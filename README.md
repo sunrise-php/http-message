@@ -18,7 +18,7 @@ composer require sunrise/http-message
 
 ## How to use?
 
-### HTTP Request Message
+#### HTTP Request Message
 
 ```php
 use Sunrise\Http\Message\RequestFactory;
@@ -28,7 +28,7 @@ $message = (new RequestFactory)->createRequest('GET', 'http://php.net/');
 // just use PSR-7 methods...
 ```
 
-### HTTP Response Message
+#### HTTP Response Message
 
 ```php
 use Sunrise\Http\Message\ResponseFactory;
