@@ -6,6 +6,10 @@
 [![Total Downloads](https://poser.pugx.org/sunrise/http-message/downloads)](https://packagist.org/packages/sunrise/http-message)
 [![License](https://poser.pugx.org/sunrise/http-message/license)](https://packagist.org/packages/sunrise/http-message)
 
+## Awards
+
+[![SymfonyInsight](https://insight.symfony.com/projects/62934e27-3e71-439c-9569-4aa57cdb3f36/big.svg)](https://insight.symfony.com/projects/62934e27-3e71-439c-9569-4aa57cdb3f36)
+
 ## Installation
 
 ```
