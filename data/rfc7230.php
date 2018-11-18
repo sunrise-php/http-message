@@ -16,7 +16,7 @@ namespace Sunrise\Http\Message;
  *
  * MUST NOT be used outside of this package.
  *
- * @var string
+ * @link https://tools.ietf.org/html/rfc7230#section-3.2
  */
 const RFC7230_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
 
@@ -25,6 +25,6 @@ const RFC7230_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x
  *
  * MUST NOT be used outside of this package.
  *
- * @var string
+ * @link https://tools.ietf.org/html/rfc7230#section-3.2
  */
 const RFC7230_FIELD_VALUE = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
