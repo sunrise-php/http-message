@@ -158,7 +158,7 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.1
 	 */
@@ -166,7 +166,7 @@ class Request extends Message implements RequestInterface
 	{
 		if (! \preg_match(RFC7230_TOKEN, $method))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given method "%s" is not valid', $method)
 			);
 		}
@@ -179,7 +179,7 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-5.3
 	 */
@@ -190,7 +190,7 @@ class Request extends Message implements RequestInterface
 
 		if (! \preg_match($regex, $requestTarget))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given request-target "%s" is not valid', $requestTarget)
 			);
 		}

@@ -81,7 +81,7 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @param int $statusCode
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
@@ -89,7 +89,7 @@ class Response extends Message implements ResponseInterface
 	{
 		if (! ($statusCode >= 100 && $statusCode <= 599))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given status-code "%d" is not valid', $statusCode)
 			);
 		}
@@ -100,7 +100,7 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @param string $reasonPhrase
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
@@ -108,7 +108,7 @@ class Response extends Message implements ResponseInterface
 	{
 		if (! \preg_match(RFC7230_FIELD_VALUE, $reasonPhrase))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given reason-phrase "%s" is not valid', $reasonPhrase)
 			);
 		}

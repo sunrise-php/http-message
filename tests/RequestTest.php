@@ -5,7 +5,6 @@ namespace Sunrise\Http\Message\Tests;
 use Fig\Http\Message\RequestMethodInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Message;
 use Sunrise\Http\Message\Request;
 use Sunrise\Uri\Uri;
@@ -49,7 +48,7 @@ class RequestTest extends TestCase
 	 */
 	public function testInvalidMethod($method)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Request)->withMethod($method);
 	}
@@ -115,7 +114,7 @@ class RequestTest extends TestCase
 	 */
 	public function testInvalidRequestTarget($requestTarget)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Request)->withRequestTarget($requestTarget);
 	}

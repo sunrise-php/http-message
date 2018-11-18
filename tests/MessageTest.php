@@ -4,7 +4,6 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Message;
 use Sunrise\Stream\Stream;
 
@@ -38,7 +37,7 @@ class MessageTest extends TestCase
 	 */
 	public function testInvalidProtocolVersion($protocolVersion)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withProtocolVersion($protocolVersion);
 	}
@@ -92,7 +91,7 @@ class MessageTest extends TestCase
 	 */
 	public function testSetInvalidHeaderName($headerName)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withHeader($headerName, 'bar');
 	}
@@ -102,7 +101,7 @@ class MessageTest extends TestCase
 	 */
 	public function testSetInvalidHeaderValue($headerValue)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withHeader('x-foo', $headerValue);
 	}
@@ -112,7 +111,7 @@ class MessageTest extends TestCase
 	 */
 	public function testSetInvalidHeaderValueInArray($headerValue)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withHeader('x-foo', ['bar', $headerValue, 'baz']);
 	}
@@ -165,7 +164,7 @@ class MessageTest extends TestCase
 	 */
 	public function testAddInvalidHeaderName($headerName)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withAddedHeader($headerName, 'bar');
 	}
@@ -175,7 +174,7 @@ class MessageTest extends TestCase
 	 */
 	public function testAddInvalidHeaderValue($headerValue)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withAddedHeader('x-foo', $headerValue);
 	}
@@ -185,7 +184,7 @@ class MessageTest extends TestCase
 	 */
 	public function testAddInvalidHeaderValueInArray($headerValue)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Message)->withAddedHeader('x-foo', ['bar', $headerValue, 'baz']);
 	}
@@ -309,16 +308,6 @@ class MessageTest extends TestCase
 		$this->assertEquals(null, $mess->getBody());
 		// assigned value
 		$this->assertEquals($body, $copy->getBody());
-	}
-
-	// EXCEPTIONS
-
-	public function testExceptions()
-	{
-		$this->assertInstanceOf(
-			\InvalidArgumentException::class,
-			new InvalidArgumentException('')
-		);
 	}
 
 	// PROVIDERS

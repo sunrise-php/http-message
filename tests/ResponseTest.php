@@ -5,7 +5,6 @@ namespace Sunrise\Http\Message\Tests;
 use Fig\Http\Message\StatusCodeInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Message;
 use Sunrise\Http\Message\Response;
 
@@ -124,7 +123,7 @@ class ResponseTest extends TestCase
 	 */
 	public function testInvalidStatusCode($statusCode)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Response)->withStatus($statusCode);
 	}
@@ -143,7 +142,7 @@ class ResponseTest extends TestCase
 	 */
 	public function testInvalidReasonPhrase($reasonPhrase)
 	{
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(\InvalidArgumentException::class);
 
 		(new Response)->withStatus(200, $reasonPhrase);
 	}

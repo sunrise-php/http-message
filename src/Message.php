@@ -199,7 +199,7 @@ class Message implements MessageInterface
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-2.6
 	 * @link https://tools.ietf.org/html/rfc7540
@@ -208,7 +208,7 @@ class Message implements MessageInterface
 	{
 		if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given protocol version "%s" is not valid', $protocolVersion)
 			);
 		}
@@ -221,7 +221,7 @@ class Message implements MessageInterface
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
 	 */
@@ -229,7 +229,7 @@ class Message implements MessageInterface
 	{
 		if (! \preg_match(RFC7230_TOKEN, $headerName))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given header name "%s" is not valid', $headerName)
 			);
 		}
@@ -242,7 +242,7 @@ class Message implements MessageInterface
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
 	 */
@@ -250,7 +250,7 @@ class Message implements MessageInterface
 	{
 		if (! \preg_match(RFC7230_FIELD_VALUE, $headerValue))
 		{
-			throw new Exception\InvalidArgumentException(
+			throw new \InvalidArgumentException(
 				\sprintf('The given header value "%s" is not valid', $headerValue)
 			);
 		}
