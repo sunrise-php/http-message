@@ -37,6 +37,8 @@ class RequestFactory implements RequestFactoryInterface
 			$uri = new Uri($uri);
 		}
 
-		return (new Request)->withMethod($method)->withUri($uri);
+		return (new Request)
+		->withMethod($method)
+		->withUri($uri);
 	}
 }

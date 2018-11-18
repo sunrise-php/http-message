@@ -14,6 +14,8 @@ namespace Sunrise\Http\Message;
 /**
  * List of Phrases
  *
+ * MUST NOT be used outside of this package.
+ *
  * @var array
  *
  * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml

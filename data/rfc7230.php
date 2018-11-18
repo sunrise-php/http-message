@@ -14,12 +14,16 @@ namespace Sunrise\Http\Message;
 /**
  * Regular Expression for a token validation
  *
+ * MUST NOT be used outside of this package.
+ *
  * @var string
  */
 const RFC7230_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
 
 /**
  * Regular Expression for a field-value validation
+ *
+ * MUST NOT be used outside of this package.
  *
  * @var string
  */
