@@ -12,7 +12,12 @@
 namespace Sunrise\Http\Message\Exception;
 
 /**
+ * Import classes
+ */
+use InvalidArgumentException as BaseInvalidArgumentException;
+
+/**
  * InvalidArgumentException
  */
-class InvalidArgumentException extends Exception
+class InvalidArgumentException extends BaseInvalidArgumentException
 {}

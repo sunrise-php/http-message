@@ -4,7 +4,6 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
-use Sunrise\Http\Message\Exception\Exception;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Message;
 use Sunrise\Stream\Stream;
@@ -316,8 +315,10 @@ class MessageTest extends TestCase
 
 	public function testExceptions()
 	{
-		$this->assertInstanceOf(\RuntimeException::class, new Exception(''));
-		$this->assertInstanceOf(Exception::class, new InvalidArgumentException(''));
+		$this->assertInstanceOf(
+			\InvalidArgumentException::class,
+			new InvalidArgumentException('')
+		);
 	}
 
 	// PROVIDERS
