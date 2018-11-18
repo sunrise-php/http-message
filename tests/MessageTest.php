@@ -69,6 +69,18 @@ class MessageTest extends TestCase
 		$this->assertEquals(['x-foo' => ['bar', 'baz']], $mess->getHeaders());
 	}
 
+	public function testSetSeveralHeaders()
+	{
+		$mess = (new Message)
+		->withHeader('x-foo', ['bar', 'baz'])
+		->withHeader('x-quux', ['quuux', 'quuuux']);
+
+		$this->assertEquals([
+			'x-foo' => ['bar', 'baz'],
+			'x-quux' => ['quuux', 'quuuux'],
+		], $mess->getHeaders());
+	}
+
 	public function testSetHeaderLowercase()
 	{
 		$mess = (new Message)->withHeader('X-Foo', 'bar');
@@ -76,25 +88,34 @@ class MessageTest extends TestCase
 		$this->assertEquals(['x-foo' => ['bar']], $mess->getHeaders());
 	}
 
-	public function testSetInvalidHeaderName()
+	/**
+	 * @dataProvider invalidHeaderNameProvider
+	 */
+	public function testSetInvalidHeaderName($headerName)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withHeader('x-foo:', 'bar');
+		(new Message)->withHeader($headerName, 'bar');
 	}
 
-	public function testSetInvalidHeaderValue()
+	/**
+	 * @dataProvider invalidHeaderValueProvider
+	 */
+	public function testSetInvalidHeaderValue($headerValue)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withHeader('x-foo', "bar\0");
+		(new Message)->withHeader('x-foo', $headerValue);
 	}
 
-	public function testSetInvalidHeaderValueInArray()
+	/**
+	 * @dataProvider invalidHeaderValueProvider
+	 */
+	public function testSetInvalidHeaderValueInArray($headerValue)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withHeader('x-foo', ['bar', "baz\0", 'quux']);
+		(new Message)->withHeader('x-foo', ['bar', $headerValue, 'baz']);
 	}
 
 	public function testAddHeader()
@@ -117,6 +138,20 @@ class MessageTest extends TestCase
 		$this->assertEquals(['x-foo' => ['bar', 'baz', 'quux', 'quuux']], $mess->getHeaders());
 	}
 
+	public function testAddSeveralHeaders()
+	{
+		$mess = (new Message)
+		->withHeader('x-foo', 'bar')
+		->withHeader('x-baz', 'quux')
+		->withAddedHeader('x-foo', 'quuux')
+		->withAddedHeader('x-baz', 'quuuux');
+
+		$this->assertEquals([
+			'x-foo' => ['bar', 'quuux'],
+			'x-baz' => ['quux', 'quuuux'],
+		], $mess->getHeaders());
+	}
+
 	public function testAddHeaderLowercase()
 	{
 		$mess = (new Message)
@@ -126,25 +161,34 @@ class MessageTest extends TestCase
 		$this->assertEquals(['x-foo' => ['bar', 'baz']], $mess->getHeaders());
 	}
 
-	public function testAddInvalidHeaderName()
+	/**
+	 * @dataProvider invalidHeaderNameProvider
+	 */
+	public function testAddInvalidHeaderName($headerName)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withAddedHeader('x-foo:', 'bar');
+		(new Message)->withAddedHeader($headerName, 'bar');
 	}
 
-	public function testAddInvalidHeaderValue()
+	/**
+	 * @dataProvider invalidHeaderValueProvider
+	 */
+	public function testAddInvalidHeaderValue($headerValue)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withAddedHeader('x-foo', "bar\0");
+		(new Message)->withAddedHeader('x-foo', $headerValue);
 	}
 
-	public function testAddInvalidHeaderValueInArray()
+	/**
+	 * @dataProvider invalidHeaderValueProvider
+	 */
+	public function testAddInvalidHeaderValueInArray($headerValue)
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		(new Message)->withAddedHeader('x-foo', ['bar', "baz\0", 'quux']);
+		(new Message)->withAddedHeader('x-foo', ['bar', $headerValue, 'baz']);
 	}
 
 	public function testDeleteHeader()
@@ -274,5 +318,29 @@ class MessageTest extends TestCase
 	{
 		$this->assertInstanceOf(\RuntimeException::class, new Exception(''));
 		$this->assertInstanceOf(Exception::class, new InvalidArgumentException(''));
+	}
+
+	// PROVIDERS
+
+	public function invalidHeaderNameProvider()
+	{
+		return [
+			[''],
+			['x foo'],
+			['x-foo:'],
+			["x\0foo"],
+			["x\tfoo"],
+			["x\rfoo"],
+			["x\nfoo"],
+		];
+	}
+
+	public function invalidHeaderValueProvider()
+	{
+		return [
+			["field \0 value"],
+			["field \r value"],
+			["field \n value"],
+		];
 	}
 }
