@@ -62,7 +62,7 @@ class Response extends Message implements ResponseInterface
 	{
 		if ('' === $reasonPhrase)
 		{
-			$reasonPhrase = PHRASES[$statusCode] ?? '';
+			$reasonPhrase = PHRASES[$statusCode] ?? 'Unknown Status Code';
 		}
 
 		$this->validateStatusCode($statusCode);
