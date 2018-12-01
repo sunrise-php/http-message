@@ -2,6 +2,8 @@
 
 [![Build Status](https://api.travis-ci.com/sunrise-php/http-message.svg?branch=master)](https://travis-ci.com/sunrise-php/http-message)
 [![CodeFactor](https://www.codefactor.io/repository/github/sunrise-php/http-message/badge)](https://www.codefactor.io/repository/github/sunrise-php/http-message)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![Latest Stable Version](https://poser.pugx.org/sunrise/http-message/v/stable)](https://packagist.org/packages/sunrise/http-message)
 [![Total Downloads](https://poser.pugx.org/sunrise/http-message/downloads)](https://packagist.org/packages/sunrise/http-message)
 [![License](https://poser.pugx.org/sunrise/http-message/license)](https://packagist.org/packages/sunrise/http-message)
