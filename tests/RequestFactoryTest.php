@@ -5,6 +5,7 @@ namespace Sunrise\Http\Message\Tests;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\RequestFactory;
 use Sunrise\Uri\Uri;
@@ -29,6 +30,13 @@ class RequestFactoryTest extends TestCase
 		$this->assertInstanceOf(RequestInterface::class, $request);
 		$this->assertEquals($method, $request->getMethod());
 		$this->assertEquals($uri, $request->getUri());
+
+		// default body of the request...
+		$this->assertInstanceOf(StreamInterface::class, $request->getBody());
+		$this->assertTrue($request->getBody()->isSeekable());
+		$this->assertTrue($request->getBody()->isWritable());
+		$this->assertTrue($request->getBody()->isReadable());
+		$this->assertEquals('php://temp', $request->getBody()->getMetadata('uri'));
 	}
 
 	public function testCreateRequestWithUriAsString()

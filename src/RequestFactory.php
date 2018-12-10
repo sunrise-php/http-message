@@ -17,7 +17,8 @@ namespace Sunrise\Http\Message;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Sunrise\Uri\Uri;
+use Sunrise\Stream\StreamFactory;
+use Sunrise\Uri\UriFactory;
 
 /**
  * RequestFactory
@@ -34,11 +35,16 @@ class RequestFactory implements RequestFactoryInterface
 	{
 		if (! ($uri instanceof UriInterface))
 		{
-			$uri = new Uri($uri);
+			$uri = (new UriFactory)
+			->createUri($uri);
 		}
+
+		$body = (new StreamFactory)
+		->createStream();
 
 		return (new Request)
 		->withMethod($method)
-		->withUri($uri);
+		->withUri($uri)
+		->withBody($body);
 	}
 }
