@@ -168,7 +168,7 @@ class Request extends Message implements RequestInterface
 		{
 			throw new \InvalidArgumentException('HTTP method must be a string');
 		}
-		else if (! \preg_match(RFC7230_TOKEN, $method))
+		else if (! \preg_match(self::RFC7230_TOKEN, $method))
 		{
 			throw new \InvalidArgumentException(\sprintf('The given method "%s" is not valid', $method));
 		}

@@ -25,8 +25,7 @@
 	},
 	"autoload": {
 		"files": [
-			"data/phrases.php",
-			"data/rfc7230.php"
+			"data/phrases.php"
 		],
 		"psr-4": {
 			"Sunrise\\Http\\Message\\": "src/"
