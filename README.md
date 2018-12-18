@@ -41,6 +41,12 @@ $message = (new ResponseFactory)->createResponse(200, 'OK');
 // just use PSR-7 methods...
 ```
 
+#### Remaining PSR-7 packages
+
+* https://github.com/sunrise-php/http-server-request
+* https://github.com/sunrise-php/stream
+* https://github.com/sunrise-php/uri
+
 ## Test run
 
 ```bash
