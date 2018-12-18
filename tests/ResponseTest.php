@@ -16,7 +16,7 @@ class ResponseTest extends TestCase
 	{
 		$mess = new Response();
 
-		$this->assertSubclassOf(Message::class, $mess);
+		$this->assertInstanceOf(Message::class, $mess);
 		$this->assertInstanceOf(ResponseInterface::class, $mess);
 	}
 
@@ -27,7 +27,7 @@ class ResponseTest extends TestCase
 		$mess = new Response();
 		$copy = $mess->withStatus(204);
 
-		$this->assertSubclassOf(Message::class, $copy);
+		$this->assertInstanceOf(Message::class, $copy);
 		$this->assertInstanceOf(ResponseInterface::class, $copy);
 		$this->assertNotEquals($mess, $copy);
 
@@ -50,6 +50,35 @@ class ResponseTest extends TestCase
 		$this->assertEquals($statusCode, $mess->getStatusCode());
 		$this->assertEquals($reasonPhrase, $mess->getReasonPhrase());
 	}
+
+	/**
+	 * @dataProvider invalidStatusCodeProvider
+	 */
+	public function testInvalidStatusCode($statusCode)
+	{
+		$this->expectException(\InvalidArgumentException::class);
+
+		(new Response)->withStatus($statusCode);
+	}
+
+	/**
+	 * @dataProvider invalidReasonPhraseProvider
+	 */
+	public function testInvalidReasonPhrase($reasonPhrase)
+	{
+		$this->expectException(\InvalidArgumentException::class);
+
+		(new Response)->withStatus(200, $reasonPhrase);
+	}
+
+	public function testCustomReasonPhrase()
+	{
+		$mess = (new Response)->withStatus(StatusCodeInterface::STATUS_OK, 'test');
+
+		$this->assertEquals('test', $mess->getReasonPhrase());
+	}
+
+	// PROVIDERS
 
 	public function figStatusProvider()
 	{
@@ -118,33 +147,20 @@ class ResponseTest extends TestCase
 		];
 	}
 
-	/**
-	 * @dataProvider invalidStatusCodeProvider
-	 */
-	public function testInvalidStatusCode($statusCode)
-	{
-		$this->expectException(\InvalidArgumentException::class);
-
-		(new Response)->withStatus($statusCode);
-	}
-
 	public function invalidStatusCodeProvider()
 	{
 		return [
 			[0],
 			[99],
 			[600],
+
+			// other types
+			[null],
+			[false],
+			['200'],
+			[[]],
+			[new \stdClass],
 		];
-	}
-
-	/**
-	 * @dataProvider invalidReasonPhraseProvider
-	 */
-	public function testInvalidReasonPhrase($reasonPhrase)
-	{
-		$this->expectException(\InvalidArgumentException::class);
-
-		(new Response)->withStatus(200, $reasonPhrase);
 	}
 
 	public function invalidReasonPhraseProvider()
@@ -153,20 +169,13 @@ class ResponseTest extends TestCase
 			["bar\0baz"],
 			["bar\nbaz"],
 			["bar\rbaz"],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
 		];
-	}
-
-	public function testCustomReasonPhrase()
-	{
-		$mess = (new Response)->withStatus(StatusCodeInterface::STATUS_OK, 'test');
-
-		$this->assertEquals('test', $mess->getReasonPhrase());
-	}
-
-	// USER ASSERTIONS
-
-	private function assertSubclassOf(string $expected, object $actual)
-	{
-		$this->assertTrue(\is_subclass_of($actual, $expected, true));
 	}
 }

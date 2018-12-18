@@ -60,13 +60,13 @@ class Response extends Message implements ResponseInterface
 	 */
 	public function withStatus($statusCode, $reasonPhrase = '') : ResponseInterface
 	{
+		$this->validateStatusCode($statusCode);
+		$this->validateReasonPhrase($reasonPhrase);
+
 		if ('' === $reasonPhrase)
 		{
 			$reasonPhrase = PHRASES[$statusCode] ?? 'Unknown Status Code';
 		}
-
-		$this->validateStatusCode($statusCode);
-		$this->validateReasonPhrase($reasonPhrase);
 
 		$clone = clone $this;
 
@@ -79,38 +79,42 @@ class Response extends Message implements ResponseInterface
 	/**
 	 * Validates the given status-code
 	 *
-	 * @param int $statusCode
+	 * @param mixed $statusCode
 	 *
 	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
-	public function validateStatusCode(int $statusCode) : void
+	public function validateStatusCode($statusCode) : void
 	{
-		if (! ($statusCode >= 100 && $statusCode <= 599))
+		if (! \is_int($statusCode))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given status-code "%d" is not valid', $statusCode)
-			);
+			throw new \InvalidArgumentException('HTTP status-code must be an integer');
+		}
+		else if (! ($statusCode >= 100 && $statusCode <= 599))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given status-code "%d" is not valid', $statusCode));
 		}
 	}
 
 	/**
 	 * Validates the given reason-phrase
 	 *
-	 * @param string $reasonPhrase
+	 * @param mixed $reasonPhrase
 	 *
 	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
-	public function validateReasonPhrase(string $reasonPhrase) : void
+	public function validateReasonPhrase($reasonPhrase) : void
 	{
-		if (! \preg_match(RFC7230_FIELD_VALUE, $reasonPhrase))
+		if (! \is_string($reasonPhrase))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given reason-phrase "%s" is not valid', $reasonPhrase)
-			);
+			throw new \InvalidArgumentException('HTTP reason-phrase must be a string');
+		}
+		else if (! \preg_match(RFC7230_FIELD_VALUE, $reasonPhrase))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given reason-phrase "%s" is not valid', $reasonPhrase));
 		}
 	}
 }

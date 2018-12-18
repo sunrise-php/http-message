@@ -154,7 +154,7 @@ class Request extends Message implements RequestInterface
 	/**
 	 * Validates the given method
 	 *
-	 * @param string $method
+	 * @param mixed $method
 	 *
 	 * @return void
 	 *
@@ -162,20 +162,22 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.1
 	 */
-	protected function validateMethod(string $method) : void
+	protected function validateMethod($method) : void
 	{
-		if (! \preg_match(RFC7230_TOKEN, $method))
+		if (! \is_string($method))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given method "%s" is not valid', $method)
-			);
+			throw new \InvalidArgumentException('HTTP method must be a string');
+		}
+		else if (! \preg_match(RFC7230_TOKEN, $method))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given method "%s" is not valid', $method));
 		}
 	}
 
 	/**
 	 * Validates the given request-target
 	 *
-	 * @param string $requestTarget
+	 * @param mixed $requestTarget
 	 *
 	 * @return void
 	 *
@@ -183,16 +185,15 @@ class Request extends Message implements RequestInterface
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-5.3
 	 */
-	protected function validateRequestTarget(string $requestTarget) : void
+	protected function validateRequestTarget($requestTarget) : void
 	{
-		// Safe field-value chars without whitespace
-		$regex = '/^[\x21-\x7E\x80-\xFF]+$/';
-
-		if (! \preg_match($regex, $requestTarget))
+		if (! \is_string($requestTarget))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given request-target "%s" is not valid', $requestTarget)
-			);
+			throw new \InvalidArgumentException('HTTP request-target must be a string');
+		}
+		else if (! \preg_match('/^[\x21-\x7E\x80-\xFF]+$/', $requestTarget))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given request-target "%s" is not valid', $requestTarget));
 		}
 	}
 }

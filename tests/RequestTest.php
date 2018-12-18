@@ -15,7 +15,7 @@ class RequestTest extends TestCase
 	{
 		$mess = new Request();
 
-		$this->assertSubclassOf(Message::class, $mess);
+		$this->assertInstanceOf(Message::class, $mess);
 		$this->assertInstanceOf(RequestInterface::class, $mess);
 	}
 
@@ -26,7 +26,7 @@ class RequestTest extends TestCase
 		$mess = new Request();
 		$copy = $mess->withMethod('POST');
 
-		$this->assertSubclassOf(Message::class, $copy);
+		$this->assertInstanceOf(Message::class, $copy);
 		$this->assertInstanceOf(RequestInterface::class, $copy);
 		$this->assertNotEquals($mess, $copy);
 
@@ -53,19 +53,6 @@ class RequestTest extends TestCase
 		(new Request)->withMethod($method);
 	}
 
-	public function invalidMethodProvider()
-	{
-		return [
-			[''],
-			["BAR\0BAZ"],
-			["BAR\tBAZ"],
-			["BAR\nBAZ"],
-			["BAR\rBAZ"],
-			["BAR BAZ"],
-			["BAR,BAZ"],
-		];
-	}
-
 	/**
 	 * @dataProvider figMethodsProvider
 	 */
@@ -76,22 +63,6 @@ class RequestTest extends TestCase
 		$this->assertEquals($method, $mess->getMethod());
 	}
 
-	public function figMethodsProvider()
-	{
-		return [
-			[RequestMethodInterface::METHOD_HEAD],
-			[RequestMethodInterface::METHOD_GET],
-			[RequestMethodInterface::METHOD_POST],
-			[RequestMethodInterface::METHOD_PUT],
-			[RequestMethodInterface::METHOD_PATCH],
-			[RequestMethodInterface::METHOD_DELETE],
-			[RequestMethodInterface::METHOD_PURGE],
-			[RequestMethodInterface::METHOD_OPTIONS],
-			[RequestMethodInterface::METHOD_TRACE],
-			[RequestMethodInterface::METHOD_CONNECT],
-		];
-	}
-
 	// REQUEST TARGET
 
 	public function testMainLogicForRequestTarget()
@@ -99,7 +70,7 @@ class RequestTest extends TestCase
 		$mess = new Request();
 		$copy = $mess->withRequestTarget('/path?query');
 
-		$this->assertSubclassOf(Message::class, $copy);
+		$this->assertInstanceOf(Message::class, $copy);
 		$this->assertInstanceOf(RequestInterface::class, $copy);
 		$this->assertNotEquals($mess, $copy);
 
@@ -117,18 +88,6 @@ class RequestTest extends TestCase
 		$this->expectException(\InvalidArgumentException::class);
 
 		(new Request)->withRequestTarget($requestTarget);
-	}
-
-	public function invalidRequestTargetProvider()
-	{
-		return [
-			[''],
-			["/path\0/"],
-			["/path\t/"],
-			["/path\n/"],
-			["/path\r/"],
-			["/path /"],
-		];
 	}
 
 	public function testRequestTargetFromUriWithoutPath()
@@ -184,16 +143,6 @@ class RequestTest extends TestCase
 		$this->assertEquals($requestTarget, $mess->getRequestTarget());
 	}
 
-	public function variedUriFormsProvider()
-	{
-		return [
-			['/path?query'],
-			['http://localhost/path?query'],
-			['localhost:3000'],
-			['*'],
-		];
-	}
-
 	// URI
 
 	public function testMainLogicForUri()
@@ -203,7 +152,7 @@ class RequestTest extends TestCase
 		$mess = new Request();
 		$copy = $mess->withUri($uri);
 
-		$this->assertSubclassOf(Message::class, $copy);
+		$this->assertInstanceOf(Message::class, $copy);
 		$this->assertInstanceOf(RequestInterface::class, $copy);
 		$this->assertNotEquals($mess, $copy);
 
@@ -259,10 +208,70 @@ class RequestTest extends TestCase
 		$this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
 	}
 
-	// USER ASSERTIONS
+	// PROVIDERS
 
-	private function assertSubclassOf(string $expected, object $actual)
+	public function invalidMethodProvider()
 	{
-		$this->assertTrue(\is_subclass_of($actual, $expected, true));
+		return [
+			[''],
+			["BAR\0BAZ"],
+			["BAR\tBAZ"],
+			["BAR\nBAZ"],
+			["BAR\rBAZ"],
+			["BAR BAZ"],
+			["BAR,BAZ"],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
+		];
+	}
+
+	public function figMethodsProvider()
+	{
+		return [
+			[RequestMethodInterface::METHOD_HEAD],
+			[RequestMethodInterface::METHOD_GET],
+			[RequestMethodInterface::METHOD_POST],
+			[RequestMethodInterface::METHOD_PUT],
+			[RequestMethodInterface::METHOD_PATCH],
+			[RequestMethodInterface::METHOD_DELETE],
+			[RequestMethodInterface::METHOD_PURGE],
+			[RequestMethodInterface::METHOD_OPTIONS],
+			[RequestMethodInterface::METHOD_TRACE],
+			[RequestMethodInterface::METHOD_CONNECT],
+		];
+	}
+
+	public function invalidRequestTargetProvider()
+	{
+		return [
+			[''],
+			["/path\0/"],
+			["/path\t/"],
+			["/path\n/"],
+			["/path\r/"],
+			["/path /"],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
+		];
+	}
+
+	public function variedUriFormsProvider()
+	{
+		return [
+			['/path?query'],
+			['http://localhost/path?query'],
+			['localhost:3000'],
+			['*'],
+		];
 	}
 }

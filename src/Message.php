@@ -82,7 +82,7 @@ class Message implements MessageInterface
 	 */
 	public function hasHeader($name) : bool
 	{
-		$name = \strtolower($name);
+		$name = $this->normalizeHeaderName($name);
 
 		return ! empty($this->headers[$name]);
 	}
@@ -92,7 +92,7 @@ class Message implements MessageInterface
 	 */
 	public function getHeader($name) : array
 	{
-		$name = \strtolower($name);
+		$name = $this->normalizeHeaderName($name);
 
 		if (empty($this->headers[$name]))
 		{
@@ -107,7 +107,7 @@ class Message implements MessageInterface
 	 */
 	public function getHeaderLine($name) : string
 	{
-		$name = \strtolower($name);
+		$name = $this->normalizeHeaderName($name);
 
 		if (empty($this->headers[$name]))
 		{
@@ -122,11 +122,11 @@ class Message implements MessageInterface
 	 */
 	public function withHeader($name, $value) : MessageInterface
 	{
-		$name = \strtolower($name);
-		$value = (array) $value;
-
 		$this->validateHeaderName($name);
-		$this->validateHeaderValues($value);
+		$this->validateHeaderValue($value);
+
+		$name = $this->normalizeHeaderName($name);
+		$value = $this->normalizeHeaderValue($value);
 
 		$clone = clone $this;
 
@@ -140,11 +140,11 @@ class Message implements MessageInterface
 	 */
 	public function withAddedHeader($name, $value) : MessageInterface
 	{
-		$name = \strtolower($name);
-		$value = (array) $value;
-
 		$this->validateHeaderName($name);
-		$this->validateHeaderValues($value);
+		$this->validateHeaderValue($value);
+
+		$name = $this->normalizeHeaderName($name);
+		$value = $this->normalizeHeaderValue($value);
 
 		if (! empty($this->headers[$name]))
 		{
@@ -163,7 +163,7 @@ class Message implements MessageInterface
 	 */
 	public function withoutHeader($name) : MessageInterface
 	{
-		$name = \strtolower($name);
+		$name = $this->normalizeHeaderName($name);
 
 		$clone = clone $this;
 
@@ -195,7 +195,7 @@ class Message implements MessageInterface
 	/**
 	 * Validates the given protocol version
 	 *
-	 * @param string $protocolVersion
+	 * @param mixed $protocolVersion
 	 *
 	 * @return void
 	 *
@@ -204,20 +204,22 @@ class Message implements MessageInterface
 	 * @link https://tools.ietf.org/html/rfc7230#section-2.6
 	 * @link https://tools.ietf.org/html/rfc7540
 	 */
-	protected function validateProtocolVersion(string $protocolVersion) : void
+	protected function validateProtocolVersion($protocolVersion) : void
 	{
-		if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion))
+		if (! \is_string($protocolVersion))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given protocol version "%s" is not valid', $protocolVersion)
-			);
+			throw new \InvalidArgumentException('HTTP protocol version must be a string');
+		}
+		else if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given protocol version "%s" is not valid', $protocolVersion));
 		}
 	}
 
 	/**
 	 * Validates the given header name
 	 *
-	 * @param string $headerName
+	 * @param mixed $headerName
 	 *
 	 * @return void
 	 *
@@ -225,20 +227,22 @@ class Message implements MessageInterface
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
 	 */
-	protected function validateHeaderName(string $headerName) : void
+	protected function validateHeaderName($headerName) : void
 	{
-		if (! \preg_match(RFC7230_TOKEN, $headerName))
+		if (! \is_string($headerName))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given header name "%s" is not valid', $headerName)
-			);
+			throw new \InvalidArgumentException('Header name must be a string');
+		}
+		else if (! \preg_match(RFC7230_TOKEN, $headerName))
+		{
+			throw new \InvalidArgumentException(\sprintf('The given header name "%s" is not valid', $headerName));
 		}
 	}
 
 	/**
 	 * Validates the given header value
 	 *
-	 * @param string $headerValue
+	 * @param mixed $headerValue
 	 *
 	 * @return void
 	 *
@@ -246,28 +250,61 @@ class Message implements MessageInterface
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
 	 */
-	protected function validateHeaderValue(string $headerValue) : void
+	protected function validateHeaderValue($headerValue) : void
 	{
-		if (! \preg_match(RFC7230_FIELD_VALUE, $headerValue))
+		if (\is_string($headerValue))
 		{
-			throw new \InvalidArgumentException(
-				\sprintf('The given header value "%s" is not valid', $headerValue)
-			);
+			$headerValue = [$headerValue];
+		}
+
+		if (! \is_array($headerValue) || [] === $headerValue)
+		{
+			throw new \InvalidArgumentException('Header value must be a string or not an empty array');
+		}
+
+		foreach ($headerValue as $oneOf)
+		{
+			if (! \is_string($oneOf))
+			{
+				throw new \InvalidArgumentException('Header value must be a string or an array containing only strings');
+			}
+			else if (! \preg_match(RFC7230_FIELD_VALUE, $oneOf))
+			{
+				throw new \InvalidArgumentException(\sprintf('The given header value "%s" is not valid', $oneOf));
+			}
 		}
 	}
 
 	/**
-	 * Validates the given header values
+	 * Normalizes the given header name
 	 *
-	 * @param array $headerValues
+	 * @param string $headerName
 	 *
-	 * @return void
+	 * @return string
+	 *
+	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
 	 */
-	protected function validateHeaderValues(array $headerValues) : void
+	protected function normalizeHeaderName($headerName) : string
 	{
-		foreach ($headerValues as $headerValue)
-		{
-			$this->validateHeaderValue($headerValue);
-		}
+		// Each header field consists of a case-insensitive field name...
+		$headerName = \strtolower($headerName);
+
+		return $headerName;
+	}
+
+	/**
+	 * Normalizes the given header value
+	 *
+	 * @param string|array $headerValue
+	 *
+	 * @return array
+	 */
+	protected function normalizeHeaderValue($headerValue) : array
+	{
+		$headerValue = (array) $headerValue;
+
+		$headerValue = \array_values($headerValue);
+
+		return $headerValue;
 	}
 }

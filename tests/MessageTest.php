@@ -42,11 +42,6 @@ class MessageTest extends TestCase
 		(new Message)->withProtocolVersion($protocolVersion);
 	}
 
-	public function invalidProtocolVersionProvider()
-	{
-		return [[''], ['.'], ['1.'], ['.1'], ['1.1.'], ['.1.1'], ['1.1.1'], ['a'], ['a.'], ['.a'], ['a.a'], ['HTTP/1.1']];
-	}
-
 	// HEADERS
 
 	public function testSetHeader()
@@ -312,6 +307,31 @@ class MessageTest extends TestCase
 
 	// PROVIDERS
 
+	public function invalidProtocolVersionProvider()
+	{
+		return [
+			[''],
+			['.'],
+			['1.'],
+			['.1'],
+			['1.1.'],
+			['.1.1'],
+			['1.1.1'],
+			['a'],
+			['a.'],
+			['.a'],
+			['a.a'],
+			['HTTP/1.1'],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
+		];
+	}
+
 	public function invalidHeaderNameProvider()
 	{
 		return [
@@ -322,6 +342,13 @@ class MessageTest extends TestCase
 			["x\tfoo"],
 			["x\rfoo"],
 			["x\nfoo"],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
 		];
 	}
 
@@ -331,6 +358,21 @@ class MessageTest extends TestCase
 			["field \0 value"],
 			["field \r value"],
 			["field \n value"],
+			[["field \0 value"]],
+			[["field \r value"]],
+			[["field \n value"]],
+
+			// other types
+			[null],
+			[false],
+			[1],
+			[[]],
+			[new \stdClass],
+			[[null]],
+			[[false]],
+			[[1]],
+			[[[]]],
+			[[new \stdClass]],
 		];
 	}
 }
