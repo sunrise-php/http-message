@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Sunrise\Http\Message\Message;
 use Sunrise\Http\Message\Request;
-use Sunrise\Uri\Uri;
+use Sunrise\Uri\UriFactory;
 
 class RequestTest extends TestCase
 {
@@ -19,9 +19,7 @@ class RequestTest extends TestCase
 		$this->assertInstanceOf(RequestInterface::class, $mess);
 	}
 
-	// METHOD
-
-	public function testMainLogicForMethod()
+	public function testMethod()
 	{
 		$mess = new Request();
 		$copy = $mess->withMethod('POST');
@@ -44,6 +42,16 @@ class RequestTest extends TestCase
 	}
 
 	/**
+	 * @dataProvider figMethodProvider
+	 */
+	public function testFigMethod($method)
+	{
+		$mess = (new Request)->withMethod($method);
+
+		$this->assertEquals($method, $mess->getMethod());
+	}
+
+	/**
 	 * @dataProvider invalidMethodProvider
 	 */
 	public function testInvalidMethod($method)
@@ -53,19 +61,7 @@ class RequestTest extends TestCase
 		(new Request)->withMethod($method);
 	}
 
-	/**
-	 * @dataProvider figMethodsProvider
-	 */
-	public function testMethodsFromFig($method)
-	{
-		$mess = (new Request)->withMethod($method);
-
-		$this->assertEquals($method, $mess->getMethod());
-	}
-
-	// REQUEST TARGET
-
-	public function testMainLogicForRequestTarget()
+	public function testRequestTarget()
 	{
 		$mess = new Request();
 		$copy = $mess->withRequestTarget('/path?query');
@@ -81,6 +77,16 @@ class RequestTest extends TestCase
 	}
 
 	/**
+	 * @dataProvider uriFormProvider
+	 */
+	public function testRequestTargetWithDifferentUriForms($requestTarget)
+	{
+		$mess = (new Request)->withRequestTarget($requestTarget);
+
+		$this->assertEquals($requestTarget, $mess->getRequestTarget());
+	}
+
+	/**
 	 * @dataProvider invalidRequestTargetProvider
 	 */
 	public function testInvalidRequestTarget($requestTarget)
@@ -90,65 +96,51 @@ class RequestTest extends TestCase
 		(new Request)->withRequestTarget($requestTarget);
 	}
 
-	public function testRequestTargetFromUriWithoutPath()
+	public function testGetRequestTargetHavingUriWithoutPath()
 	{
-		$mess = (new Request)
-		->withUri(new Uri('http://localhost'));
+		$uri = (new UriFactory)->createUri('http://localhost');
+		$mess = (new Request)->withUri($uri);
 
 		// returns "/" as default path
 		$this->assertEquals('/', $mess->getRequestTarget());
 	}
 
-	public function testRequestTargetFromUriWithNotAbsolutePath()
+	public function testGetRequestTargetHavingUriWithNotAbsolutePath()
 	{
-		$mess = (new Request)
-		->withUri(new Uri('not/absolute/path?query'));
+		$uri = (new UriFactory)->createUri('not/absolute/path?query');
+		$mess = (new Request)->withUri($uri);
 
 		// returns "/" as default path
 		$this->assertEquals('/', $mess->getRequestTarget());
 	}
 
-	public function testRequestTargetFromUriWithAbsolutePath()
+	public function testGetRequestTargetHavingUriWithAbsolutePath()
 	{
-		$mess = (new Request)
-		->withUri(new Uri('/path'));
+		$uri = (new UriFactory)->createUri('/path');
+		$mess = (new Request)->withUri($uri);
 
 		$this->assertEquals('/path', $mess->getRequestTarget());
 	}
 
-	public function testRequestTargetFromUriWithAbsolutePathAndQuery()
+	public function testGetRequestTargetHavingUriWithAbsolutePathAndQuery()
 	{
-		$mess = (new Request)
-		->withUri(new Uri('/path?query'));
+		$uri = (new UriFactory)->createUri('/path?query');
+		$mess = (new Request)->withUri($uri);
 
 		$this->assertEquals('/path?query', $mess->getRequestTarget());
 	}
 
-	public function testRequestTargetWithIgnoringNewUri()
+	public function testGetRequestTargetIgnoringNewUri()
 	{
-		$mess = (new Request)
-		->withRequestTarget('/primary')
-		->withUri(new Uri('/new'));
+		$uri = (new UriFactory)->createUri('/new');
+		$mess = (new Request)->withRequestTarget('/primary')->withUri($uri);
 
 		$this->assertEquals('/primary', $mess->getRequestTarget());
 	}
 
-	/**
-	 * @dataProvider variedUriFormsProvider
-	 */
-	public function testRequestTargetWithVariedUriForms($requestTarget)
+	public function testUri()
 	{
-		$mess = (new Request)->withRequestTarget($requestTarget);
-
-		$this->assertEquals($requestTarget, $mess->getRequestTarget());
-	}
-
-	// URI
-
-	public function testMainLogicForUri()
-	{
-		$uri = new Uri('/');
-
+		$uri = (new UriFactory)->createUri('/');
 		$mess = new Request();
 		$copy = $mess->withUri($uri);
 
@@ -164,7 +156,7 @@ class RequestTest extends TestCase
 
 	public function testUriWithAssigningHostHeaderFromUriHost()
 	{
-		$uri = new Uri('http://localhost');
+		$uri = (new UriFactory)->createUri('http://localhost');
 		$mess = (new Request)->withUri($uri);
 
 		$this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
@@ -172,7 +164,7 @@ class RequestTest extends TestCase
 
 	public function testUriWithAssigningHostHeaderFromUriHostAndPort()
 	{
-		$uri = new Uri('http://localhost:3000');
+		$uri = (new UriFactory)->createUri('http://localhost:3000');
 		$mess = (new Request)->withUri($uri);
 
 		$this->assertEquals($uri->getHost() . ':' . $uri->getPort(), $mess->getHeaderLine('host'));
@@ -180,57 +172,31 @@ class RequestTest extends TestCase
 
 	public function testUriWithReplacingHostHeaderFromUri()
 	{
-		$uri = new Uri('http://localhost');
-
-		$mess = (new Request)
-		->withHeader('host', 'example.com')
-		->withUri($uri);
+		$uri = (new UriFactory)->createUri('http://localhost');
+		$mess = (new Request)->withHeader('host', 'example.com')->withUri($uri);
 
 		$this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
 	}
 
 	public function testUriWithPreservingHostHeader()
 	{
-		$uri = new Uri('http://localhost');
-
-		$mess = (new Request)
-		->withHeader('host', 'example.com')
-		->withUri($uri, true);
+		$uri = (new UriFactory)->createUri('http://localhost');
+		$mess = (new Request)->withHeader('host', 'example.com')->withUri($uri, true);
 
 		$this->assertEquals('example.com', $mess->getHeaderLine('host'));
 	}
 
 	public function testUriWithPreservingHostHeaderIfItIsEmpty()
 	{
-		$uri = new Uri('http://localhost');
+		$uri = (new UriFactory)->createUri('http://localhost');
 		$mess = (new Request)->withUri($uri, true);
 
 		$this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
 	}
 
-	// PROVIDERS
+	// Providers...
 
-	public function invalidMethodProvider()
-	{
-		return [
-			[''],
-			["BAR\0BAZ"],
-			["BAR\tBAZ"],
-			["BAR\nBAZ"],
-			["BAR\rBAZ"],
-			["BAR BAZ"],
-			["BAR,BAZ"],
-
-			// other types
-			[null],
-			[false],
-			[1],
-			[[]],
-			[new \stdClass],
-		];
-	}
-
-	public function figMethodsProvider()
+	public function figMethodProvider()
 	{
 		return [
 			[RequestMethodInterface::METHOD_HEAD],
@@ -246,6 +212,30 @@ class RequestTest extends TestCase
 		];
 	}
 
+	public function invalidMethodProvider()
+	{
+		return [
+			[''],
+			["BAR\0BAZ"],
+			["BAR\tBAZ"],
+			["BAR\nBAZ"],
+			["BAR\rBAZ"],
+			["BAR BAZ"],
+			["BAR,BAZ"],
+
+			// other types
+			[true],
+			[false],
+			[1],
+			[1.1],
+			[[]],
+			[new \stdClass],
+			[\STDOUT],
+			[null],
+			[function(){}],
+		];
+	}
+
 	public function invalidRequestTargetProvider()
 	{
 		return [
@@ -257,20 +247,31 @@ class RequestTest extends TestCase
 			["/path /"],
 
 			// other types
-			[null],
+			[true],
 			[false],
 			[1],
+			[1.1],
 			[[]],
 			[new \stdClass],
+			[\STDOUT],
+			[null],
+			[function(){}],
 		];
 	}
 
-	public function variedUriFormsProvider()
+	public function uriFormProvider()
 	{
 		return [
+			// https://tools.ietf.org/html/rfc7230#section-5.3.1
 			['/path?query'],
+
+			// https://tools.ietf.org/html/rfc7230#section-5.3.2
 			['http://localhost/path?query'],
+
+			// https://tools.ietf.org/html/rfc7230#section-5.3.3
 			['localhost:3000'],
+
+			// https://tools.ietf.org/html/rfc7230#section-5.3.4
 			['*'],
 		];
 	}

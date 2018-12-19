@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\RequestFactory;
-use Sunrise\Uri\Uri;
+use Sunrise\Uri\UriFactory;
 
 class RequestFactoryTest extends TestCase
 {
@@ -22,10 +22,8 @@ class RequestFactoryTest extends TestCase
 	public function testCreateRequest()
 	{
 		$method = 'POST';
-		$uri = new Uri('/');
-
-		$request = (new RequestFactory)
-		->createRequest($method, $uri);
+		$uri = (new UriFactory)->createUri('/');
+		$request = (new RequestFactory)->createRequest($method, $uri);
 
 		$this->assertInstanceOf(RequestInterface::class, $request);
 		$this->assertEquals($method, $request->getMethod());
@@ -42,9 +40,7 @@ class RequestFactoryTest extends TestCase
 	public function testCreateRequestWithUriAsString()
 	{
 		$uri = 'http://user:password@localhost:3000/path?query#fragment';
-
-		$request = (new RequestFactory)
-		->createRequest('GET', $uri);
+		$request = (new RequestFactory)->createRequest('GET', $uri);
 
 		$this->assertInstanceOf(UriInterface::class, $request->getUri());
 		$this->assertEquals($uri, (string) $request->getUri());

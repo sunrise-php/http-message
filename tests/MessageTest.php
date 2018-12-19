@@ -5,7 +5,7 @@ namespace Sunrise\Http\Message\Tests;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
 use Sunrise\Http\Message\Message;
-use Sunrise\Stream\Stream;
+use Sunrise\Stream\StreamFactory;
 
 class MessageTest extends TestCase
 {
@@ -16,9 +16,7 @@ class MessageTest extends TestCase
 		$this->assertInstanceOf(MessageInterface::class, $mess);
 	}
 
-	// PROTOCOL VERSION
-
-	public function testMainLogicForProtocolVersion()
+	public function testProtocolVersion()
 	{
 		$mess = new Message();
 		$copy = $mess->withProtocolVersion('2.0');
@@ -41,8 +39,6 @@ class MessageTest extends TestCase
 
 		(new Message)->withProtocolVersion($protocolVersion);
 	}
-
-	// HEADERS
 
 	public function testSetHeader()
 	{
@@ -287,12 +283,9 @@ class MessageTest extends TestCase
 		$this->assertEquals('bar, baz, quux', $mess->getHeaderLine('x-foo'));
 	}
 
-	// BODY
-
-	public function testMainLogicForBody()
+	public function testBody()
 	{
-		$body = new Stream(\STDOUT);
-
+		$body =(new StreamFactory)->createStreamFromResource(\STDOUT);
 		$mess = new Message();
 		$copy = $mess->withBody($body);
 
@@ -305,7 +298,7 @@ class MessageTest extends TestCase
 		$this->assertEquals($body, $copy->getBody());
 	}
 
-	// PROVIDERS
+	// Providers...
 
 	public function invalidProtocolVersionProvider()
 	{
@@ -324,11 +317,15 @@ class MessageTest extends TestCase
 			['HTTP/1.1'],
 
 			// other types
-			[null],
+			[true],
 			[false],
 			[1],
+			[1.1],
 			[[]],
 			[new \stdClass],
+			[\STDOUT],
+			[null],
+			[function(){}],
 		];
 	}
 
@@ -344,11 +341,15 @@ class MessageTest extends TestCase
 			["x\nfoo"],
 
 			// other types
-			[null],
+			[true],
 			[false],
 			[1],
+			[1.1],
 			[[]],
 			[new \stdClass],
+			[\STDOUT],
+			[null],
+			[function(){}],
 		];
 	}
 
@@ -363,16 +364,25 @@ class MessageTest extends TestCase
 			[["field \n value"]],
 
 			// other types
-			[null],
+			[true],
 			[false],
 			[1],
+			[1.1],
 			[[]],
 			[new \stdClass],
-			[[null]],
+			[\STDOUT],
+			[null],
+			[function(){}],
+
+			[[true]],
 			[[false]],
 			[[1]],
+			[[1.1]],
 			[[[]]],
 			[[new \stdClass]],
+			[[\STDOUT]],
+			[[null]],
+			[[function(){}]],
 		];
 	}
 }
