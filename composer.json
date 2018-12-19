@@ -18,7 +18,8 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "7.4.3",
-		"fig/http-message-util": "^1.1"
+		"fig/http-message-util": "^1.1",
+		"php-http/psr7-integration-tests": "dev-master"
 	},
 	"provide": {
 		"psr/http-message-implementation": "1.0"

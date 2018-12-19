@@ -5,4 +5,11 @@
 			<directory>./tests/</directory>
 		</testsuite>
 	</testsuites>
+
+	<php>
+		<const name="REQUEST_FACTORY" value="Sunrise\Http\Message\RequestFactory"/>
+		<const name="RESPONSE_FACTORY" value="Sunrise\Http\Message\ResponseFactory"/>
+		<const name="STREAM_FACTORY" value="Sunrise\Stream\StreamFactory"/>
+		<const name="URI_FACTORY" value="Sunrise\Uri\UriFactory"/>
+	</php>
 </phpunit>
