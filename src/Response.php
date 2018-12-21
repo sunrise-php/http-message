@@ -81,11 +81,13 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @param mixed $statusCode
 	 *
+	 * @return void
+	 *
 	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
-	public function validateStatusCode($statusCode) : void
+	protected function validateStatusCode($statusCode) : void
 	{
 		if (! \is_int($statusCode))
 		{
@@ -102,11 +104,13 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @param mixed $reasonPhrase
 	 *
+	 * @return void
+	 *
 	 * @throws \InvalidArgumentException
 	 *
 	 * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
 	 */
-	public function validateReasonPhrase($reasonPhrase) : void
+	protected function validateReasonPhrase($reasonPhrase) : void
 	{
 		if (! \is_string($reasonPhrase))
 		{
