@@ -1,4 +1,4 @@
-## HTTP message wrapper for PHP 7.2+ based on RFC-7230, PSR-7 & PSR-17
+## HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17
 
 [![Gitter](https://badges.gitter.im/sunrise-php/support.png)](https://gitter.im/sunrise-php/support)
 [![Build Status](https://api.travis-ci.com/sunrise-php/http-message.svg?branch=master)](https://travis-ci.com/sunrise-php/http-message)
