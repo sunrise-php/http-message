@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true">
-	<testsuites>
-		<testsuite name="Sunrise HTTP Message Test Suite">
-			<directory>./tests/</directory>
-		</testsuite>
-	</testsuites>
-
-	<php>
-		<const name="REQUEST_FACTORY" value="Sunrise\Http\Message\RequestFactory"/>
-		<const name="RESPONSE_FACTORY" value="Sunrise\Http\Message\ResponseFactory"/>
-		<const name="STREAM_FACTORY" value="Sunrise\Stream\StreamFactory"/>
-		<const name="URI_FACTORY" value="Sunrise\Uri\UriFactory"/>
-	</php>
+    <testsuites>
+        <testsuite name="Sunrise HTTP Message Test Suite">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <const name="REQUEST_FACTORY" value="Sunrise\Http\Message\RequestFactory"/>
+        <const name="RESPONSE_FACTORY" value="Sunrise\Http\Message\ResponseFactory"/>
+        <const name="STREAM_FACTORY" value="Sunrise\Stream\StreamFactory"/>
+        <const name="URI_FACTORY" value="Sunrise\Uri\UriFactory"/>
+    </php>
 </phpunit>

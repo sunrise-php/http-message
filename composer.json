@@ -1,35 +1,40 @@
 {
-	"name": "sunrise/http-message",
-	"description": "Sunrise HTTP message",
-	"keywords": ["fenric", "sunrise", "http-message", "rfc-7230", "psr-7", "psr-17"],
-	"homepage": "https://github.com/sunrise-php/http-message",
-	"license": "MIT",
-	"authors": [{
-		"name": "Anatoly Fenric",
-		"email": "anatoly@fenric.ru",
-		"homepage": "https://anatoly.fenric.ru/"
-	}],
-	"require": {
-		"php": "^7.1",
-		"psr/http-factory": "^1.0",
-		"psr/http-message": "^1.0",
-		"sunrise/stream": "^1.0",
-		"sunrise/uri": "^1.0"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "7.5.1",
-		"fig/http-message-util": "1.1.3",
-		"php-http/psr7-integration-tests": "dev-master"
-	},
-	"provide": {
-		"psr/http-message-implementation": "1.0"
-	},
-	"autoload": {
-		"files": [
-			"data/phrases.php"
-		],
-		"psr-4": {
-			"Sunrise\\Http\\Message\\": "src/"
-		}
-	}
+    "name": "sunrise/http-message",
+    "description": "Sunrise HTTP message",
+    "keywords": ["fenric", "sunrise", "http-message", "rfc-7230", "psr-7", "psr-17"],
+    "homepage": "https://github.com/sunrise-php/http-message",
+    "license": "MIT",
+    "authors": [{
+        "name": "Anatoly Fenric",
+        "email": "anatoly@fenric.ru",
+        "homepage": "https://anatoly.fenric.ru/"
+    }],
+    "require": {
+        "php": "^7.1",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0",
+        "sunrise/stream": "^1.0",
+        "sunrise/uri": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.5.1",
+        "fig/http-message-util": "1.1.3",
+        "php-http/psr7-integration-tests": "dev-master"
+    },
+    "provide": {
+        "psr/http-message-implementation": "1.0"
+    },
+    "autoload": {
+        "files": [
+            "data/phrases.php"
+        ],
+        "psr-4": {
+            "Sunrise\\Http\\Message\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "phpunit --colors=always --coverage-text"
+        ]
+    }
 }
