@@ -1,6 +1,6 @@
 {
     "name": "sunrise/http-message",
-    "description": "Sunrise HTTP message",
+    "description": "Sunrise HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17",
     "keywords": ["fenric", "sunrise", "http-message", "rfc-7230", "psr-7", "psr-17"],
     "homepage": "https://github.com/sunrise-php/http-message",
     "license": "MIT",
