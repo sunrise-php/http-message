@@ -2,7 +2,6 @@
 
 [![Gitter](https://badges.gitter.im/sunrise-php/support.png)](https://gitter.im/sunrise-php/support)
 [![Build Status](https://api.travis-ci.com/sunrise-php/http-message.svg?branch=master)](https://travis-ci.com/sunrise-php/http-message)
-[![CodeFactor](https://www.codefactor.io/repository/github/sunrise-php/http-message/badge)](https://www.codefactor.io/repository/github/sunrise-php/http-message)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/sunrise/http-message/v/stable)](https://packagist.org/packages/sunrise/http-message)
@@ -15,7 +14,7 @@
 
 ## Installation
 
-```
+```bash
 composer require sunrise/http-message
 ```
 
@@ -59,6 +58,6 @@ https://phpdoc.fenric.ru/
 
 ## Useful links
 
-https://tools.ietf.org/html/rfc7230<br>
-https://www.php-fig.org/psr/psr-7/<br>
-https://www.php-fig.org/psr/psr-17/
+* https://tools.ietf.org/html/rfc7230
+* https://www.php-fig.org/psr/psr-7/
+* https://www.php-fig.org/psr/psr-17/
