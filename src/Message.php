@@ -16,6 +16,7 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
+use Sunrise\Http\Header\HeaderInterface;
 
 /**
  * Hypertext Transfer Protocol Message
@@ -25,20 +26,6 @@ use Psr\Http\Message\StreamInterface;
  */
 class Message implements MessageInterface
 {
-
-	/**
-	 * Regular Expression for a token validation
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
-	 */
-	protected const RFC7230_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
-
-	/**
-	 * Regular Expression for a field-value validation
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
-	 */
-	protected const RFC7230_FIELD_VALUE = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
 
 	/**
 	 * Protocol version for the message
@@ -247,7 +234,7 @@ class Message implements MessageInterface
 		{
 			throw new \InvalidArgumentException('Header name must be a string');
 		}
-		else if (! \preg_match(self::RFC7230_TOKEN, $headerName))
+		else if (! \preg_match(HeaderInterface::RFC7230_TOKEN, $headerName))
 		{
 			throw new \InvalidArgumentException(\sprintf('The given header name "%s" is not valid', $headerName));
 		}
@@ -282,7 +269,7 @@ class Message implements MessageInterface
 			{
 				throw new \InvalidArgumentException('Header value must be a string or an array containing only strings');
 			}
-			else if (! \preg_match(self::RFC7230_FIELD_VALUE, $oneOf))
+			else if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $oneOf))
 			{
 				throw new \InvalidArgumentException(\sprintf('The given header value "%s" is not valid', $oneOf));
 			}

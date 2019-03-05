@@ -15,6 +15,7 @@ namespace Sunrise\Http\Message;
  * Import classes
  */
 use Psr\Http\Message\ResponseInterface;
+use Sunrise\Http\Header\HeaderInterface;
 
 /**
  * HTTP Response Message
@@ -116,7 +117,7 @@ class Response extends Message implements ResponseInterface
 		{
 			throw new \InvalidArgumentException('HTTP reason-phrase must be a string');
 		}
-		else if (! \preg_match(self::RFC7230_FIELD_VALUE, $reasonPhrase))
+		else if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $reasonPhrase))
 		{
 			throw new \InvalidArgumentException(\sprintf('The given reason-phrase "%s" is not valid', $reasonPhrase));
 		}

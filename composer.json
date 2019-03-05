@@ -4,15 +4,18 @@
     "keywords": ["fenric", "sunrise", "http-message", "rfc-7230", "psr-7", "psr-17"],
     "homepage": "https://github.com/sunrise-php/http-message",
     "license": "MIT",
-    "authors": [{
-        "name": "Anatoly Fenric",
-        "email": "anatoly@fenric.ru",
-        "homepage": "https://anatoly.fenric.ru/"
-    }],
+    "authors": [
+        {
+            "name": "Anatoly Fenric",
+            "email": "anatoly@fenric.ru",
+            "homepage": "https://anatoly.fenric.ru/"
+        }
+    ],
     "require": {
         "php": "^7.1",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
+        "sunrise/http-header": "^1.0",
         "sunrise/stream": "^1.0",
         "sunrise/uri": "^1.0"
     },
