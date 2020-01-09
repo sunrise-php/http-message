@@ -1,23 +1,46 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
+/**
+ * Import classes
+ */
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\ResponseFactory;
 
+/**
+ * Import functions
+ */
+use function json_encode;
+
+/**
+ * Import constants
+ */
+use const JSON_HEX_TAG;
+
+/**
+ * ResponseFactoryTest
+ */
 class ResponseFactoryTest extends TestCase
 {
-	public function testConstructor()
+
+	/**
+	 * @return void
+	 */
+	public function testConstructor() : void
 	{
 		$factory = new ResponseFactory();
 
 		$this->assertInstanceOf(ResponseFactoryInterface::class, $factory);
 	}
 
-	public function testCreateResponse()
+	/**
+	 * @return void
+	 */
+	public function testCreateResponse() : void
 	{
 		$statusCode = 204;
 		$reasonPhrase = 'No Content';
@@ -35,5 +58,22 @@ class ResponseFactoryTest extends TestCase
 		$this->assertTrue($response->getBody()->isWritable());
 		$this->assertTrue($response->getBody()->isReadable());
 		$this->assertEquals('php://temp', $response->getBody()->getMetadata('uri'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCreateJsonResponse() : void
+	{
+		$payload = ['foo' => '<bar>'];
+		$options = JSON_HEX_TAG;
+
+		$response = (new ResponseFactory)
+		->createJsonResponse(400, $payload, $options);
+
+		$this->assertInstanceOf(ResponseInterface::class, $response);
+		$this->assertSame(400, $response->getStatusCode());
+		$this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
+		$this->assertSame(json_encode($payload, $options), (string) $response->getBody());
 	}
 }

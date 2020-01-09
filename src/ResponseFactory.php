@@ -19,6 +19,11 @@ use Psr\Http\Message\ResponseInterface;
 use Sunrise\Stream\StreamFactory;
 
 /**
+ * Import functions
+ */
+use function json_encode;
+
+/**
  * ResponseFactory
  *
  * @link https://www.php-fig.org/psr/psr-17/
@@ -36,6 +41,27 @@ class ResponseFactory implements ResponseFactoryInterface
 
 		return (new Response)
 		->withStatus($code, $reasonPhrase)
+		->withBody($body);
+	}
+
+	/**
+	 * Creates a JSON response object
+	 *
+	 * @param int $status
+	 * @param mixed $payload
+	 * @param int $options
+	 *
+	 * @return ResponseInterface
+	 */
+	public function createJsonResponse(int $status, $payload, int $options = 0) : ResponseInterface
+	{
+		$body = (new StreamFactory)->createStream();
+
+		$body->write(json_encode($payload, $options));
+
+		return (new Response)
+		->withStatus($status)
+		->withHeader('Content-Type', 'application/json')
 		->withBody($body);
 	}
 }
