@@ -63,6 +63,22 @@ class ResponseFactoryTest extends TestCase
 	/**
 	 * @return void
 	 */
+	public function testCreateHtmlResponse() : void
+	{
+		$content = '<pre>foo bar</pre>';
+
+		$response = (new ResponseFactory)
+		->createHtmlResponse(400, $content);
+
+		$this->assertInstanceOf(ResponseInterface::class, $response);
+		$this->assertSame(400, $response->getStatusCode());
+		$this->assertSame('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
+		$this->assertSame($content, (string) $response->getBody());
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testCreateJsonResponse() : void
 	{
 		$payload = ['foo' => '<bar>'];

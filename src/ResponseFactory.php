@@ -36,11 +36,29 @@ class ResponseFactory implements ResponseFactoryInterface
 	 */
 	public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
 	{
-		$body = (new StreamFactory)
-		->createStream();
+		$body = (new StreamFactory)->createStream();
 
 		return (new Response)
 		->withStatus($code, $reasonPhrase)
+		->withBody($body);
+	}
+
+	/**
+	 * Creates a HTML response instance
+	 *
+	 * @param int $status
+	 * @param mixed $content
+	 *
+	 * @return ResponseInterface
+	 */
+	public function createHtmlResponse(int $status, $content) : ResponseInterface
+	{
+		$body = (new StreamFactory)->createStream();
+		$body->write((string) $content);
+
+		return (new Response)
+		->withStatus($status)
+		->withHeader('Content-Type', 'text/html; charset=utf-8')
 		->withBody($body);
 	}
 
@@ -56,7 +74,6 @@ class ResponseFactory implements ResponseFactoryInterface
 	public function createJsonResponse(int $status, $payload, int $options = 0) : ResponseInterface
 	{
 		$body = (new StreamFactory)->createStream();
-
 		$body->write(json_encode($payload, $options));
 
 		return (new Response)
