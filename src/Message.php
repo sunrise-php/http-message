@@ -95,8 +95,7 @@ class Message implements MessageInterface
 	{
 		$name = $this->normalizeHeaderName($name);
 
-		if (empty($this->headers[$name]))
-		{
+		if (empty($this->headers[$name])) {
 			return [];
 		}
 
@@ -110,8 +109,7 @@ class Message implements MessageInterface
 	{
 		$name = $this->normalizeHeaderName($name);
 
-		if (empty($this->headers[$name]))
-		{
+		if (empty($this->headers[$name])) {
 			return '';
 		}
 
@@ -121,13 +119,17 @@ class Message implements MessageInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function withHeader($name, $value) : MessageInterface
+	public function withHeader($name, $value, bool $append = false) : MessageInterface
 	{
 		$this->validateHeaderName($name);
 		$this->validateHeaderValue($value);
 
 		$name = $this->normalizeHeaderName($name);
 		$value = $this->normalizeHeaderValue($value);
+
+		if (isset($this->headers[$name]) && $append) {
+			$value = \array_merge($this->headers[$name], $value);
+		}
 
 		$clone = clone $this;
 
@@ -141,22 +143,28 @@ class Message implements MessageInterface
 	 */
 	public function withAddedHeader($name, $value) : MessageInterface
 	{
-		$this->validateHeaderName($name);
-		$this->validateHeaderValue($value);
+		return $this->withHeader($name, $value, true);
+	}
 
-		$name = $this->normalizeHeaderName($name);
-		$value = $this->normalizeHeaderValue($value);
+	/**
+	 * Returns a new instance with the given headers
+	 *
+	 * @param iterable $headers
+	 * @param bool $append
+	 *
+	 * @return MessageInterface
+	 *
+	 * @since 1.3.0
+	 */
+	public function withMultipleHeaders(iterable $headers, bool $append = false) : MessageInterface
+	{
+		$result = clone $this;
 
-		if (! empty($this->headers[$name]))
-		{
-			$value = \array_merge($this->headers[$name], $value);
+		foreach ($headers as $name => $value) {
+			$result = $result->withHeader($name, $value, $append);
 		}
 
-		$clone = clone $this;
-
-		$clone->headers[$name] = $value;
-
-		return $clone;
+		return $result;
 	}
 
 	/**
@@ -207,13 +215,14 @@ class Message implements MessageInterface
 	 */
 	protected function validateProtocolVersion($protocolVersion) : void
 	{
-		if (! \is_string($protocolVersion))
-		{
+		if (! \is_string($protocolVersion)) {
 			throw new \InvalidArgumentException('HTTP protocol version must be a string');
 		}
-		else if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion))
-		{
-			throw new \InvalidArgumentException(\sprintf('The given protocol version "%s" is not valid', $protocolVersion));
+
+		if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion)) {
+			throw new \InvalidArgumentException(
+				\sprintf('The given protocol version "%s" is not valid', $protocolVersion)
+			);
 		}
 	}
 
@@ -230,13 +239,14 @@ class Message implements MessageInterface
 	 */
 	protected function validateHeaderName($headerName) : void
 	{
-		if (! \is_string($headerName))
-		{
+		if (! \is_string($headerName)) {
 			throw new \InvalidArgumentException('Header name must be a string');
 		}
-		else if (! \preg_match(HeaderInterface::RFC7230_TOKEN, $headerName))
-		{
-			throw new \InvalidArgumentException(\sprintf('The given header name "%s" is not valid', $headerName));
+
+		if (! \preg_match(HeaderInterface::RFC7230_TOKEN, $headerName)) {
+			throw new \InvalidArgumentException(
+				\sprintf('The given header name "%s" is not valid', $headerName)
+			);
 		}
 	}
 
@@ -253,25 +263,23 @@ class Message implements MessageInterface
 	 */
 	protected function validateHeaderValue($headerValue) : void
 	{
-		if (\is_string($headerValue))
-		{
+		if (\is_string($headerValue)) {
 			$headerValue = [$headerValue];
 		}
 
-		if (! \is_array($headerValue) || [] === $headerValue)
-		{
+		if (! \is_array($headerValue) || [] === $headerValue) {
 			throw new \InvalidArgumentException('Header value must be a string or not an empty array');
 		}
 
-		foreach ($headerValue as $oneOf)
-		{
-			if (! \is_string($oneOf))
-			{
+		foreach ($headerValue as $oneOf) {
+			if (! \is_string($oneOf)) {
 				throw new \InvalidArgumentException('Header value must be a string or an array containing only strings');
 			}
-			else if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $oneOf))
-			{
-				throw new \InvalidArgumentException(\sprintf('The given header value "%s" is not valid', $oneOf));
+
+			if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $oneOf)) {
+				throw new \InvalidArgumentException(
+					\sprintf('The given header value "%s" is not valid', $oneOf)
+				);
 			}
 		}
 	}
@@ -303,7 +311,6 @@ class Message implements MessageInterface
 	protected function normalizeHeaderValue($headerValue) : array
 	{
 		$headerValue = (array) $headerValue;
-
 		$headerValue = \array_values($headerValue);
 
 		return $headerValue;
