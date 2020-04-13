@@ -180,6 +180,27 @@ class MessageTest extends TestCase
 		(new Message)->withAddedHeader('x-foo', ['bar', $headerValue, 'baz']);
 	}
 
+	public function testWithMultipleHeaders() : void
+	{
+		$message = new Message();
+
+		$subject = $message
+		->withMultipleHeaders(['x-foo' => 'bar'])
+		->withMultipleHeaders(['x-foo' => 'baz']);
+
+		$this->assertNotSame($subject, $message);
+		$this->assertCount(0, $message->getHeaders());
+		$this->assertSame(['x-foo' => ['baz']], $subject->getHeaders());
+
+		$subject = $message
+		->withMultipleHeaders(['x-foo' => 'bar'], true)
+		->withMultipleHeaders(['x-foo' => 'baz'], true);
+
+		$this->assertNotSame($subject, $message);
+		$this->assertCount(0, $message->getHeaders());
+		$this->assertSame(['x-foo' => ['bar', 'baz']], $subject->getHeaders());
+	}
+
 	public function testDeleteHeader()
 	{
 		$mess = (new Message)->withHeader('x-foo', 'bar');
