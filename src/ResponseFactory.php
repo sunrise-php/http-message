@@ -53,8 +53,10 @@ class ResponseFactory implements ResponseFactoryInterface
 	 */
 	public function createHtmlResponse(int $status, $content) : ResponseInterface
 	{
+		$content = (string) $content;
+
 		$body = (new StreamFactory)->createStream();
-		$body->write((string) $content);
+		$body->write($content);
 
 		return (new Response)
 		->withStatus($status)
@@ -63,22 +65,32 @@ class ResponseFactory implements ResponseFactoryInterface
 	}
 
 	/**
-	 * Creates a JSON response object
+	 * Creates a JSON response instance
 	 *
 	 * @param int $status
 	 * @param mixed $payload
 	 * @param int $options
+	 * @param int $depth
 	 *
 	 * @return ResponseInterface
+	 *
+	 * @throws Exception\JsonException
 	 */
-	public function createJsonResponse(int $status, $payload, int $options = 0) : ResponseInterface
+	public function createJsonResponse(int $status, $payload, int $options = 0, int $depth = 512) : ResponseInterface
 	{
+		// clears a previous error...
+		json_encode(null);
+
+		$content = json_encode($payload, $options, $depth);
+
+		Exception\JsonException::assert();
+
 		$body = (new StreamFactory)->createStream();
-		$body->write(json_encode($payload, $options));
+		$body->write($content);
 
 		return (new Response)
 		->withStatus($status)
-		->withHeader('Content-Type', 'application/json')
+		->withHeader('Content-Type', 'application/json; charset=utf-8')
 		->withBody($body);
 	}
 }

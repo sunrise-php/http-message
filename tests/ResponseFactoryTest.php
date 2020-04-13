@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Sunrise\Http\Message\Exception\JsonException;
 use Sunrise\Http\Message\ResponseFactory;
 
 /**
@@ -89,7 +90,19 @@ class ResponseFactoryTest extends TestCase
 
 		$this->assertInstanceOf(ResponseInterface::class, $response);
 		$this->assertSame(400, $response->getStatusCode());
-		$this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
+		$this->assertSame('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
 		$this->assertSame(json_encode($payload, $options), (string) $response->getBody());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCreateResponseWithInvalidJson() : void
+	{
+		$this->expectException(JsonException::class);
+		$this->expectExceptionMessage('Maximum stack depth exceeded');
+
+		$response = (new ResponseFactory)
+		->createJsonResponse(200, [[]], 0, 1);
 	}
 }
