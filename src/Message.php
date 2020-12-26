@@ -16,6 +16,7 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
+use Sunrise\Http\Header\HeaderCollectionInterface;
 use Sunrise\Http\Header\HeaderInterface;
 
 /**
@@ -27,292 +28,342 @@ use Sunrise\Http\Header\HeaderInterface;
 class Message implements MessageInterface
 {
 
-	/**
-	 * Protocol version for the message
-	 *
-	 * @var string
-	 */
-	protected $protocolVersion = '1.1';
+    /**
+     * Protocol version for the message
+     *
+     * @var string
+     */
+    protected $protocolVersion = '1.1';
 
-	/**
-	 * Headers of the message
-	 *
-	 * @var array
-	 */
-	protected $headers = [];
+    /**
+     * Headers of the message
+     *
+     * @var array
+     */
+    protected $headers = [];
 
-	/**
-	 * Body of the message
-	 *
-	 * @var null|StreamInterface
-	 */
-	protected $body;
+    /**
+     * Body of the message
+     *
+     * @var null|StreamInterface
+     */
+    protected $body;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getProtocolVersion() : string
-	{
-		return $this->protocolVersion;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function getProtocolVersion() : string
+    {
+        return $this->protocolVersion;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function withProtocolVersion($protocolVersion) : MessageInterface
-	{
-		$this->validateProtocolVersion($protocolVersion);
+    /**
+     * {@inheritDoc}
+     */
+    public function withProtocolVersion($protocolVersion) : MessageInterface
+    {
+        $this->validateProtocolVersion($protocolVersion);
 
-		$clone = clone $this;
+        $clone = clone $this;
+        $clone->protocolVersion = $protocolVersion;
 
-		$clone->protocolVersion = $protocolVersion;
+        return $clone;
+    }
 
-		return $clone;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function getHeaders() : array
+    {
+        return $this->headers;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getHeaders() : array
-	{
-		return $this->headers;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function hasHeader($name) : bool
+    {
+        $name = $this->normalizeHeaderName($name);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function hasHeader($name) : bool
-	{
-		$name = $this->normalizeHeaderName($name);
+        return ! empty($this->headers[$name]);
+    }
 
-		return ! empty($this->headers[$name]);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function getHeader($name) : array
+    {
+        $name = $this->normalizeHeaderName($name);
+        if (empty($this->headers[$name])) {
+            return [];
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getHeader($name) : array
-	{
-		$name = $this->normalizeHeaderName($name);
+        return $this->headers[$name];
+    }
 
-		if (empty($this->headers[$name])) {
-			return [];
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function getHeaderLine($name) : string
+    {
+        $name = $this->normalizeHeaderName($name);
+        if (empty($this->headers[$name])) {
+            return '';
+        }
 
-		return $this->headers[$name];
-	}
+        return \implode(', ', $this->headers[$name]);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getHeaderLine($name) : string
-	{
-		$name = $this->normalizeHeaderName($name);
+    /**
+     * {@inheritDoc}
+     */
+    public function withHeader($name, $value, bool $append = false) : MessageInterface
+    {
+        $this->validateHeaderName($name);
+        $this->validateHeaderValue($value);
 
-		if (empty($this->headers[$name])) {
-			return '';
-		}
+        $name = $this->normalizeHeaderName($name);
+        $value = $this->normalizeHeaderValue($value);
 
-		return \implode(', ', $this->headers[$name]);
-	}
+        if (isset($this->headers[$name]) && $append) {
+            $value = \array_merge($this->headers[$name], $value);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function withHeader($name, $value, bool $append = false) : MessageInterface
-	{
-		$this->validateHeaderName($name);
-		$this->validateHeaderValue($value);
+        $clone = clone $this;
+        $clone->headers[$name] = $value;
 
-		$name = $this->normalizeHeaderName($name);
-		$value = $this->normalizeHeaderValue($value);
+        return $clone;
+    }
 
-		if (isset($this->headers[$name]) && $append) {
-			$value = \array_merge($this->headers[$name], $value);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function withAddedHeader($name, $value) : MessageInterface
+    {
+        return $this->withHeader($name, $value, true);
+    }
 
-		$clone = clone $this;
+    /**
+     * Returns a new instance with the given headers
+     *
+     * [!] This method is not associated with PSR-7.
+     *
+     * @param iterable $headers
+     * @param bool $append
+     *
+     * @return MessageInterface
+     *
+     * @since 1.3.0
+     */
+    public function withMultipleHeaders(iterable $headers, bool $append = false) : MessageInterface
+    {
+        $result = clone $this;
 
-		$clone->headers[$name] = $value;
+        foreach ($headers as $name => $value) {
+            $result = $result->withHeader($name, $value, $append);
+        }
 
-		return $clone;
-	}
+        return $result;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function withAddedHeader($name, $value) : MessageInterface
-	{
-		return $this->withHeader($name, $value, true);
-	}
+    /**
+     * Returns a new instance with the given header
+     *
+     * [!] This method is not associated with PSR-7.
+     *
+     * @param HeaderInterface $header
+     * @param bool $append
+     *
+     * @return MessageInterface
+     *
+     * @since 1.4.0
+     */
+    public function withHeaderObject(HeaderInterface $header, bool $append = false) : MessageInterface
+    {
+        $name = $header->getFieldName();
+        $value = $header->getFieldValue();
 
-	/**
-	 * Returns a new instance with the given headers
-	 *
-	 * @param iterable $headers
-	 * @param bool $append
-	 *
-	 * @return MessageInterface
-	 *
-	 * @since 1.3.0
-	 */
-	public function withMultipleHeaders(iterable $headers, bool $append = false) : MessageInterface
-	{
-		$result = clone $this;
+        $result = clone $this;
+        $result = $result->withHeader($name, $value, $append);
 
-		foreach ($headers as $name => $value) {
-			$result = $result->withHeader($name, $value, $append);
-		}
+        return $result;
+    }
 
-		return $result;
-	}
+    /**
+     * Returns a new instance with the given headers
+     *
+     * [!] This method is not associated with PSR-7.
+     *
+     * @param HeaderCollectionInterface $headers
+     * @param bool $append
+     *
+     * @return MessageInterface
+     *
+     * @since 1.4.0
+     */
+    public function withHeaderCollection(HeaderCollectionInterface $headers, bool $append = false) : MessageInterface
+    {
+        $result = clone $this;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function withoutHeader($name) : MessageInterface
-	{
-		$name = $this->normalizeHeaderName($name);
+        foreach ($headers as $header) {
+            $name = $header->getFieldName();
+            $value = $header->getFieldValue();
 
-		$clone = clone $this;
+            $result = $result->withHeader($name, $value, $append);
+        }
 
-		unset($clone->headers[$name]);
+        return $result;
+    }
 
-		return $clone;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function withoutHeader($name) : MessageInterface
+    {
+        $name = $this->normalizeHeaderName($name);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getBody() : ?StreamInterface
-	{
-		return $this->body;
-	}
+        $clone = clone $this;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function withBody(StreamInterface $body) : MessageInterface
-	{
-		$clone = clone $this;
+        unset($clone->headers[$name]);
 
-		$clone->body = $body;
+        return $clone;
+    }
 
-		return $clone;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function getBody() : ?StreamInterface
+    {
+        return $this->body;
+    }
 
-	/**
-	 * Validates the given protocol version
-	 *
-	 * @param mixed $protocolVersion
-	 *
-	 * @return void
-	 *
-	 * @throws \InvalidArgumentException
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-2.6
-	 * @link https://tools.ietf.org/html/rfc7540
-	 */
-	protected function validateProtocolVersion($protocolVersion) : void
-	{
-		if (! \is_string($protocolVersion)) {
-			throw new \InvalidArgumentException('HTTP protocol version must be a string');
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function withBody(StreamInterface $body) : MessageInterface
+    {
+        $clone = clone $this;
+        $clone->body = $body;
 
-		if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion)) {
-			throw new \InvalidArgumentException(
-				\sprintf('The given protocol version "%s" is not valid', $protocolVersion)
-			);
-		}
-	}
+        return $clone;
+    }
 
-	/**
-	 * Validates the given header name
-	 *
-	 * @param mixed $headerName
-	 *
-	 * @return void
-	 *
-	 * @throws \InvalidArgumentException
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
-	 */
-	protected function validateHeaderName($headerName) : void
-	{
-		if (! \is_string($headerName)) {
-			throw new \InvalidArgumentException('Header name must be a string');
-		}
+    /**
+     * Validates the given protocol version
+     *
+     * @param mixed $protocolVersion
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-2.6
+     * @link https://tools.ietf.org/html/rfc7540
+     */
+    protected function validateProtocolVersion($protocolVersion) : void
+    {
+        if (! \is_string($protocolVersion)) {
+            throw new \InvalidArgumentException('HTTP protocol version must be a string');
+        }
 
-		if (! \preg_match(HeaderInterface::RFC7230_TOKEN, $headerName)) {
-			throw new \InvalidArgumentException(
-				\sprintf('The given header name "%s" is not valid', $headerName)
-			);
-		}
-	}
+        if (! \preg_match('/^\d(?:\.\d)?$/', $protocolVersion)) {
+            throw new \InvalidArgumentException(
+                \sprintf('The given protocol version "%s" is not valid', $protocolVersion)
+            );
+        }
+    }
 
-	/**
-	 * Validates the given header value
-	 *
-	 * @param mixed $headerValue
-	 *
-	 * @return void
-	 *
-	 * @throws \InvalidArgumentException
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
-	 */
-	protected function validateHeaderValue($headerValue) : void
-	{
-		if (\is_string($headerValue)) {
-			$headerValue = [$headerValue];
-		}
+    /**
+     * Validates the given header name
+     *
+     * @param mixed $headerName
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-3.2
+     */
+    protected function validateHeaderName($headerName) : void
+    {
+        if (! \is_string($headerName)) {
+            throw new \InvalidArgumentException('Header name must be a string');
+        }
 
-		if (! \is_array($headerValue) || [] === $headerValue) {
-			throw new \InvalidArgumentException('Header value must be a string or not an empty array');
-		}
+        if (! \preg_match(HeaderInterface::RFC7230_TOKEN, $headerName)) {
+            throw new \InvalidArgumentException(
+                \sprintf('The given header name "%s" is not valid', $headerName)
+            );
+        }
+    }
 
-		foreach ($headerValue as $oneOf) {
-			if (! \is_string($oneOf)) {
-				throw new \InvalidArgumentException('Header value must be a string or an array containing only strings');
-			}
+    /**
+     * Validates the given header value
+     *
+     * @param mixed $headerValue
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-3.2
+     */
+    protected function validateHeaderValue($headerValue) : void
+    {
+        if (\is_string($headerValue)) {
+            $headerValue = [$headerValue];
+        }
 
-			if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $oneOf)) {
-				throw new \InvalidArgumentException(
-					\sprintf('The given header value "%s" is not valid', $oneOf)
-				);
-			}
-		}
-	}
+        if (! \is_array($headerValue) || [] === $headerValue) {
+            throw new \InvalidArgumentException(
+                'Header value must be a string or not an empty array'
+            );
+        }
 
-	/**
-	 * Normalizes the given header name
-	 *
-	 * @param string $headerName
-	 *
-	 * @return string
-	 *
-	 * @link https://tools.ietf.org/html/rfc7230#section-3.2
-	 */
-	protected function normalizeHeaderName($headerName) : string
-	{
-		// Each header field consists of a case-insensitive field name...
-		$headerName = \strtolower($headerName);
+        foreach ($headerValue as $oneOf) {
+            if (! \is_string($oneOf)) {
+                throw new \InvalidArgumentException(
+                    'Header value must be a string or an array containing only strings'
+                );
+            }
 
-		return $headerName;
-	}
+            if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $oneOf)) {
+                throw new \InvalidArgumentException(
+                    \sprintf('The given header value "%s" is not valid', $oneOf)
+                );
+            }
+        }
+    }
 
-	/**
-	 * Normalizes the given header value
-	 *
-	 * @param string|array $headerValue
-	 *
-	 * @return array
-	 */
-	protected function normalizeHeaderValue($headerValue) : array
-	{
-		$headerValue = (array) $headerValue;
-		$headerValue = \array_values($headerValue);
+    /**
+     * Normalizes the given header name
+     *
+     * @param string $headerName
+     *
+     * @return string
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-3.2
+     */
+    protected function normalizeHeaderName($headerName) : string
+    {
+        // Each header field consists of a case-insensitive field name...
+        $headerName = \strtolower($headerName);
 
-		return $headerValue;
-	}
+        return $headerName;
+    }
+
+    /**
+     * Normalizes the given header value
+     *
+     * @param string|array $headerValue
+     *
+     * @return array
+     */
+    protected function normalizeHeaderValue($headerValue) : array
+    {
+        $headerValue = (array) $headerValue;
+        $headerValue = \array_values($headerValue);
+
+        return $headerValue;
+    }
 }
