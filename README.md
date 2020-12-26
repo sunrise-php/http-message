@@ -1,7 +1,7 @@
-## HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17
+## HTTP message wrapper for PHP 7.1+ (incl. PHP 8) based on RFC-7230, PSR-7 & PSR-17
 
 [![Gitter](https://badges.gitter.im/sunrise-php/support.png)](https://gitter.im/sunrise-php/support)
-[![Build Status](https://api.travis-ci.com/sunrise-php/http-message.svg?branch=master)](https://travis-ci.com/sunrise-php/http-message)
+[![Build Status](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/build.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/sunrise/http-message/v/stable)](https://packagist.org/packages/sunrise/http-message)
@@ -40,7 +40,39 @@ $message = (new ResponseFactory)->createResponse(200, 'OK');
 // just use PSR-7 methods...
 ```
 
-#### Remaining PSR-7 packages
+
+#### Using headers as objects
+
+> Please note that this isn't related to the PSR-7...
+
+```bash
+composer require sunrise/http-header-kit
+```
+
+```php
+use Sunrise\Http\Header\HeaderLastModified;
+
+$header = new HeaderLastModified(new \DateTime('1 day ago'));
+
+$response = $response->withHeaderObject($header);
+```
+
+```php
+use Sunrise\Http\Header\HeaderCollection;
+use Sunrise\Http\Header\HeaderContentLength;
+use Sunrise\Http\Header\HeaderContentType;
+
+$headers = new HeaderCollection([
+    new HeaderContentLength(1024),
+    new HeaderContentType('application/jpeg'),
+]);
+
+$response = $response->withHeaderCollection($headers);
+```
+
+* https://github.com/sunrise-php/http-header-kit
+
+#### Related PSR-7 packages
 
 * https://github.com/sunrise-php/http-server-request
 * https://github.com/sunrise-php/stream
@@ -51,10 +83,6 @@ $message = (new ResponseFactory)->createResponse(200, 'OK');
 ```bash
 php vendor/bin/phpunit
 ```
-
-## Api documentation
-
-https://phpdoc.fenric.ru/
 
 ## Useful links
 

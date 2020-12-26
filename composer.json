@@ -1,9 +1,17 @@
 {
     "name": "sunrise/http-message",
-    "description": "Sunrise HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17",
-    "keywords": ["fenric", "sunrise", "http-message", "rfc-7230", "psr-7", "psr-17"],
     "homepage": "https://github.com/sunrise-php/http-message",
+    "description": "Sunrise HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17",
     "license": "MIT",
+    "keywords": [
+        "fenric",
+        "sunrise",
+        "http",
+        "http-message",
+        "rfc-7230",
+        "psr-7",
+        "psr-17"
+    ],
     "authors": [
         {
             "name": "Anatoly Fenric",
@@ -12,16 +20,17 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.1|^8.0",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
-        "sunrise/http-header": "^1.0",
-        "sunrise/stream": "^1.0",
-        "sunrise/uri": "^1.0"
+        "sunrise/http-header": "^1.1",
+        "sunrise/http-header-collection": "^1.1",
+        "sunrise/stream": "^1.2",
+        "sunrise/uri": "^1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "7.5.20",
-        "fig/http-message-util": "1.1.3"
+        "phpunit/phpunit": "7.5.20|9.5.0",
+        "sunrise/coding-standard": "1.0.0"
     },
     "provide": {
         "psr/http-message-implementation": "1.0"
@@ -36,7 +45,8 @@
     },
     "scripts": {
         "test": [
-            "phpunit --colors=always --coverage-text"
+            "phpunit --colors=always --coverage-text",
+            "phpcs"
         ]
     }
 }
