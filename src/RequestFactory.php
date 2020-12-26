@@ -28,23 +28,20 @@ use Sunrise\Uri\UriFactory;
 class RequestFactory implements RequestFactoryInterface
 {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function createRequest(string $method, $uri) : RequestInterface
-	{
-		if (! ($uri instanceof UriInterface))
-		{
-			$uri = (new UriFactory)
-			->createUri($uri);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function createRequest(string $method, $uri) : RequestInterface
+    {
+        if (! ($uri instanceof UriInterface)) {
+            $uri = (new UriFactory)->createUri($uri);
+        }
 
-		$body = (new StreamFactory)
-		->createStream();
+        $body = (new StreamFactory)->createStream();
 
-		return (new Request)
-		->withMethod($method)
-		->withUri($uri)
-		->withBody($body);
-	}
+        return (new Request)
+            ->withMethod($method)
+            ->withUri($uri)
+            ->withBody($body);
+    }
 }

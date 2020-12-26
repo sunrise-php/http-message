@@ -33,19 +33,19 @@ use const JSON_ERROR_NONE;
 class JsonException extends RuntimeException
 {
 
-	/**
-	 * @return void
-	 *
-	 * @throws self
-	 */
-	public static function assert() : void
-	{
-		$code = json_last_error();
+    /**
+     * @return void
+     *
+     * @throws self
+     */
+    public static function assert() : void
+    {
+        $code = json_last_error();
 
-		if (JSON_ERROR_NONE === $code) {
-			return;
-		}
+        if (JSON_ERROR_NONE === $code) {
+            return;
+        }
 
-		throw new self(json_last_error_msg(), $code);
-	}
+        throw new self(json_last_error_msg(), $code);
+    }
 }
