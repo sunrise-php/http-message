@@ -90,7 +90,7 @@ class ResponseFactoryTest extends TestCase
      */
     public function testCreateResponseWithInvalidJson() : void
     {
-        $this->expectException(\JsonException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Maximum stack depth exceeded');
 
         $response = (new ResponseFactory)
