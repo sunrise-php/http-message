@@ -12,13 +12,11 @@
 namespace Sunrise\Http\Message;
 
 /**
- * List of Phrases
- *
- * MUST NOT be used outside of this package.
+ * List of Reason Phrases
  *
  * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
  */
-const PHRASES = [
+const REASON_PHRASES = [
 
     // 1xx
     100 => 'Continue',
@@ -45,7 +43,6 @@ const PHRASES = [
     303 => 'See Other',
     304 => 'Not Modified',
     305 => 'Use Proxy',
-    306 => '(Unused)',
     307 => 'Temporary Redirect',
     308 => 'Permanent Redirect',
 
@@ -68,7 +65,6 @@ const PHRASES = [
     415 => 'Unsupported Media Type',
     416 => 'Range Not Satisfiable',
     417 => 'Expectation Failed',
-    418 => 'I\'m a teapot',
     421 => 'Misdirected Request',
     422 => 'Unprocessable Entity',
     423 => 'Locked',
