@@ -1,4 +1,4 @@
-# HTTP message wrapper for PHP 7.1+ (incl. PHP 8) based on RFC-7230, PSR-7 and PSR-17
+# HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 and PSR-17
 
 [![Build Status](https://circleci.com/gh/sunrise-php/http-message.svg?style=shield)](https://circleci.com/gh/sunrise-php/http-message)
 [![Code Coverage](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
