@@ -14,8 +14,19 @@ namespace Sunrise\Http\Message;
 /**
  * Import classes
  */
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Header\HeaderInterface;
+use InvalidArgumentException;
+
+/**
+ * Import functions
+ */
+use function is_int;
+use function is_string;
+use function preg_match;
+use function sprintf;
 
 /**
  * HTTP Response Message
@@ -23,25 +34,54 @@ use Sunrise\Http\Header\HeaderInterface;
  * @link https://tools.ietf.org/html/rfc7230
  * @link https://www.php-fig.org/psr/psr-7/
  */
-class Response extends Message implements ResponseInterface
+class Response extends Message implements ResponseInterface, StatusCodeInterface
 {
 
     /**
-     * Status code of the message
+     * The response status code
      *
      * @var int
      */
-    protected $statusCode = 200;
+    protected $statusCode = self::STATUS_OK;
 
     /**
-     * Reason phrase of the message
+     * The response reason phrase
      *
      * @var string
      */
-    protected $reasonPhrase = 'OK';
+    protected $reasonPhrase = REASON_PHRASES[self::STATUS_OK];
 
     /**
-     * {@inheritDoc}
+     * Constrictor of the class
+     *
+     * @param int|null $statusCode
+     * @param string|null $reasonPhrase
+     * @param array<string, string|array<string>>|null $headers
+     * @param StreamInterface|null $body
+     * @param string|null $protocolVersion
+     *
+     * @throws InvalidArgumentException
+     */
+    public function __construct(
+        ?int $statusCode = null,
+        ?string $reasonPhrase = null,
+        ?array $headers = null,
+        ?StreamInterface $body = null,
+        ?string $protocolVersion = null
+    ) {
+        parent::__construct(
+            $headers,
+            $body,
+            $protocolVersion
+        );
+
+        if (isset($statusCode)) {
+            $this->setStatus($statusCode, $reasonPhrase ?? '');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getStatusCode() : int
     {
@@ -49,7 +89,7 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getReasonPhrase() : string
     {
@@ -57,22 +97,39 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
+     * @throws InvalidArgumentException
      */
     public function withStatus($statusCode, $reasonPhrase = '') : ResponseInterface
+    {
+        $clone = clone $this;
+        $clone->setStatus($statusCode, $reasonPhrase);
+
+        return $clone;
+    }
+
+    /**
+     * Sets the given status to the response
+     *
+     * @param int $statusCode
+     * @param string $reasonPhrase
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function setStatus($statusCode, $reasonPhrase) : void
     {
         $this->validateStatusCode($statusCode);
         $this->validateReasonPhrase($reasonPhrase);
 
         if ('' === $reasonPhrase) {
-            $reasonPhrase = PHRASES[$statusCode] ?? 'Unknown Status Code';
+            $reasonPhrase = REASON_PHRASES[$statusCode] ?? 'Unknown Status Code';
         }
 
-        $clone = clone $this;
-        $clone->statusCode = $statusCode;
-        $clone->reasonPhrase = $reasonPhrase;
-
-        return $clone;
+        $this->statusCode = $statusCode;
+        $this->reasonPhrase = $reasonPhrase;
     }
 
     /**
@@ -82,18 +139,18 @@ class Response extends Message implements ResponseInterface
      *
      * @return void
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
      */
     protected function validateStatusCode($statusCode) : void
     {
-        if (! \is_int($statusCode)) {
-            throw new \InvalidArgumentException('HTTP status-code must be an integer');
+        if (!is_int($statusCode)) {
+            throw new InvalidArgumentException('HTTP status-code must be an integer');
         }
 
         if (! ($statusCode >= 100 && $statusCode <= 599)) {
-            throw new \InvalidArgumentException(\sprintf('The given status-code "%d" is not valid', $statusCode));
+            throw new InvalidArgumentException(sprintf('The status-code "%d" is not valid', $statusCode));
         }
     }
 
@@ -104,18 +161,18 @@ class Response extends Message implements ResponseInterface
      *
      * @return void
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @link https://tools.ietf.org/html/rfc7230#section-3.1.2
      */
     protected function validateReasonPhrase($reasonPhrase) : void
     {
-        if (! \is_string($reasonPhrase)) {
-            throw new \InvalidArgumentException('HTTP reason-phrase must be a string');
+        if (!is_string($reasonPhrase)) {
+            throw new InvalidArgumentException('HTTP reason-phrase must be a string');
         }
 
-        if (! \preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $reasonPhrase)) {
-            throw new \InvalidArgumentException(\sprintf('The given reason-phrase "%s" is not valid', $reasonPhrase));
+        if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $reasonPhrase)) {
+            throw new InvalidArgumentException(sprintf('The reason-phrase "%s" is not valid', $reasonPhrase));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Sunrise\Stream\StreamFactory;
+use JsonException;
 
 /**
  * Import functions
@@ -24,7 +24,12 @@ use Sunrise\Stream\StreamFactory;
 use function json_encode;
 
 /**
- * ResponseFactory
+ * Import constants
+ */
+use const JSON_THROW_ON_ERROR;
+
+/**
+ * HTTP Response Message Factory
  *
  * @link https://www.php-fig.org/psr/psr-17/
  */
@@ -32,15 +37,11 @@ class ResponseFactory implements ResponseFactoryInterface
 {
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
+    public function createResponse(int $statusCode = 200, string $reasonPhrase = '') : ResponseInterface
     {
-        $body = (new StreamFactory)->createStream();
-
-        return (new Response)
-            ->withStatus($code, $reasonPhrase)
-            ->withBody($body);
+        return new Response($statusCode, $reasonPhrase);
     }
 
     /**
@@ -53,15 +54,13 @@ class ResponseFactory implements ResponseFactoryInterface
      */
     public function createHtmlResponse(int $status, $content) : ResponseInterface
     {
+        $headers = ['Content-Type' => 'text/html; charset=UTF-8'];
+        $response = new Response($status, null, $headers);
+
         $content = (string) $content;
+        $response->getBody()->write($content);
 
-        $body = (new StreamFactory)->createStream();
-        $body->write($content);
-
-        return (new Response)
-            ->withStatus($status)
-            ->withHeader('Content-Type', 'text/html; charset=utf-8')
-            ->withBody($body);
+        return $response;
     }
 
     /**
@@ -74,23 +73,16 @@ class ResponseFactory implements ResponseFactoryInterface
      *
      * @return ResponseInterface
      *
-     * @throws Exception\JsonException
+     * @throws JsonException
      */
     public function createJsonResponse(int $status, $payload, int $options = 0, int $depth = 512) : ResponseInterface
     {
-        // clears a previous error...
-        json_encode(null);
+        $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
+        $response = new Response($status, null, $headers);
 
-        $content = json_encode($payload, $options, $depth);
+        $content = json_encode($payload, $options | JSON_THROW_ON_ERROR, $depth);
+        $response->getBody()->write($content);
 
-        Exception\JsonException::assert();
-
-        $body = (new StreamFactory)->createStream();
-        $body->write($content);
-
-        return (new Response)
-            ->withStatus($status)
-            ->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withBody($body);
+        return $response;
     }
 }
