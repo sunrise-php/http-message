@@ -1,16 +1,20 @@
 {
     "name": "sunrise/http-message",
     "homepage": "https://github.com/sunrise-php/http-message",
-    "description": "Sunrise HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 & PSR-17",
+    "description": "Sunrise // HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 and PSR-17",
     "license": "MIT",
     "keywords": [
         "fenric",
         "sunrise",
         "http",
         "http-message",
+        "http-request",
+        "http-response",
         "rfc-7230",
         "psr-7",
-        "psr-17"
+        "psr-17",
+        "php-7",
+        "php-8"
     ],
     "authors": [
         {
@@ -21,10 +25,10 @@
     ],
     "require": {
         "php": "^7.1|^8.0",
+        "fig/http-message-util": "^1.1",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
-        "sunrise/http-header": "^1.1",
-        "sunrise/http-header-collection": "^1.1",
+        "sunrise/http-header": "^2.0",
         "sunrise/stream": "^1.2",
         "sunrise/uri": "^1.2"
     },
@@ -37,7 +41,7 @@
     },
     "autoload": {
         "files": [
-            "data/phrases.php"
+            "constants/REASON_PHRASES.php"
         ],
         "psr-4": {
             "Sunrise\\Http\\Message\\": "src/"
@@ -45,8 +49,12 @@
     },
     "scripts": {
         "test": [
-            "phpunit --colors=always --coverage-text",
-            "phpcs"
+            "phpcs",
+            "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
+        ],
+        "build": [
+            "phpdoc -d src/ -t phpdoc/",
+            "XDEBUG_MODE=coverage phpunit --coverage-html coverage/"
         ]
     }
 }
