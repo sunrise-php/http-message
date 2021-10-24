@@ -16,17 +16,19 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use JsonException;
+use InvalidArgumentException;
 
 /**
  * Import functions
  */
 use function json_encode;
+use function json_last_error;
+use function json_last_error_msg;
 
 /**
  * Import constants
  */
-use const JSON_THROW_ON_ERROR;
+use const JSON_ERROR_NONE;
 
 /**
  * HTTP Response Message Factory
@@ -54,10 +56,12 @@ class ResponseFactory implements ResponseFactoryInterface
      */
     public function createHtmlResponse(int $status, $content) : ResponseInterface
     {
+        $content = (string) $content;
+
         $headers = ['Content-Type' => 'text/html; charset=UTF-8'];
+
         $response = new Response($status, null, $headers);
 
-        $content = (string) $content;
         $response->getBody()->write($content);
 
         return $response;
@@ -73,14 +77,20 @@ class ResponseFactory implements ResponseFactoryInterface
      *
      * @return ResponseInterface
      *
-     * @throws JsonException
+     * @throws InvalidArgumentException
      */
     public function createJsonResponse(int $status, $payload, int $options = 0, int $depth = 512) : ResponseInterface
     {
+        json_encode(''); // reset previous error...
+        $content = json_encode($payload, $options, $depth);
+        if (JSON_ERROR_NONE <> json_last_error()) {
+            throw new InvalidArgumentException(json_last_error_msg());
+        }
+
         $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
+
         $response = new Response($status, null, $headers);
 
-        $content = json_encode($payload, $options | JSON_THROW_ON_ERROR, $depth);
         $response->getBody()->write($content);
 
         return $response;
