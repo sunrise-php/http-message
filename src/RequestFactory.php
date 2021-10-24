@@ -16,12 +16,9 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\UriInterface;
-use Sunrise\Stream\StreamFactory;
-use Sunrise\Uri\UriFactory;
 
 /**
- * RequestFactory
+ * HTTP Request Message Factory
  *
  * @link https://www.php-fig.org/psr/psr-17/
  */
@@ -29,19 +26,10 @@ class RequestFactory implements RequestFactoryInterface
 {
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createRequest(string $method, $uri) : RequestInterface
     {
-        if (! ($uri instanceof UriInterface)) {
-            $uri = (new UriFactory)->createUri($uri);
-        }
-
-        $body = (new StreamFactory)->createStream();
-
-        return (new Request)
-            ->withMethod($method)
-            ->withUri($uri)
-            ->withBody($body);
+        return new Request($method, $uri);
     }
 }

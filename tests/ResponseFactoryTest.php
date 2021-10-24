@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
@@ -9,18 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Sunrise\Http\Message\Exception\JsonException;
 use Sunrise\Http\Message\ResponseFactory;
-
-/**
- * Import functions
- */
-use function json_encode;
-
-/**
- * Import constants
- */
-use const JSON_HEX_TAG;
 
 /**
  * ResponseFactoryTest
@@ -73,7 +64,7 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertSame($content, (string) $response->getBody());
     }
 
@@ -83,15 +74,15 @@ class ResponseFactoryTest extends TestCase
     public function testCreateJsonResponse() : void
     {
         $payload = ['foo' => '<bar>'];
-        $options = JSON_HEX_TAG;
+        $options = \JSON_HEX_TAG;
 
         $response = (new ResponseFactory)
             ->createJsonResponse(400, $payload, $options);
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
-        $this->assertSame(json_encode($payload, $options), (string) $response->getBody());
+        $this->assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame(\json_encode($payload, $options), (string) $response->getBody());
     }
 
     /**
@@ -99,7 +90,7 @@ class ResponseFactoryTest extends TestCase
      */
     public function testCreateResponseWithInvalidJson() : void
     {
-        $this->expectException(JsonException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Maximum stack depth exceeded');
 
         $response = (new ResponseFactory)

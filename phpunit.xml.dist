@@ -1,19 +1,13 @@
 <?xml version="1.0"?>
-<phpunit colors="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+    <coverage>
+        <include>
+            <directory>./src</directory>
+        </include>
+    </coverage>
     <testsuites>
-        <testsuite name="Sunrise HTTP Message Test Suite">
+        <testsuite name="sunrise.http.message.testSuite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory>./src</directory>
-        </whitelist>
-    </filter>
-    <php>
-        <const name="REQUEST_FACTORY" value="Sunrise\Http\Message\RequestFactory"/>
-        <const name="RESPONSE_FACTORY" value="Sunrise\Http\Message\ResponseFactory"/>
-        <const name="STREAM_FACTORY" value="Sunrise\Stream\StreamFactory"/>
-        <const name="URI_FACTORY" value="Sunrise\Uri\UriFactory"/>
-    </php>
 </phpunit>

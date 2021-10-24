@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
@@ -7,8 +9,6 @@ namespace Sunrise\Http\Message\Tests;
  */
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
-use Sunrise\Http\Header\HeaderCollection;
-use Sunrise\Http\Header\HeaderInterface;
 use Sunrise\Http\Message\Message;
 use Sunrise\Stream\StreamFactory;
 
@@ -21,11 +21,27 @@ class MessageTest extends TestCase
     /**
      * @return void
      */
-    public function testConstructor() : void
+    public function testContracts() : void
     {
         $mess = new Message();
 
         $this->assertInstanceOf(MessageInterface::class, $mess);
+    }
+
+    /**
+     * @return void
+     */
+    public function testConstructor() : void
+    {
+        $headers = ['X-Foo' => ['bar', 'baz'], 'X-Bar' => ['baz']];
+        $body = (new StreamFactory)->createStreamFromResource(\STDOUT);
+        $protocol = '2.0';
+
+        $mess = new Message($headers, $body, $protocol);
+
+        $this->assertSame($headers, $mess->getHeaders());
+        $this->assertSame($body, $mess->getBody());
+        $this->assertSame($protocol, $mess->getProtocolVersion());
     }
 
     /**
@@ -63,22 +79,22 @@ class MessageTest extends TestCase
     public function testSetHeader() : void
     {
         $mess = new Message();
-        $copy = $mess->withHeader('x-foo', 'bar');
+        $copy = $mess->withHeader('X-Foo', 'bar');
 
         $this->assertInstanceOf(MessageInterface::class, $copy);
         $this->assertNotEquals($mess, $copy);
         $this->assertEquals([], $mess->getHeaders());
-        $this->assertEquals(['x-foo' => ['bar']], $copy->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar']], $copy->getHeaders());
     }
 
     /**
      * @return void
      */
-    public function testSetHeaderWithValueArray() : void
+    public function testSetHeaderWithSeveralValues() : void
     {
-        $mess = (new Message)->withHeader('x-foo', ['bar', 'baz']);
+        $mess = (new Message)->withHeader('X-Foo', ['bar', 'baz']);
 
-        $this->assertEquals(['x-foo' => ['bar', 'baz']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar', 'baz']], $mess->getHeaders());
     }
 
     /**
@@ -87,12 +103,12 @@ class MessageTest extends TestCase
     public function testSetSeveralHeaders() : void
     {
         $mess = (new Message)
-            ->withHeader('x-foo', ['bar', 'baz'])
-            ->withHeader('x-quux', ['quuux', 'quuuux']);
+            ->withHeader('X-Foo', ['bar', 'baz'])
+            ->withHeader('X-Quux', ['quuux', 'quuuux']);
 
         $this->assertEquals([
-            'x-foo' => ['bar', 'baz'],
-            'x-quux' => ['quuux', 'quuuux'],
+            'X-Foo' => ['bar', 'baz'],
+            'X-Quux' => ['quuux', 'quuuux'],
         ], $mess->getHeaders());
     }
 
@@ -101,9 +117,9 @@ class MessageTest extends TestCase
      */
     public function testSetHeaderLowercase() : void
     {
-        $mess = (new Message)->withHeader('X-Foo', 'bar');
+        $mess = (new Message)->withHeader('x-foo', 'bar');
 
-        $this->assertEquals(['x-foo' => ['bar']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar']], $mess->getHeaders());
     }
 
     /**
@@ -127,7 +143,7 @@ class MessageTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new Message)->withHeader('x-foo', $headerValue);
+        (new Message)->withHeader('X-Foo', $headerValue);
     }
 
     /**
@@ -135,11 +151,11 @@ class MessageTest extends TestCase
      *
      * @return void
      */
-    public function testSetInvalidHeaderValueInArray($headerValue) : void
+    public function testSetInvalidHeaderValueItem($headerValue) : void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new Message)->withHeader('x-foo', ['bar', $headerValue, 'baz']);
+        (new Message)->withHeader('X-Foo', ['bar', $headerValue, 'baz']);
     }
 
     /**
@@ -147,25 +163,25 @@ class MessageTest extends TestCase
      */
     public function testAddHeader() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
-        $copy = $mess->withAddedHeader('x-foo', 'baz');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
+        $copy = $mess->withAddedHeader('X-Foo', 'baz');
 
         $this->assertInstanceOf(MessageInterface::class, $copy);
         $this->assertNotEquals($mess, $copy);
-        $this->assertEquals(['x-foo' => ['bar']], $mess->getHeaders());
-        $this->assertEquals(['x-foo' => ['bar', 'baz']], $copy->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar', 'baz']], $copy->getHeaders());
     }
 
     /**
      * @return void
      */
-    public function testAddHeaderWithValueArray() : void
+    public function testAddHeaderWithSeveralValues() : void
     {
         $mess = (new Message)
-            ->withHeader('x-foo', ['bar', 'baz'])
-            ->withAddedHeader('x-foo', ['quux', 'quuux']);
+            ->withHeader('X-Foo', ['bar', 'baz'])
+            ->withAddedHeader('X-Foo', ['quux', 'quuux']);
 
-        $this->assertEquals(['x-foo' => ['bar', 'baz', 'quux', 'quuux']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar', 'baz', 'quux', 'quuux']], $mess->getHeaders());
     }
 
     /**
@@ -174,14 +190,14 @@ class MessageTest extends TestCase
     public function testAddSeveralHeaders() : void
     {
         $mess = (new Message)
-            ->withHeader('x-foo', 'bar')
-            ->withHeader('x-baz', 'quux')
-            ->withAddedHeader('x-foo', 'quuux')
-            ->withAddedHeader('x-baz', 'quuuux');
+            ->withHeader('X-Foo', 'bar')
+            ->withHeader('X-Baz', 'quux')
+            ->withAddedHeader('X-Foo', 'quuux')
+            ->withAddedHeader('X-Baz', 'quuuux');
 
         $this->assertEquals([
-            'x-foo' => ['bar', 'quuux'],
-            'x-baz' => ['quux', 'quuuux'],
+            'X-Foo' => ['bar', 'quuux'],
+            'X-Baz' => ['quux', 'quuuux'],
         ], $mess->getHeaders());
     }
 
@@ -192,9 +208,9 @@ class MessageTest extends TestCase
     {
         $mess = (new Message)
             ->withHeader('x-foo', 'bar')
-            ->withAddedHeader('X-Foo', 'baz');
+            ->withAddedHeader('x-foo', 'baz');
 
-        $this->assertEquals(['x-foo' => ['bar', 'baz']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar', 'baz']], $mess->getHeaders());
     }
 
     /**
@@ -218,7 +234,7 @@ class MessageTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new Message)->withAddedHeader('x-foo', $headerValue);
+        (new Message)->withAddedHeader('X-Foo', $headerValue);
     }
 
     /**
@@ -226,108 +242,11 @@ class MessageTest extends TestCase
      *
      * @return void
      */
-    public function testAddInvalidHeaderValueInArray($headerValue) : void
+    public function testAddInvalidHeaderValueItem($headerValue) : void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new Message)->withAddedHeader('x-foo', ['bar', $headerValue, 'baz']);
-    }
-
-    /**
-     * @return void
-     */
-    public function testWithMultipleHeaders() : void
-    {
-        $message = new Message();
-
-        $subject = $message
-            ->withMultipleHeaders(['x-foo' => 'bar'])
-            ->withMultipleHeaders(['x-foo' => 'baz']);
-
-        $this->assertNotSame($subject, $message);
-        $this->assertCount(0, $message->getHeaders());
-        $this->assertSame(['x-foo' => ['baz']], $subject->getHeaders());
-
-        $subject = $message
-            ->withMultipleHeaders(['x-foo' => 'bar'], true)
-            ->withMultipleHeaders(['x-foo' => 'baz'], true);
-
-        $this->assertNotSame($subject, $message);
-        $this->assertCount(0, $message->getHeaders());
-        $this->assertSame(['x-foo' => ['bar', 'baz']], $subject->getHeaders());
-    }
-
-    /**
-     * @return void
-     */
-    public function testWithHeaderObject() : void
-    {
-        $foo1 = $this->createMock(HeaderInterface::class);
-        $foo1->method('getFieldName')->willReturn('x-foo');
-        $foo1->method('getFieldValue')->willReturn('1');
-
-        $foo2 = $this->createMock(HeaderInterface::class);
-        $foo2->method('getFieldName')->willReturn('x-foo');
-        $foo2->method('getFieldValue')->willReturn('2');
-
-        $mess0 = new Message();
-
-        $copy1 = $mess0->withHeaderObject($foo1);
-        $this->assertNotSame($copy1, $mess0);
-        $this->assertEquals([], $mess0->getHeaders());
-        $this->assertEquals(['x-foo' => ['1']], $copy1->getHeaders());
-
-        $copy2 = $copy1->withHeaderObject($foo2);
-        $this->assertNotSame($copy2, $copy1);
-        $this->assertEquals(['x-foo' => ['1']], $copy1->getHeaders());
-        $this->assertEquals(['x-foo' => ['2']], $copy2->getHeaders());
-
-        $copy3 = $copy2->withHeaderObject($foo1, true);
-        $this->assertNotSame($copy3, $copy2);
-        $this->assertEquals(['x-foo' => ['2']], $copy2->getHeaders());
-        $this->assertEquals(['x-foo' => ['2', '1']], $copy3->getHeaders());
-    }
-
-    /**
-     * @return void
-     */
-    public function testWithHeaderCollection() : void
-    {
-        $foo1 = $this->createMock(HeaderInterface::class);
-        $foo1->method('getFieldName')->willReturn('x-foo');
-        $foo1->method('getFieldValue')->willReturn('1');
-
-        $foo2 = $this->createMock(HeaderInterface::class);
-        $foo2->method('getFieldName')->willReturn('x-foo');
-        $foo2->method('getFieldValue')->willReturn('2');
-
-        $bar1 = $this->createMock(HeaderInterface::class);
-        $bar1->method('getFieldName')->willReturn('x-bar');
-        $bar1->method('getFieldValue')->willReturn('1');
-
-        $bar2 = $this->createMock(HeaderInterface::class);
-        $bar2->method('getFieldName')->willReturn('x-bar');
-        $bar2->method('getFieldValue')->willReturn('2');
-
-        $coll1 = new HeaderCollection([$foo1, $bar1]);
-        $coll2 = new HeaderCollection([$foo2, $bar2]);
-
-        $mess0 = new Message();
-
-        $copy1 = $mess0->withHeaderCollection($coll1);
-        $this->assertNotSame($copy1, $mess0);
-        $this->assertEquals([], $mess0->getHeaders());
-        $this->assertEquals(['x-foo' => ['1'], 'x-bar' => ['1']], $copy1->getHeaders());
-
-        $copy2 = $copy1->withHeaderCollection($coll2);
-        $this->assertNotSame($copy2, $copy1);
-        $this->assertEquals(['x-foo' => ['1'], 'x-bar' => ['1']], $copy1->getHeaders());
-        $this->assertEquals(['x-foo' => ['2'], 'x-bar' => ['2']], $copy2->getHeaders());
-
-        $copy3 = $copy2->withHeaderCollection($coll1, true);
-        $this->assertNotSame($copy3, $copy2);
-        $this->assertEquals(['x-foo' => ['2'], 'x-bar' => ['2']], $copy2->getHeaders());
-        $this->assertEquals(['x-foo' => ['2', '1'], 'x-bar' => ['2', '1']], $copy3->getHeaders());
+        (new Message)->withAddedHeader('X-Foo', ['bar', $headerValue, 'baz']);
     }
 
     /**
@@ -335,12 +254,12 @@ class MessageTest extends TestCase
      */
     public function testDeleteHeader() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
-        $copy = $mess->withoutHeader('x-foo');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
+        $copy = $mess->withoutHeader('X-Foo');
 
         $this->assertInstanceOf(MessageInterface::class, $copy);
         $this->assertNotEquals($mess, $copy);
-        $this->assertEquals(['x-foo' => ['bar']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar']], $mess->getHeaders());
         $this->assertEquals([], $copy->getHeaders());
     }
 
@@ -361,11 +280,11 @@ class MessageTest extends TestCase
      */
     public function testReplaceHeader() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
-        $copy = $mess->withHeader('x-foo', 'baz');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
+        $copy = $mess->withHeader('X-Foo', 'baz');
 
-        $this->assertEquals(['x-foo' => ['bar']], $mess->getHeaders());
-        $this->assertEquals(['x-foo' => ['baz']], $copy->getHeaders());
+        $this->assertEquals(['X-Foo' => ['bar']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['baz']], $copy->getHeaders());
     }
 
     /**
@@ -377,7 +296,7 @@ class MessageTest extends TestCase
             ->withHeader('x-foo', 'bar')
             ->withHeader('X-Foo', 'baz');
 
-        $this->assertEquals(['x-foo' => ['baz']], $mess->getHeaders());
+        $this->assertEquals(['X-Foo' => ['baz']], $mess->getHeaders());
     }
 
     /**
@@ -385,10 +304,10 @@ class MessageTest extends TestCase
      */
     public function testHasHeader() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
 
-        $this->assertTrue($mess->hasHeader('x-foo'));
-        $this->assertFalse($mess->hasHeader('x-bar'));
+        $this->assertTrue($mess->hasHeader('X-Foo'));
+        $this->assertFalse($mess->hasHeader('X-Bar'));
     }
 
     /**
@@ -408,10 +327,10 @@ class MessageTest extends TestCase
      */
     public function testGetHeader() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
 
-        $this->assertEquals(['bar'], $mess->getHeader('x-foo'));
-        $this->assertEquals([], $mess->getHeader('x-bar'));
+        $this->assertEquals(['bar'], $mess->getHeader('X-Foo'));
+        $this->assertEquals([], $mess->getHeader('X-Bar'));
     }
 
     /**
@@ -429,11 +348,11 @@ class MessageTest extends TestCase
     /**
      * @return void
      */
-    public function testGetHeaderWithMultipleValue() : void
+    public function testGetHeaderWithSeveralValues() : void
     {
-        $mess = (new Message)->withHeader('x-foo', ['bar', 'baz', 'quux']);
+        $mess = (new Message)->withHeader('X-Foo', ['bar', 'baz', 'quux']);
 
-        $this->assertEquals(['bar', 'baz', 'quux'], $mess->getHeader('x-foo'));
+        $this->assertEquals(['bar', 'baz', 'quux'], $mess->getHeader('X-Foo'));
     }
 
     /**
@@ -441,10 +360,10 @@ class MessageTest extends TestCase
      */
     public function testGetHeaderLine() : void
     {
-        $mess = (new Message)->withHeader('x-foo', 'bar');
+        $mess = (new Message)->withHeader('X-Foo', 'bar');
 
-        $this->assertEquals('bar', $mess->getHeaderLine('x-foo'));
-        $this->assertEquals('', $mess->getHeaderLine('x-bar'));
+        $this->assertEquals('bar', $mess->getHeaderLine('X-Foo'));
+        $this->assertEquals('', $mess->getHeaderLine('X-Bar'));
     }
 
     /**
@@ -462,11 +381,11 @@ class MessageTest extends TestCase
     /**
      * @return void
      */
-    public function testGetHeaderLineWithMultipleValue() : void
+    public function testGetHeaderLineWithSeveralValues() : void
     {
-        $mess = (new Message)->withHeader('x-foo', ['bar', 'baz', 'quux']);
+        $mess = (new Message)->withHeader('X-Foo', ['bar', 'baz', 'quux']);
 
-        $this->assertEquals('bar, baz, quux', $mess->getHeaderLine('x-foo'));
+        $this->assertEquals('bar, baz, quux', $mess->getHeaderLine('X-Foo'));
     }
 
     /**
@@ -474,7 +393,7 @@ class MessageTest extends TestCase
      */
     public function testBody() : void
     {
-        $body =(new StreamFactory)->createStreamFromResource(\STDOUT);
+        $body = (new StreamFactory)->createStreamFromResource(\STDOUT);
         $mess = new Message();
         $copy = $mess->withBody($body);
 
@@ -482,7 +401,7 @@ class MessageTest extends TestCase
         $this->assertNotEquals($mess, $copy);
 
         // default value
-        $this->assertEquals(null, $mess->getBody());
+        $this->assertNotSame($body, $mess->getBody());
         // assigned value
         $this->assertEquals($body, $copy->getBody());
     }

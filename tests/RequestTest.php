@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
@@ -9,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Sunrise\Http\Message\Message;
 use Sunrise\Http\Message\Request;
+use Sunrise\Stream\StreamFactory;
 use Sunrise\Uri\UriFactory;
 
 /**
@@ -20,12 +23,42 @@ class RequestTest extends TestCase
     /**
      * @return void
      */
-    public function testConstructor() : void
+    public function testContracts() : void
     {
         $mess = new Request();
 
         $this->assertInstanceOf(Message::class, $mess);
         $this->assertInstanceOf(RequestInterface::class, $mess);
+    }
+
+    /**
+     * @return void
+     */
+    public function testConstructor() : void
+    {
+        $method = 'POST';
+        $uri = '/foo?bar';
+        $headers = ['X-Foo' => ['bar', 'baz'], 'X-Bar' => ['baz']];
+        $body = (new StreamFactory)->createStreamFromResource(\STDOUT);
+        $target = '/bar?baz';
+        $protocol = '2.0';
+
+        $mess = new Request(
+            $method,
+            $uri,
+            $headers,
+            $body,
+            $target,
+            $protocol
+        );
+
+        $this->assertSame($method, $mess->getMethod());
+        $this->assertSame('/foo', $mess->getUri()->getPath());
+        $this->assertSame('bar', $mess->getUri()->getQuery());
+        $this->assertSame($headers, $mess->getHeaders());
+        $this->assertSame($body, $mess->getBody());
+        $this->assertSame($target, $mess->getRequestTarget());
+        $this->assertSame($protocol, $mess->getProtocolVersion());
     }
 
     /**
@@ -193,7 +226,7 @@ class RequestTest extends TestCase
         $this->assertNotEquals($mess, $copy);
 
         // default value
-        $this->assertEquals(null, $mess->getUri());
+        $this->assertNotSame($uri, $mess->getUri());
         // assigned value
         $this->assertEquals($uri, $copy->getUri());
     }

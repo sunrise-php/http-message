@@ -16,15 +16,22 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Sunrise\Stream\StreamFactory;
+use InvalidArgumentException;
 
 /**
  * Import functions
  */
 use function json_encode;
+use function json_last_error;
+use function json_last_error_msg;
 
 /**
- * ResponseFactory
+ * Import constants
+ */
+use const JSON_ERROR_NONE;
+
+/**
+ * HTTP Response Message Factory
  *
  * @link https://www.php-fig.org/psr/psr-17/
  */
@@ -32,15 +39,11 @@ class ResponseFactory implements ResponseFactoryInterface
 {
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
+    public function createResponse(int $statusCode = 200, string $reasonPhrase = '') : ResponseInterface
     {
-        $body = (new StreamFactory)->createStream();
-
-        return (new Response)
-            ->withStatus($code, $reasonPhrase)
-            ->withBody($body);
+        return new Response($statusCode, $reasonPhrase);
     }
 
     /**
@@ -55,13 +58,13 @@ class ResponseFactory implements ResponseFactoryInterface
     {
         $content = (string) $content;
 
-        $body = (new StreamFactory)->createStream();
-        $body->write($content);
+        $headers = ['Content-Type' => 'text/html; charset=UTF-8'];
 
-        return (new Response)
-            ->withStatus($status)
-            ->withHeader('Content-Type', 'text/html; charset=utf-8')
-            ->withBody($body);
+        $response = new Response($status, null, $headers);
+
+        $response->getBody()->write($content);
+
+        return $response;
     }
 
     /**
@@ -74,23 +77,22 @@ class ResponseFactory implements ResponseFactoryInterface
      *
      * @return ResponseInterface
      *
-     * @throws Exception\JsonException
+     * @throws InvalidArgumentException
      */
     public function createJsonResponse(int $status, $payload, int $options = 0, int $depth = 512) : ResponseInterface
     {
-        // clears a previous error...
-        json_encode(null);
-
+        json_encode(''); // reset previous error...
         $content = json_encode($payload, $options, $depth);
+        if (JSON_ERROR_NONE <> json_last_error()) {
+            throw new InvalidArgumentException(json_last_error_msg());
+        }
 
-        Exception\JsonException::assert();
+        $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
 
-        $body = (new StreamFactory)->createStream();
-        $body->write($content);
+        $response = new Response($status, null, $headers);
 
-        return (new Response)
-            ->withStatus($status)
-            ->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withBody($body);
+        $response->getBody()->write($content);
+
+        return $response;
     }
 }

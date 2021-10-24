@@ -1,11 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
 /**
  * Import classes
  */
-use Fig\Http\Message\StatusCodeInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\Message;
@@ -14,7 +15,7 @@ use Sunrise\Http\Message\Response;
 /**
  * Import constants
  */
-use const Sunrise\Http\Message\PHRASES;
+use const Sunrise\Http\Message\REASON_PHRASES;
 
 /**
  * ResponseTest
@@ -47,11 +48,11 @@ class ResponseTest extends TestCase
 
         // default values
         $this->assertEquals(200, $mess->getStatusCode());
-        $this->assertEquals(PHRASES[200], $mess->getReasonPhrase());
+        $this->assertEquals(REASON_PHRASES[200], $mess->getReasonPhrase());
 
         // assigned values
         $this->assertEquals(204, $copy->getStatusCode());
-        $this->assertEquals(PHRASES[204], $copy->getReasonPhrase());
+        $this->assertEquals(REASON_PHRASES[204], $copy->getReasonPhrase());
     }
 
     /**
@@ -119,7 +120,7 @@ class ResponseTest extends TestCase
     public function figStatusProvider() : array
     {
         return [
-            [200, PHRASES[200] ?? ''],
+            [200, REASON_PHRASES[200] ?? ''],
         ];
     }
 
