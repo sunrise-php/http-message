@@ -63,4 +63,32 @@ class RequestFactoryTest extends TestCase
         $this->assertInstanceOf(UriInterface::class, $request->getUri());
         $this->assertEquals($uri, (string) $request->getUri());
     }
+
+    /**
+     * @return void
+     */
+    public function testCreateJsonRequest() : void
+    {
+        $payload = ['foo' => '<bar>'];
+        $options = \JSON_HEX_TAG;
+
+        $request = (new RequestFactory)->createJsonRequest('GET', '/foo', $payload, $options);
+
+        $this->assertInstanceOf(RequestInterface::class, $request);
+        $this->assertSame('GET', $request->getMethod());
+        $this->assertSame('/foo', (string) $request->getUri());
+        $this->assertSame('application/json; charset=UTF-8', $request->getHeaderLine('Content-Type'));
+        $this->assertSame(\json_encode($payload, $options), (string) $request->getBody());
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateJsonRequestWithInvalidJson() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Maximum stack depth exceeded');
+
+        $request = (new RequestFactory)->createJsonRequest('GET', '/', [[]], 0, 1);
+    }
 }
