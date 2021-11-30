@@ -41,15 +41,15 @@ class ResponseFactoryTest extends TestCase
             ->createResponse($statusCode, $reasonPhrase);
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($statusCode, $response->getStatusCode());
-        $this->assertEquals($reasonPhrase, $response->getReasonPhrase());
+        $this->assertSame($statusCode, $response->getStatusCode());
+        $this->assertSame($reasonPhrase, $response->getReasonPhrase());
 
         // default body of the response...
         $this->assertInstanceOf(StreamInterface::class, $response->getBody());
         $this->assertTrue($response->getBody()->isSeekable());
         $this->assertTrue($response->getBody()->isWritable());
         $this->assertTrue($response->getBody()->isReadable());
-        $this->assertEquals('php://temp', $response->getBody()->getMetadata('uri'));
+        $this->assertSame('php://temp', $response->getBody()->getMetadata('uri'));
     }
 
     /**

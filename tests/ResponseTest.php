@@ -47,12 +47,12 @@ class ResponseTest extends TestCase
         $this->assertNotEquals($mess, $copy);
 
         // default values
-        $this->assertEquals(200, $mess->getStatusCode());
-        $this->assertEquals(REASON_PHRASES[200], $mess->getReasonPhrase());
+        $this->assertSame(200, $mess->getStatusCode());
+        $this->assertSame(REASON_PHRASES[200], $mess->getReasonPhrase());
 
         // assigned values
-        $this->assertEquals(204, $copy->getStatusCode());
-        $this->assertEquals(REASON_PHRASES[204], $copy->getReasonPhrase());
+        $this->assertSame(204, $copy->getStatusCode());
+        $this->assertSame(REASON_PHRASES[204], $copy->getReasonPhrase());
     }
 
     /**
@@ -64,8 +64,8 @@ class ResponseTest extends TestCase
     {
         $mess = (new Response)->withStatus($statusCode);
 
-        $this->assertEquals($statusCode, $mess->getStatusCode());
-        $this->assertEquals($reasonPhrase, $mess->getReasonPhrase());
+        $this->assertSame($statusCode, $mess->getStatusCode());
+        $this->assertSame($reasonPhrase, $mess->getReasonPhrase());
     }
 
     /**
@@ -87,7 +87,7 @@ class ResponseTest extends TestCase
     {
         $mess = (new Response)->withStatus(599);
 
-        $this->assertEquals('Unknown Status Code', $mess->getReasonPhrase());
+        $this->assertSame('Unknown Status Code', $mess->getReasonPhrase());
     }
 
     /**
@@ -109,7 +109,7 @@ class ResponseTest extends TestCase
     {
         $mess = (new Response)->withStatus(200, 'test');
 
-        $this->assertEquals('test', $mess->getReasonPhrase());
+        $this->assertSame('test', $mess->getReasonPhrase());
     }
 
     // Providers...

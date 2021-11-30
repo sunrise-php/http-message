@@ -41,15 +41,15 @@ class RequestFactoryTest extends TestCase
         $request = (new RequestFactory)->createRequest($method, $uri);
 
         $this->assertInstanceOf(RequestInterface::class, $request);
-        $this->assertEquals($method, $request->getMethod());
-        $this->assertEquals($uri, $request->getUri());
+        $this->assertSame($method, $request->getMethod());
+        $this->assertSame($uri, $request->getUri());
 
         // default body of the request...
         $this->assertInstanceOf(StreamInterface::class, $request->getBody());
         $this->assertTrue($request->getBody()->isSeekable());
         $this->assertTrue($request->getBody()->isWritable());
         $this->assertTrue($request->getBody()->isReadable());
-        $this->assertEquals('php://temp', $request->getBody()->getMetadata('uri'));
+        $this->assertSame('php://temp', $request->getBody()->getMetadata('uri'));
     }
 
     /**
@@ -61,7 +61,7 @@ class RequestFactoryTest extends TestCase
         $request = (new RequestFactory)->createRequest('GET', $uri);
 
         $this->assertInstanceOf(UriInterface::class, $request->getUri());
-        $this->assertEquals($uri, (string) $request->getUri());
+        $this->assertSame($uri, (string) $request->getUri());
     }
 
     /**
