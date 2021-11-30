@@ -74,9 +74,9 @@ class RequestTest extends TestCase
         $this->assertNotEquals($mess, $copy);
 
         // default value
-        $this->assertEquals('GET', $mess->getMethod());
+        $this->assertSame('GET', $mess->getMethod());
         // assigned value
-        $this->assertEquals('POST', $copy->getMethod());
+        $this->assertSame('POST', $copy->getMethod());
     }
 
     /**
@@ -86,7 +86,7 @@ class RequestTest extends TestCase
     {
         $mess = (new Request)->withMethod('post');
 
-        $this->assertEquals('POST', $mess->getMethod());
+        $this->assertSame('POST', $mess->getMethod());
     }
 
     /**
@@ -98,7 +98,7 @@ class RequestTest extends TestCase
     {
         $mess = (new Request)->withMethod($method);
 
-        $this->assertEquals($method, $mess->getMethod());
+        $this->assertSame($method, $mess->getMethod());
     }
 
     /**
@@ -126,9 +126,9 @@ class RequestTest extends TestCase
         $this->assertNotEquals($mess, $copy);
 
         // default value
-        $this->assertEquals('/', $mess->getRequestTarget());
+        $this->assertSame('/', $mess->getRequestTarget());
         // assigned value
-        $this->assertEquals('/path?query', $copy->getRequestTarget());
+        $this->assertSame('/path?query', $copy->getRequestTarget());
     }
 
     /**
@@ -140,7 +140,7 @@ class RequestTest extends TestCase
     {
         $mess = (new Request)->withRequestTarget($requestTarget);
 
-        $this->assertEquals($requestTarget, $mess->getRequestTarget());
+        $this->assertSame($requestTarget, $mess->getRequestTarget());
     }
 
     /**
@@ -164,7 +164,7 @@ class RequestTest extends TestCase
         $mess = (new Request)->withUri($uri);
 
         // returns "/" as default path
-        $this->assertEquals('/', $mess->getRequestTarget());
+        $this->assertSame('/', $mess->getRequestTarget());
     }
 
     /**
@@ -176,7 +176,7 @@ class RequestTest extends TestCase
         $mess = (new Request)->withUri($uri);
 
         // returns "/" as default path
-        $this->assertEquals('/', $mess->getRequestTarget());
+        $this->assertSame('/', $mess->getRequestTarget());
     }
 
     /**
@@ -187,7 +187,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('/path');
         $mess = (new Request)->withUri($uri);
 
-        $this->assertEquals('/path', $mess->getRequestTarget());
+        $this->assertSame('/path', $mess->getRequestTarget());
     }
 
     /**
@@ -198,7 +198,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('/path?query');
         $mess = (new Request)->withUri($uri);
 
-        $this->assertEquals('/path?query', $mess->getRequestTarget());
+        $this->assertSame('/path?query', $mess->getRequestTarget());
     }
 
     /**
@@ -209,7 +209,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('/new');
         $mess = (new Request)->withRequestTarget('/primary')->withUri($uri);
 
-        $this->assertEquals('/primary', $mess->getRequestTarget());
+        $this->assertSame('/primary', $mess->getRequestTarget());
     }
 
     /**
@@ -228,7 +228,7 @@ class RequestTest extends TestCase
         // default value
         $this->assertNotSame($uri, $mess->getUri());
         // assigned value
-        $this->assertEquals($uri, $copy->getUri());
+        $this->assertSame($uri, $copy->getUri());
     }
 
     /**
@@ -239,7 +239,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('http://localhost');
         $mess = (new Request)->withUri($uri);
 
-        $this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
+        $this->assertSame($uri->getHost(), $mess->getHeaderLine('host'));
     }
 
     /**
@@ -250,7 +250,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('http://localhost:3000');
         $mess = (new Request)->withUri($uri);
 
-        $this->assertEquals($uri->getHost() . ':' . $uri->getPort(), $mess->getHeaderLine('host'));
+        $this->assertSame($uri->getHost() . ':' . $uri->getPort(), $mess->getHeaderLine('host'));
     }
 
     /**
@@ -261,7 +261,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('http://localhost');
         $mess = (new Request)->withHeader('host', 'example.com')->withUri($uri);
 
-        $this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
+        $this->assertSame($uri->getHost(), $mess->getHeaderLine('host'));
     }
 
     /**
@@ -272,7 +272,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('http://localhost');
         $mess = (new Request)->withHeader('host', 'example.com')->withUri($uri, true);
 
-        $this->assertEquals('example.com', $mess->getHeaderLine('host'));
+        $this->assertSame('example.com', $mess->getHeaderLine('host'));
     }
 
     /**
@@ -283,7 +283,7 @@ class RequestTest extends TestCase
         $uri = (new UriFactory)->createUri('http://localhost');
         $mess = (new Request)->withUri($uri, true);
 
-        $this->assertEquals($uri->getHost(), $mess->getHeaderLine('host'));
+        $this->assertSame($uri->getHost(), $mess->getHeaderLine('host'));
     }
 
     // Providers...
