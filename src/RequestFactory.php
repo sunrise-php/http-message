@@ -14,10 +14,10 @@ namespace Sunrise\Http\Message;
 /**
  * Import classes
  */
+use InvalidArgumentException;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use InvalidArgumentException;
 
 /**
  * Import functions
@@ -48,12 +48,12 @@ class RequestFactory implements RequestFactoryInterface
     }
 
     /**
-     * Creates JSON request
+     * Creates a JSON request
      *
      * @param string $method
      * @param string|UriInterface|null $uri
      * @param mixed $data
-     * @param int $options
+     * @param int $flags
      * @param int $depth
      *
      * @return RequestInterface
@@ -61,15 +61,14 @@ class RequestFactory implements RequestFactoryInterface
      * @throws InvalidArgumentException
      *         If the data cannot be encoded.
      */
-    public function createJsonRequest(
-        string $method,
-        $uri,
-        $data,
-        int $options = 0,
-        int $depth = 512
-    ) : RequestInterface {
-        json_encode(''); // reset previous error...
-        $content = json_encode($data, $options, $depth);
+    public function createJsonRequest(string $method, $uri, $data, int $flags = 0, int $depth = 512) : RequestInterface
+    {
+        /**
+         * @psalm-suppress UnusedFunctionCall
+         */
+        json_encode('');
+
+        $json = json_encode($data, $flags, $depth);
         if (JSON_ERROR_NONE <> json_last_error()) {
             throw new InvalidArgumentException(json_last_error_msg());
         }
@@ -78,7 +77,7 @@ class RequestFactory implements RequestFactoryInterface
             'Content-Type' => 'application/json; charset=UTF-8',
         ]);
 
-        $request->getBody()->write($content);
+        $request->getBody()->write($json);
 
         return $request;
     }

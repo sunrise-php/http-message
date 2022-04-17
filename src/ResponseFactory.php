@@ -14,9 +14,11 @@ namespace Sunrise\Http\Message;
 /**
  * Import classes
  */
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
+use Stringable;
 
 /**
  * Import functions
@@ -40,6 +42,8 @@ class ResponseFactory implements ResponseFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress ParamNameMismatch
      */
     public function createResponse(int $statusCode = 200, string $reasonPhrase = '') : ResponseInterface
     {
@@ -47,51 +51,56 @@ class ResponseFactory implements ResponseFactoryInterface
     }
 
     /**
-     * Creates a HTML response instance
+     * Creates a HTML response
      *
-     * @param int $status
-     * @param mixed $content
+     * @param int $statusCode
+     * @param string|StreamInterface|Stringable $html
      *
      * @return ResponseInterface
      */
-    public function createHtmlResponse(int $status, $content) : ResponseInterface
+    public function createHtmlResponse(int $statusCode, $html) : ResponseInterface
     {
-        $content = (string) $content;
+        $html = (string) $html;
 
-        $headers = ['Content-Type' => 'text/html; charset=UTF-8'];
+        $response = new Response($statusCode, null, [
+            'Content-Type' => 'text/html; charset=UTF-8',
+        ]);
 
-        $response = new Response($status, null, $headers);
-
-        $response->getBody()->write($content);
+        $response->getBody()->write($html);
 
         return $response;
     }
 
     /**
-     * Creates a JSON response instance
+     * Creates a JSON response
      *
-     * @param int $status
-     * @param mixed $payload
-     * @param int $options
+     * @param int $statusCode
+     * @param mixed $data
+     * @param int $flags
      * @param int $depth
      *
      * @return ResponseInterface
      *
      * @throws InvalidArgumentException
+     *         If the data cannot be encoded.
      */
-    public function createJsonResponse(int $status, $payload, int $options = 0, int $depth = 512) : ResponseInterface
+    public function createJsonResponse(int $statusCode, $data, int $flags = 0, int $depth = 512) : ResponseInterface
     {
-        json_encode(''); // reset previous error...
-        $content = json_encode($payload, $options, $depth);
+        /**
+         * @psalm-suppress UnusedFunctionCall
+         */
+        json_encode('');
+
+        $json = json_encode($data, $flags, $depth);
         if (JSON_ERROR_NONE <> json_last_error()) {
             throw new InvalidArgumentException(json_last_error_msg());
         }
 
-        $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
+        $response = new Response($statusCode, null, [
+            'Content-Type' => 'application/json; charset=UTF-8',
+        ]);
 
-        $response = new Response($status, null, $headers);
-
-        $response->getBody()->write($content);
+        $response->getBody()->write($json);
 
         return $response;
     }

@@ -15,10 +15,10 @@ namespace Sunrise\Http\Message;
  * Import classes
  */
 use Fig\Http\Message\StatusCodeInterface;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Header\HeaderInterface;
-use InvalidArgumentException;
 
 /**
  * Import functions
@@ -27,6 +27,11 @@ use function is_int;
 use function is_string;
 use function preg_match;
 use function sprintf;
+
+/**
+ * Import constants
+ */
+use const Sunrise\Http\Message\REASON_PHRASES;
 
 /**
  * HTTP Response Message
@@ -38,14 +43,14 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
 {
 
     /**
-     * The response status code
+     * The response's status code
      *
      * @var int
      */
     protected $statusCode = self::STATUS_OK;
 
     /**
-     * The response reason phrase
+     * The response's reason phrase
      *
      * @var string
      */
@@ -56,11 +61,9 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @param int|null $statusCode
      * @param string|null $reasonPhrase
-     * @param array<string, string|array<string>>|null $headers
+     * @param array<string, string|string[]>|null $headers
      * @param StreamInterface|null $body
      * @param string|null $protocolVersion
-     *
-     * @throws InvalidArgumentException
      */
     public function __construct(
         ?int $statusCode = null,
@@ -99,7 +102,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidArgumentException
+     * @psalm-suppress ParamNameMismatch
      */
     public function withStatus($statusCode, $reasonPhrase = '') : ResponseInterface
     {
@@ -116,8 +119,6 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      * @param string $reasonPhrase
      *
      * @return void
-     *
-     * @throws InvalidArgumentException
      */
     protected function setStatus($statusCode, $reasonPhrase) : void
     {
@@ -150,7 +151,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         }
 
         if (! ($statusCode >= 100 && $statusCode <= 599)) {
-            throw new InvalidArgumentException(sprintf('The status-code "%d" is not valid', $statusCode));
+            throw new InvalidArgumentException(sprintf('HTTP status-code "%d" is not valid', $statusCode));
         }
     }
 
@@ -172,7 +173,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         }
 
         if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE, $reasonPhrase)) {
-            throw new InvalidArgumentException(sprintf('The reason-phrase "%s" is not valid', $reasonPhrase));
+            throw new InvalidArgumentException(sprintf('HTTP reason-phrase "%s" is not valid', $reasonPhrase));
         }
     }
 }

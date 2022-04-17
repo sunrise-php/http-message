@@ -14,6 +14,8 @@ namespace Sunrise\Http\Message;
 /**
  * List of Reason Phrases
  *
+ * @var array<int, string>
+ *
  * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
  */
 const REASON_PHRASES = [

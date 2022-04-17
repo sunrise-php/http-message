@@ -15,12 +15,12 @@ namespace Sunrise\Http\Message;
  * Import classes
  */
 use Fig\Http\Message\RequestMethodInterface;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Header\HeaderInterface;
 use Sunrise\Uri\UriFactory;
-use InvalidArgumentException;
 
 /**
  * Import functions
@@ -66,12 +66,10 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @param string|null $method
      * @param string|UriInterface|null $uri
-     * @param array<string, string|array<string>>|null $headers
+     * @param array<string, string|string[]>|null $headers
      * @param StreamInterface|null $body
      * @param string|null $requestTarget
      * @param string|null $protocolVersion
-     *
-     * @throws InvalidArgumentException
      */
     public function __construct(
         ?string $method = null,
@@ -110,8 +108,6 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 
     /**
      * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
      */
     public function withMethod($method) : RequestInterface
     {
@@ -131,19 +127,22 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
         }
 
         $uri = $this->getUri();
+        $path = $uri->getPath();
 
         // https://tools.ietf.org/html/rfc7230#section-5.3.1
         // https://tools.ietf.org/html/rfc7230#section-2.7
         //
         // origin-form = absolute-path [ "?" query ]
         // absolute-path = 1*( "/" segment )
-        if (0 <> strncmp($uri->getPath(), '/', 1)) {
+        if (0 !== strncmp($path, '/', 1)) {
             return '/';
         }
 
-        $requestTarget = $uri->getPath();
-        if ('' !== $uri->getQuery()) {
-            $requestTarget .= '?' . $uri->getQuery();
+        $requestTarget = $path;
+
+        $query = $uri->getQuery();
+        if ('' !== $query) {
+            $requestTarget .= '?' . $query;
         }
 
         return $requestTarget;
@@ -151,8 +150,6 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 
     /**
      * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
      */
     public function withRequestTarget($requestTarget) : RequestInterface
     {
@@ -191,8 +188,6 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param string $method
      *
      * @return void
-     *
-     * @throws InvalidArgumentException
      */
     protected function setMethod($method) : void
     {
@@ -204,15 +199,17 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     /**
      * Sets the given request-target to the request
      *
-     * @param string $requestTarget
+     * @param mixed $requestTarget
      *
      * @return void
-     *
-     * @throws InvalidArgumentException
      */
     protected function setRequestTarget($requestTarget) : void
     {
         $this->validateRequestTarget($requestTarget);
+
+        /**
+         * @var string $requestTarget
+         */
 
         $this->requestTarget = $requestTarget;
     }
@@ -224,8 +221,6 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param bool $preserveHost
      *
      * @return void
-     *
-     * @throws InvalidArgumentException
      */
     protected function setUri($uri, $preserveHost = false) : void
     {
@@ -239,12 +234,14 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
             return;
         }
 
-        $host = $uri->getHost();
-        if (null !== $uri->getPort()) {
-            $host .= ':' . $uri->getPort();
+        $newHost = $uri->getHost();
+
+        $port = $uri->getPort();
+        if (null !== $port) {
+            $newHost .= ':' . $port;
         }
 
-        $this->addHeader('Host', $host);
+        $this->addHeader('Host', $newHost);
     }
 
     /**
@@ -265,7 +262,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
         }
 
         if (!preg_match(HeaderInterface::RFC7230_TOKEN, $method)) {
-            throw new InvalidArgumentException(sprintf('The method "%s" is not valid', $method));
+            throw new InvalidArgumentException(sprintf('HTTP method "%s" is not valid', $method));
         }
     }
 
@@ -287,7 +284,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
         }
 
         if (!preg_match('/^[\x21-\x7E\x80-\xFF]+$/', $requestTarget)) {
-            throw new InvalidArgumentException(sprintf('The request-target "%s" is not valid', $requestTarget));
+            throw new InvalidArgumentException(sprintf('HTTP request-target "%s" is not valid', $requestTarget));
         }
     }
 }
