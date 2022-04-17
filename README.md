@@ -17,7 +17,7 @@ composer require 'sunrise/http-message:^2.0'
 
 ## How to use?
 
-#### HTTP Request Message
+#### Request message
 
 ```php
 use Sunrise\Http\Message\RequestFactory;
@@ -27,7 +27,7 @@ $message = (new RequestFactory)->createRequest('GET', 'http://php.net/');
 // just use PSR-7 methods...
 ```
 
-#### HTTP Response Message
+#### Response message
 
 ```php
 use Sunrise\Http\Message\ResponseFactory;
@@ -37,15 +37,15 @@ $message = (new ResponseFactory)->createResponse(200, 'OK');
 // just use PSR-7 methods...
 ```
 
-#### HTTP Headers as Objects
-
-* https://github.com/sunrise-php/http-header-kit
-
-#### Related PSR-7 packages
+#### Related packages
 
 * https://github.com/sunrise-php/http-server-request
 * https://github.com/sunrise-php/stream
 * https://github.com/sunrise-php/uri
+
+#### Headers as objects
+
+* https://github.com/sunrise-php/http-header-kit
 
 ---
 
