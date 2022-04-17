@@ -1,15 +1,15 @@
 {
     "name": "sunrise/http-message",
     "homepage": "https://github.com/sunrise-php/http-message",
-    "description": "Sunrise // HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 and PSR-17",
+    "description": "HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 and PSR-17",
     "license": "MIT",
     "keywords": [
         "fenric",
         "sunrise",
         "http",
-        "http-message",
-        "http-request",
-        "http-response",
+        "message",
+        "request",
+        "response",
         "rfc-7230",
         "psr-7",
         "psr-17",
@@ -19,10 +19,13 @@
     "authors": [
         {
             "name": "Anatoly Fenric",
-            "email": "anatoly@fenric.ru",
-            "homepage": "https://anatoly.fenric.ru/"
+            "email": "afenric@gmail.com",
+            "homepage": "https://github.com/fenric"
         }
     ],
+    "provide": {
+        "psr/http-message-implementation": "1.0"
+    },
     "require": {
         "php": "^7.1|^8.0",
         "fig/http-message-util": "^1.1",
@@ -36,9 +39,6 @@
         "phpunit/phpunit": "7.5.20|9.5.0",
         "sunrise/coding-standard": "1.0.0"
     },
-    "provide": {
-        "psr/http-message-implementation": "1.0"
-    },
     "autoload": {
         "files": [
             "constants/REASON_PHRASES.php"
@@ -50,6 +50,7 @@
     "scripts": {
         "test": [
             "phpcs",
+            "psalm",
             "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
         ],
         "build": [
