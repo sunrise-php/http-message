@@ -31,7 +31,7 @@
         "fig/http-message-util": "^1.1",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
-        "sunrise/http-header": "^2.0",
+        "sunrise/http-header": "^3.0",
         "sunrise/stream": "^1.2",
         "sunrise/uri": "^1.2"
     },
