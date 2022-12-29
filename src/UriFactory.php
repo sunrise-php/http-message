@@ -3,8 +3,8 @@
 /**
  * It's free open-source software released under the MIT License.
  *
- * @author Anatoly Fenric <anatoly@fenric.ru>
- * @copyright Copyright (c) 2018, Anatoly Fenric
+ * @author Anatoly Nekhay <afenric@gmail.com>
+ * @copyright Copyright (c) 2018, Anatoly Nekhay
  * @license https://github.com/sunrise-php/http-message/blob/master/LICENSE
  * @link https://github.com/sunrise-php/http-message
  */
@@ -14,22 +14,22 @@ namespace Sunrise\Http\Message;
 /**
  * Import classes
  */
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
- * HTTP Request Message Factory
+ * UriFactory
  *
  * @link https://www.php-fig.org/psr/psr-17/
  */
-class RequestFactory implements RequestFactoryInterface
+class UriFactory implements UriFactoryInterface
 {
 
     /**
      * {@inheritdoc}
      */
-    public function createRequest(string $method, $uri): RequestInterface
+    public function createUri(string $uri = ''): UriInterface
     {
-        return new Request($method, $uri);
+        return new Uri($uri);
     }
 }
