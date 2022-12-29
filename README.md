@@ -1,6 +1,6 @@
 # HTTP message wrapper for PHP 7.1+ based on RFC-7230, PSR-7 and PSR-17
 
-[![Build Status](https://circleci.com/gh/sunrise-php/http-message.svg?style=shield)](https://circleci.com/gh/sunrise-php/http-message)
+[![Build Status](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/build.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunrise-php/http-message/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunrise-php/http-message/?branch=master)
 [![Total Downloads](https://poser.pugx.org/sunrise/http-message/downloads?format=flat)](https://packagist.org/packages/sunrise/http-message)
@@ -12,40 +12,8 @@
 ## Installation
 
 ```bash
-composer require 'sunrise/http-message:^2.0'
+composer require sunrise/http-message
 ```
-
-## How to use?
-
-#### Request message
-
-```php
-use Sunrise\Http\Message\RequestFactory;
-
-$message = (new RequestFactory)->createRequest('GET', 'http://php.net/');
-
-// just use PSR-7 methods...
-```
-
-#### Response message
-
-```php
-use Sunrise\Http\Message\ResponseFactory;
-
-$message = (new ResponseFactory)->createResponse(200, 'OK');
-
-// just use PSR-7 methods...
-```
-
-#### Related packages
-
-* https://github.com/sunrise-php/http-server-request
-* https://github.com/sunrise-php/stream
-* https://github.com/sunrise-php/uri
-
-#### Headers as objects
-
-* https://github.com/sunrise-php/http-header-kit
 
 ---
 
