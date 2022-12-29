@@ -4,96 +4,97 @@ declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
-/**
- * Import classes
- */
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\ResponseFactory;
 
-/**
- * ResponseFactoryTest
- */
 class ResponseFactoryTest extends TestCase
 {
-
-    /**
-     * @return void
-     */
-    public function testConstructor() : void
+    public function testContracts(): void
     {
         $factory = new ResponseFactory();
 
         $this->assertInstanceOf(ResponseFactoryInterface::class, $factory);
     }
 
-    /**
-     * @return void
-     */
-    public function testCreateResponse() : void
+    public function testCreateResponse(): void
     {
-        $statusCode = 204;
-        $reasonPhrase = 'No Content';
+        $response = (new ResponseFactory)->createResponse();
 
-        $response = (new ResponseFactory)
-            ->createResponse($statusCode, $reasonPhrase);
-
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame($statusCode, $response->getStatusCode());
-        $this->assertSame($reasonPhrase, $response->getReasonPhrase());
-
-        // default body of the response...
-        $this->assertInstanceOf(StreamInterface::class, $response->getBody());
-        $this->assertTrue($response->getBody()->isSeekable());
-        $this->assertTrue($response->getBody()->isWritable());
-        $this->assertTrue($response->getBody()->isReadable());
-        $this->assertSame('php://temp', $response->getBody()->getMetadata('uri'));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('OK', $response->getReasonPhrase());
     }
 
-    /**
-     * @return void
-     */
-    public function testCreateHtmlResponse() : void
+    public function testCreateResponseWithStatusCode(): void
     {
-        $content = '<pre>foo bar</pre>';
+        $response = (new ResponseFactory)->createResponse(202);
 
-        $response = (new ResponseFactory)
-            ->createHtmlResponse(400, $content);
-
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
-        $this->assertSame($content, (string) $response->getBody());
+        $this->assertSame(202, $response->getStatusCode());
+        $this->assertSame('Accepted', $response->getReasonPhrase());
     }
 
-    /**
-     * @return void
-     */
-    public function testCreateJsonResponse() : void
+    public function testCreateResponseWithStatusCodeAndEmptyReasonPhrase(): void
     {
-        $payload = ['foo' => '<bar>'];
-        $options = \JSON_HEX_TAG;
+        $response = (new ResponseFactory)->createResponse(202, '');
 
-        $response = (new ResponseFactory)
-            ->createJsonResponse(400, $payload, $options);
-
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
-        $this->assertSame(\json_encode($payload, $options), (string) $response->getBody());
+        $this->assertSame(202, $response->getStatusCode());
+        $this->assertSame('Accepted', $response->getReasonPhrase());
     }
 
-    /**
-     * @return void
-     */
-    public function testCreateResponseWithInvalidJson() : void
+    public function testCreateResponseWithStatusCodeAndCustomReasonPhrase(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Maximum stack depth exceeded');
+        $response = (new ResponseFactory)->createResponse(202, 'Custom Reason Phrase');
 
-        $response = (new ResponseFactory)
-            ->createJsonResponse(200, [[]], 0, 1);
+        $this->assertSame(202, $response->getStatusCode());
+        $this->assertSame('Custom Reason Phrase', $response->getReasonPhrase());
+    }
+
+    public function testCreateResponseWithUnknownStatusCode(): void
+    {
+        $response = (new ResponseFactory)->createResponse(599);
+
+        $this->assertSame(599, $response->getStatusCode());
+        $this->assertSame('Unknown Status Code', $response->getReasonPhrase());
+    }
+
+    public function testCreateResponseWithUnknownStatusCodeAndEmptyReasonPhrase(): void
+    {
+        $response = (new ResponseFactory)->createResponse(599, '');
+
+        $this->assertSame(599, $response->getStatusCode());
+        $this->assertSame('Unknown Status Code', $response->getReasonPhrase());
+    }
+
+    public function testCreateResponseWithUnknownStatusCodeAndReasonPhrase(): void
+    {
+        $response = (new ResponseFactory)->createResponse(599, 'Custom Reason Phrase');
+
+        $this->assertSame(599, $response->getStatusCode());
+        $this->assertSame('Custom Reason Phrase', $response->getReasonPhrase());
+    }
+
+    public function testCreateResponseWithStatusCodeLessThan100(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP status code');
+
+        (new ResponseFactory)->createResponse(99);
+    }
+
+    public function testCreateResponseWithStatusCodeGreaterThan599(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP status code');
+
+        (new ResponseFactory)->createResponse(600);
+    }
+
+    public function testCreateResponseWithStatusCodeAndInvalidReasonPhrase(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP reason phrase');
+
+        (new ResponseFactory)->createResponse(200, "\0");
     }
 }
