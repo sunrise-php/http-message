@@ -15,6 +15,23 @@
 composer require sunrise/http-message
 ```
 
+## Navigation
+
+- [Headers as objects](#headers-as-objects)
+- - [Implemented headers](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md)
+- [Server request from global environment](#server-request-from-global-environment)
+- [HTML and JSON responses](#html-and-json-responses)
+- - [HTML response](#html-response)
+- - [JSON response](#json-response)
+- [Streams](#streams)
+- - [File stream](#file-stream)
+- - [PHP input stream](#php-input-stream)
+- - [PHP memory stream](#php-memory-stream)
+- - [PHP temporary stream](#php-temporary-stream)
+- - [Temporary file stream](#temporary-file-stream)
+- [PSR-7 and PSR-17](#psr-7-and-psr-17)
+- [Exceptions](#exceptions)
+
 ## How to use
 
 ⚠️ We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
