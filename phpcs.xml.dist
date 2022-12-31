@@ -2,7 +2,7 @@
 <ruleset name="Sunrise Coding Standard">
     <rule ref="./vendor/sunrise/coding-standard/ruleset.xml"/>
 
-    <file>constants</file>
+    <file>functions</file>
     <file>src</file>
     <file>tests</file>
 </ruleset>

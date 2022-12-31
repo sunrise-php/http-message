@@ -3,8 +3,8 @@
 /**
  * It's free open-source software released under the MIT License.
  *
- * @author Anatoly Fenric <anatoly@fenric.ru>
- * @copyright Copyright (c) 2018, Anatoly Fenric
+ * @author Anatoly Nekhay <afenric@gmail.com>
+ * @copyright Copyright (c) 2018, Anatoly Nekhay
  * @license https://github.com/sunrise-php/http-message/blob/master/LICENSE
  * @link https://github.com/sunrise-php/http-message
  */
@@ -15,21 +15,17 @@ namespace Sunrise\Http\Message;
  * Import classes
  */
 use Fig\Http\Message\RequestMethodInterface;
-use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use Sunrise\Http\Header\HeaderInterface;
-use Sunrise\Uri\UriFactory;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
  * Import functions
  */
 use function is_string;
 use function preg_match;
-use function sprintf;
 use function strncmp;
-use function strtoupper;
 
 /**
  * HTTP Request Message
@@ -41,75 +37,102 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 {
 
     /**
+     * Regular Expression for a request target validation
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-5.3
+     *
+     * @var string
+     */
+    public const RFC7230_VALID_REQUEST_TARGET = '/^[\x21-\x7E\x80-\xFF]+$/';
+
+    /**
+     * Default request method
+     *
+     * @var string
+     */
+    public const DEFAULT_METHOD = self::METHOD_GET;
+
+    /**
+     * Default request URI
+     *
+     * @var string
+     */
+    public const DEFAULT_URI = '/';
+
+    /**
      * The request method (aka verb)
      *
      * @var string
      */
-    protected $method = self::METHOD_GET;
+    private string $method = self::DEFAULT_METHOD;
+
+    /**
+     * The request URI
+     *
+     * @var UriInterface
+     */
+    private UriInterface $uri;
 
     /**
      * The request target
      *
      * @var string|null
      */
-    protected $requestTarget = null;
-
-    /**
-     * The request URI
-     *
-     * @var UriInterface|null
-     */
-    protected $uri = null;
+    private ?string $requestTarget = null;
 
     /**
      * Constructor of the class
      *
      * @param string|null $method
-     * @param string|UriInterface|null $uri
+     * @param mixed $uri
      * @param array<string, string|string[]>|null $headers
      * @param StreamInterface|null $body
-     * @param string|null $requestTarget
-     * @param string|null $protocolVersion
+     *
+     * @throws InvalidArgumentException
+     *         If one of the parameters isn't valid.
      */
     public function __construct(
         ?string $method = null,
         $uri = null,
         ?array $headers = null,
-        ?StreamInterface $body = null,
-        ?string $requestTarget = null,
-        ?string $protocolVersion = null
+        ?StreamInterface $body = null
     ) {
-        parent::__construct(
-            $headers,
-            $body,
-            $protocolVersion
-        );
-
         if (isset($method)) {
             $this->setMethod($method);
         }
 
-        if (isset($requestTarget)) {
-            $this->setRequestTarget($requestTarget);
+        $this->setUri($uri ?? self::DEFAULT_URI);
+
+        if (isset($headers)) {
+            $this->setHeaders($headers);
         }
 
-        if (isset($uri)) {
-            $this->setUri($uri);
+        if (isset($body)) {
+            $this->setBody($body);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * Gets the request method
+     *
+     * @return string
      */
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->method;
     }
 
     /**
-     * {@inheritdoc}
+     * Creates a new instance of the request with the given method
+     *
+     * @param string $method
+     *
+     * @return static
+     *
+     * @throws InvalidArgumentException
+     *         If the method isn't valid.
      */
-    public function withMethod($method) : RequestInterface
+    public function withMethod($method): RequestInterface
     {
         $clone = clone $this;
         $clone->setMethod($method);
@@ -118,66 +141,75 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * Gets the request URI
+     *
+     * @return UriInterface
      */
-    public function getRequestTarget() : string
+    public function getUri(): UriInterface
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Creates a new instance of the request with the given URI
+     *
+     * @param UriInterface $uri
+     * @param bool $preserveHost
+     *
+     * @return static
+     */
+    public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
+    {
+        $clone = clone $this;
+        $clone->setUri($uri, $preserveHost);
+
+        return $clone;
+    }
+
+    /**
+     * Gets the request target
+     *
+     * @return string
+     */
+    public function getRequestTarget(): string
     {
         if (isset($this->requestTarget)) {
             return $this->requestTarget;
         }
 
-        $uri = $this->getUri();
-        $path = $uri->getPath();
+        $requestTarget = $this->uri->getPath();
 
         // https://tools.ietf.org/html/rfc7230#section-5.3.1
         // https://tools.ietf.org/html/rfc7230#section-2.7
         //
         // origin-form = absolute-path [ "?" query ]
         // absolute-path = 1*( "/" segment )
-        if (0 !== strncmp($path, '/', 1)) {
+        if (strncmp($requestTarget, '/', 1) !== 0) {
             return '/';
         }
 
-        $requestTarget = $path;
-
-        $query = $uri->getQuery();
-        if ('' !== $query) {
-            $requestTarget .= '?' . $query;
+        $queryString = $this->uri->getQuery();
+        if ($queryString !== '') {
+            $requestTarget .= '?' . $queryString;
         }
 
         return $requestTarget;
     }
 
     /**
-     * {@inheritdoc}
+     * Creates a new instance of the request with the given request target
+     *
+     * @param mixed $requestTarget
+     *
+     * @return static
+     *
+     * @throws InvalidArgumentException
+     *         If the request target isn't valid.
      */
-    public function withRequestTarget($requestTarget) : RequestInterface
+    public function withRequestTarget($requestTarget): RequestInterface
     {
         $clone = clone $this;
         $clone->setRequestTarget($requestTarget);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUri() : UriInterface
-    {
-        if (null === $this->uri) {
-            $this->uri = (new UriFactory)->createUri();
-        }
-
-        return $this->uri;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withUri(UriInterface $uri, $preserveHost = false) : RequestInterface
-    {
-        $clone = clone $this;
-        $clone->setUri($uri, $preserveHost);
 
         return $clone;
     }
@@ -188,103 +220,117 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param string $method
      *
      * @return void
+     *
+     * @throws InvalidArgumentException
+     *         If the method isn't valid.
      */
-    protected function setMethod($method) : void
+    final protected function setMethod($method): void
     {
         $this->validateMethod($method);
 
-        $this->method = strtoupper($method);
-    }
-
-    /**
-     * Sets the given request-target to the request
-     *
-     * @param mixed $requestTarget
-     *
-     * @return void
-     */
-    protected function setRequestTarget($requestTarget) : void
-    {
-        $this->validateRequestTarget($requestTarget);
-
-        /**
-         * @var string $requestTarget
-         */
-
-        $this->requestTarget = $requestTarget;
+        $this->method = $method;
     }
 
     /**
      * Sets the given URI to the request
      *
-     * @param string|UriInterface $uri
+     * @param mixed $uri
      * @param bool $preserveHost
      *
      * @return void
+     *
+     * @throws InvalidArgumentException
+     *         If the URI isn't valid.
      */
-    protected function setUri($uri, $preserveHost = false) : void
+    final protected function setUri($uri, $preserveHost = false): void
     {
-        if (! ($uri instanceof UriInterface)) {
-            $uri = (new UriFactory)->createUri($uri);
-        }
+        $this->uri = Uri::create($uri);
 
-        $this->uri = $uri;
-
-        if ('' === $uri->getHost() || ($preserveHost && $this->hasHeader('Host'))) {
+        if ($preserveHost && $this->hasHeader('Host')) {
             return;
         }
 
-        $newHost = $uri->getHost();
-
-        $port = $uri->getPort();
-        if (null !== $port) {
-            $newHost .= ':' . $port;
+        $host = $this->uri->getHost();
+        if ($host === '') {
+            return;
         }
 
-        $this->addHeader('Host', $newHost);
+        $port = $this->uri->getPort();
+        if (isset($port)) {
+            $host .= ':' . $port;
+        }
+
+        $this->setHeader('Host', $host, true);
+    }
+
+    /**
+     * Sets the given request target to the request
+     *
+     * @param mixed $requestTarget
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     *         If the request target isn't valid.
+     */
+    final protected function setRequestTarget($requestTarget): void
+    {
+        $this->validateRequestTarget($requestTarget);
+
+        /** @var string $requestTarget */
+
+        $this->requestTarget = $requestTarget;
     }
 
     /**
      * Validates the given method
+     *
+     * @link https://tools.ietf.org/html/rfc7230#section-3.1.1
      *
      * @param mixed $method
      *
      * @return void
      *
      * @throws InvalidArgumentException
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-3.1.1
+     *         If the method isn't valid.
      */
-    protected function validateMethod($method) : void
+    private function validateMethod($method): void
     {
+        if ('' === $method) {
+            throw new InvalidArgumentException('HTTP method cannot be an empty');
+        }
+
         if (!is_string($method)) {
             throw new InvalidArgumentException('HTTP method must be a string');
         }
 
-        if (!preg_match(HeaderInterface::RFC7230_TOKEN, $method)) {
-            throw new InvalidArgumentException(sprintf('HTTP method "%s" is not valid', $method));
+        if (!preg_match(Header::RFC7230_VALID_TOKEN, $method)) {
+            throw new InvalidArgumentException('Invalid HTTP method');
         }
     }
 
     /**
-     * Validates the given request-target
+     * Validates the given request target
      *
      * @param mixed $requestTarget
      *
      * @return void
      *
      * @throws InvalidArgumentException
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-5.3
+     *         If the request target isn't valid.
      */
-    protected function validateRequestTarget($requestTarget) : void
+    private function validateRequestTarget($requestTarget): void
     {
-        if (!is_string($requestTarget)) {
-            throw new InvalidArgumentException('HTTP request-target must be a string');
+        if ('' === $requestTarget) {
+            throw new InvalidArgumentException('HTTP request target cannot be an empty');
         }
 
-        if (!preg_match('/^[\x21-\x7E\x80-\xFF]+$/', $requestTarget)) {
-            throw new InvalidArgumentException(sprintf('HTTP request-target "%s" is not valid', $requestTarget));
+        if (!is_string($requestTarget)) {
+            throw new InvalidArgumentException('HTTP request target must be a string');
+        }
+
+        if (!preg_match(self::RFC7230_VALID_REQUEST_TARGET, $requestTarget)) {
+            throw new InvalidArgumentException('Invalid HTTP request target');
         }
     }
 }

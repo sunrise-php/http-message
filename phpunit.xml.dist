@@ -5,6 +5,7 @@
 >
     <coverage>
         <include>
+            <directory>./functions</directory>
             <directory>./src</directory>
         </include>
     </coverage>
@@ -13,4 +14,12 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <const name="REQUEST_FACTORY" value="Sunrise\Http\Message\RequestFactory" />
+        <const name="RESPONSE_FACTORY" value="Sunrise\Http\Message\ResponseFactory" />
+        <const name="SERVER_REQUEST_FACTORY" value="Sunrise\Http\Message\ServerRequestFactory" />
+        <const name="STREAM_FACTORY" value="Sunrise\Http\Message\StreamFactory" />
+        <const name="UPLOADED_FILE_FACTORY" value="Sunrise\Http\Message\UploadedFileFactory" />
+        <const name="URI_FACTORY" value="Sunrise\Http\Message\UriFactory" />
+    </php>
 </phpunit>
