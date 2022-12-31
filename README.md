@@ -15,7 +15,7 @@
 composer require sunrise/http-message
 ```
 
-## Navigation
+## Documentation navigation
 
 - [Headers as objects](#headers-as-objects)
 - - [Implemented headers](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md)
@@ -221,6 +221,6 @@ composer test
 
 ## Useful links
 
-* https://tools.ietf.org/html/rfc7230
-* https://www.php-fig.org/psr/psr-7/
-* https://www.php-fig.org/psr/psr-17/
+- https://tools.ietf.org/html/rfc7230
+- https://www.php-fig.org/psr/psr-7/
+- https://www.php-fig.org/psr/psr-17/
