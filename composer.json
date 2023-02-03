@@ -37,7 +37,7 @@
     },
     "require-dev": {
         "sunrise/coding-standard": "~1.0.0",
-        "phpunit/phpunit": "~9.5.0",
+        "phpunit/phpunit": "~9.6.0",
         "php-http/psr7-integration-tests": "^1.1"
     },
     "autoload": {
