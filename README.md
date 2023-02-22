@@ -177,6 +177,17 @@ $tmpfileStream = new TmpfileStream();
 $tmpfileStream->getMetadata('uri');
 ```
 
+If you don't need the above behavior, you can use another temporary file stream:
+
+```php
+use Sunrise\Http\Message\Stream\TempFileStream;
+
+$tempFileStream = new TempFileStream();
+
+// Returns the file path...
+$tempFileStream->getMetadata('uri');
+```
+
 ### PSR-7 and PSR-17
 
 The following classes implement PSR-7:
