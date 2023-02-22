@@ -17,9 +17,6 @@ namespace Sunrise\Http\Message;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidHeaderException;
-use Sunrise\Http\Message\Exception\InvalidHeaderNameException;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
 /**
@@ -181,7 +178,7 @@ abstract class Message implements MessageInterface
      *
      * @return static
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     public function withHeader($name, $value): MessageInterface
@@ -200,7 +197,7 @@ abstract class Message implements MessageInterface
      *
      * @return static
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     public function withAddedHeader($name, $value): MessageInterface
@@ -277,7 +274,7 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     final protected function setHeader($name, $value, bool $replace = true): void
@@ -310,7 +307,7 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If one of the headers isn't valid.
      */
     final protected function setHeaders(array $headers): void
@@ -373,21 +370,21 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderNameException
+     * @throws InvalidArgumentException
      *         If the header name isn't valid.
      */
     private function validateHeaderName($name): void
     {
         if ($name === '') {
-            throw new InvalidHeaderNameException('HTTP header name cannot be an empty');
+            throw new InvalidArgumentException('HTTP header name cannot be an empty');
         }
 
         if (!is_string($name)) {
-            throw new InvalidHeaderNameException('HTTP header name must be a string');
+            throw new InvalidArgumentException('HTTP header name must be a string');
         }
 
         if (!preg_match(Header::RFC7230_VALID_TOKEN, $name)) {
-            throw new InvalidHeaderNameException('HTTP header name is invalid');
+            throw new InvalidArgumentException('HTTP header name is invalid');
         }
     }
 
@@ -399,36 +396,36 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidArgumentException
      *         If the header value isn't valid.
      */
     private function validateHeaderValue(string $validName, array $value): void
     {
         if ([] === $value) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The "%s" HTTP header value cannot be an empty array',
                 $validName,
             ));
         }
 
-        foreach ($value as $i => $subvalue) {
-            if ('' === $subvalue) {
+        foreach ($value as $key => $item) {
+            if ('' === $item) {
                 continue;
             }
 
-            if (!is_string($subvalue)) {
-                throw new InvalidHeaderValueException(sprintf(
-                    'The "%s[%d]" HTTP header value must be a string',
+            if (!is_string($item)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The "%s[%s]" HTTP header value must be a string',
                     $validName,
-                    $i
+                    $key
                 ));
             }
 
-            if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $subvalue)) {
-                throw new InvalidHeaderValueException(sprintf(
-                    'The "%s[%d]" HTTP header value is invalid',
+            if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $item)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The "%s[%s]" HTTP header value is invalid',
                     $validName,
-                    $i
+                    $key
                 ));
             }
         }

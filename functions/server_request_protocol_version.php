@@ -18,7 +18,7 @@ use function sprintf;
 use function sscanf;
 
 /**
- * Gets the request protocol version
+ * Gets the request's protocol version
  *
  * @param array|null $serverParams
  *

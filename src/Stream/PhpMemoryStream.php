@@ -24,7 +24,7 @@ use function fopen;
 /**
  * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory
  */
-class PhpMemoryStream extends Stream
+final class PhpMemoryStream extends Stream
 {
 
     /**

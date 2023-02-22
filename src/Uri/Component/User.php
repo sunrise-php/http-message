@@ -71,6 +71,24 @@ final class User implements ComponentInterface
     }
 
     /**
+     * Creates a user component
+     *
+     * @param mixed $user
+     *
+     * @return User
+     *
+     * @throws InvalidUriComponentException
+     */
+    public static function create($user): User
+    {
+        if ($user instanceof User) {
+            return $user;
+        }
+
+        return new User($user);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return string

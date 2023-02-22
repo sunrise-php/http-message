@@ -21,7 +21,7 @@ use IteratorAggregate;
  *   $response->withHeader(...new SetCookieHeader('foo', 'bar'))
  * </code>
  *
- * @template-implements IteratorAggregate<int, string>
+ * @extends IteratorAggregate<int, string>
  */
 interface HeaderInterface extends IteratorAggregate
 {

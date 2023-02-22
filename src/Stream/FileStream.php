@@ -14,7 +14,6 @@ namespace Sunrise\Http\Message\Stream;
 /**
  * Import classes
  */
-use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream;
 use Throwable;
@@ -25,13 +24,11 @@ use Throwable;
 use function fopen;
 use function is_resource;
 use function sprintf;
-use function sys_get_temp_dir;
-use function tempnam;
 
 /**
  * FileStream
  */
-class FileStream extends Stream
+final class FileStream extends Stream
 {
 
     /**
@@ -59,19 +56,5 @@ class FileStream extends Stream
         }
 
         parent::__construct($resource);
-    }
-
-    /**
-     * Creates a new temporary file in the temporary directory
-     *
-     * @return StreamInterface
-     *
-     * @throws RuntimeException
-     */
-    public static function tempFile(): StreamInterface
-    {
-        $filename = tempnam(sys_get_temp_dir(), 'sunrisephp');
-
-        return new self($filename, 'w+b');
     }
 }

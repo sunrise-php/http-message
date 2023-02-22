@@ -27,11 +27,11 @@ use function is_array;
 use const UPLOAD_ERR_NO_FILE;
 
 /**
- * Gets the request uploaded files
+ * Gets the request's uploaded files
  *
  * Note that not sent files will not be handled.
  *
- * @param array|null $rawUploadedFiles
+ * @param array|null $files
  *
  * @return array
  *
@@ -40,19 +40,34 @@ use const UPLOAD_ERR_NO_FILE;
  * @link https://www.php.net/manual/ru/features.file-upload.multiple.php
  * @link https://github.com/php/php-src/blob/8c5b41cefb88b753c630b731956ede8d9da30c5d/main/rfc1867.c
  */
-function server_request_files(?array $rawUploadedFiles = null): array
+function server_request_files(?array $files = null): array
 {
-    $rawUploadedFiles ??= $_FILES;
+    $files ??= $_FILES;
 
     $walker = function ($path, $size, $error, $name, $type) use (&$walker) {
-        if (! is_array($path)) {
-            return new UploadedFile(new FileStream($path, 'rb'), $size, $error, $name, $type);
+        if (!is_array($path)) {
+            // What if the path is an empty string?
+            $stream = new FileStream($path, 'rb');
+
+            return new UploadedFile(
+                $stream,
+                $size,
+                $error,
+                $name,
+                $type
+            );
         }
 
         $result = [];
         foreach ($path as $key => $_) {
             if (UPLOAD_ERR_NO_FILE <> $error[$key]) {
-                $result[$key] = $walker($path[$key], $size[$key], $error[$key], $name[$key], $type[$key]);
+                $result[$key] = $walker(
+                    $path[$key],
+                    $size[$key],
+                    $error[$key],
+                    $name[$key],
+                    $type[$key]
+                );
             }
         }
 
@@ -60,9 +75,15 @@ function server_request_files(?array $rawUploadedFiles = null): array
     };
 
     $result = [];
-    foreach ($rawUploadedFiles as $key => $file) {
+    foreach ($files as $key => $file) {
         if (UPLOAD_ERR_NO_FILE <> $file['error']) {
-            $result[$key] = $walker($file['tmp_name'], $file['size'], $file['error'], $file['name'], $file['type']);
+            $result[$key] = $walker(
+                $file['tmp_name'],
+                $file['size'],
+                $file['error'],
+                $file['name'],
+                $file['type']
+            );
         }
     }
 

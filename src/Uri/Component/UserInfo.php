@@ -41,10 +41,10 @@ final class UserInfo implements ComponentInterface
      */
     public function __construct($user, $password = null)
     {
-        $this->user = $user instanceof User ? $user : new User($user);
+        $this->user = User::create($user);
 
         if (isset($password)) {
-            $this->password = $password instanceof Password ? $password : new Password($password);
+            $this->password = Password::create($password);
         }
     }
 

@@ -94,7 +94,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $attributes
      *
      * @throws InvalidArgumentException
-     *         If one of the parameters isn't valid.
+     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?string $protocolVersion = null,

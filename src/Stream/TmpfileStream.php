@@ -32,7 +32,7 @@ use function tmpfile;
  *
  * @link https://www.php.net/tmpfile
  */
-class TmpfileStream extends Stream
+final class TmpfileStream extends Stream
 {
 
     /**
@@ -42,16 +42,16 @@ class TmpfileStream extends Stream
      */
     public function __construct()
     {
-        $tmpdir = sys_get_temp_dir();
-        if (!is_writable($tmpdir)) {
+        $dirname = sys_get_temp_dir();
+        if (!is_writable($dirname)) {
             throw new RuntimeException('Temporary files directory is not writable');
         }
 
-        $tmpfile = tmpfile();
-        if (!is_resource($tmpfile)) {
+        $resource = tmpfile();
+        if (!is_resource($resource)) {
             throw new RuntimeException('Temporary file cannot be created or opened');
         }
 
-        parent::__construct($tmpfile);
+        parent::__construct($resource);
     }
 }

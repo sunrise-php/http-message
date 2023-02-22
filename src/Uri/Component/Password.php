@@ -71,6 +71,24 @@ final class Password implements ComponentInterface
     }
 
     /**
+     * Creates a password component
+     *
+     * @param mixed $password
+     *
+     * @return Password
+     *
+     * @throws InvalidUriComponentException
+     */
+    public static function create($password): Password
+    {
+        if ($password instanceof Password) {
+            return $password;
+        }
+
+        return new Password($password);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return string

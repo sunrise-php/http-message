@@ -14,9 +14,7 @@ namespace Sunrise\Http\Message;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
-use ArrayIterator;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -79,7 +77,8 @@ abstract class Header implements HeaderInterface
      */
     final public function getIterator(): Traversable
     {
-        return new ArrayIterator([$this->getFieldName(), $this->getFieldValue()]);
+        yield $this->getFieldName();
+        yield $this->getFieldValue();
     }
 
     /**
@@ -109,7 +108,7 @@ abstract class Header implements HeaderInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the tokens isn't valid.
      */
     final protected function validateToken(string ...$tokens): void
@@ -124,7 +123,7 @@ abstract class Header implements HeaderInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the field values isn't valid.
      */
     final protected function validateFieldValue(string ...$fieldValues): void
@@ -139,7 +138,7 @@ abstract class Header implements HeaderInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the quoted strings isn't valid.
      */
     final protected function validateQuotedString(string ...$quotedStrings): void
@@ -155,7 +154,7 @@ abstract class Header implements HeaderInterface
      * @return array<string, string>
      *         The normalized parameters.
      *
-     * @throws InvalidHeaderValueParameterException
+     * @throws InvalidHeaderException
      *         If one of the parameters isn't valid.
      */
     final protected function validateParameters(array $parameters): array
@@ -175,14 +174,14 @@ abstract class Header implements HeaderInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the values isn't valid.
      */
     final protected function validateValueByRegex(string $regex, string ...$values): void
     {
         foreach ($values as $value) {
             if (!preg_match($regex, $value)) {
-                throw new InvalidHeaderValueException(sprintf(
+                throw new InvalidHeaderException(sprintf(
                     'The value "%2$s" for the header "%1$s" is not valid',
                     $this->getFieldName(),
                     $value
@@ -201,14 +200,14 @@ abstract class Header implements HeaderInterface
      * @return array<string, string>
      *         The normalized parameters.
      *
-     * @throws InvalidHeaderValueParameterException
+     * @throws InvalidHeaderException
      *         If one of the parameters isn't valid.
      */
     final protected function validateParametersByRegex(array $parameters, string $nameRegex, string $valueRegex): array
     {
         foreach ($parameters as $name => &$value) {
             if (!is_string($name) || !preg_match($nameRegex, $name)) {
-                throw new InvalidHeaderValueParameterException(sprintf(
+                throw new InvalidHeaderException(sprintf(
                     'The parameter name "%2$s" for the header "%1$s" is not valid',
                     $this->getFieldName(),
                     (is_string($name) ? $name : ('<' . gettype($name) . '>'))
@@ -221,7 +220,7 @@ abstract class Header implements HeaderInterface
             }
 
             if (!is_string($value) || !preg_match($valueRegex, $value)) {
-                throw new InvalidHeaderValueParameterException(sprintf(
+                throw new InvalidHeaderException(sprintf(
                     'The parameter value "%2$s" for the header "%1$s" is not valid',
                     $this->getFieldName(),
                     (is_string($value) ? $value : ('<' . gettype($value) . '>'))

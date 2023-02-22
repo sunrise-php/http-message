@@ -16,9 +16,7 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Sunrise\Http\Message\Exception\FailedUploadedFileOperationException;
-use Sunrise\Http\Message\Exception\InvalidUploadedFileException;
-use Sunrise\Http\Message\Exception\InvalidUploadedFileOperationException;
+use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream\FileStream;
 
 /**
@@ -60,22 +58,14 @@ class UploadedFile implements UploadedFileInterface
      */
     public const UPLOAD_ERRORS = [
         UPLOAD_ERR_OK         => 'No error',
-        UPLOAD_ERR_INI_SIZE   => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-        UPLOAD_ERR_FORM_SIZE  => 'The uploaded file exceeds the MAX_FILE_SIZE directive ' .
-                                 'that was specified in the HTML form',
-        UPLOAD_ERR_PARTIAL    => 'The uploaded file was only partially uploaded',
+        UPLOAD_ERR_INI_SIZE   => 'Uploaded file exceeds the upload_max_filesize directive in php.ini',
+        UPLOAD_ERR_FORM_SIZE  => 'Uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the form',
+        UPLOAD_ERR_PARTIAL    => 'Uploaded file was only partially uploaded',
         UPLOAD_ERR_NO_FILE    => 'No file was uploaded',
         UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
         UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
         UPLOAD_ERR_EXTENSION  => 'File upload stopped by extension',
     ];
-
-    /**
-     * Unknown error description
-     *
-     * @var string
-     */
-    public const UNKNOWN_ERROR_TEXT = 'Unknown error';
 
     /**
      * The file stream
@@ -106,14 +96,14 @@ class UploadedFile implements UploadedFileInterface
     private string $errorMessage;
 
     /**
-     * The file name
+     * The client's file name
      *
      * @var string|null
      */
     private ?string $clientFilename;
 
     /**
-     * The file type
+     * The client's file media type
      *
      * @var string|null
      */
@@ -139,11 +129,11 @@ class UploadedFile implements UploadedFileInterface
             $this->stream = $stream;
         }
 
-        $errorMessage = self::UPLOAD_ERRORS[$error] ?? self::UNKNOWN_ERROR_TEXT;
+        $message = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
 
         $this->size = $size;
         $this->errorCode = $error;
-        $this->errorMessage = $errorMessage;
+        $this->errorMessage = $message;
         $this->clientFilename = $clientFilename;
         $this->clientMediaType = $clientMediaType;
     }
@@ -153,23 +143,23 @@ class UploadedFile implements UploadedFileInterface
      *
      * @return StreamInterface
      *
-     * @throws InvalidUploadedFileException
-     *         If the file has no a stream due to an error or
-     *         if the file was already moved.
+     * @throws RuntimeException
+     *         - If the file has no a stream due to an error;
+     *         - If the file was already moved.
      */
     public function getStream(): StreamInterface
     {
         if (UPLOAD_ERR_OK <> $this->errorCode) {
-            throw new InvalidUploadedFileException(sprintf(
-                'The uploaded file has no a stream due to the error #%d (%s)',
+            throw new RuntimeException(sprintf(
+                'Uploaded file has no a stream due to the error #%d (%s)',
                 $this->errorCode,
                 $this->errorMessage
             ));
         }
 
         if (!isset($this->stream)) {
-            throw new InvalidUploadedFileException(
-                'The uploaded file has no a stream because it was already moved'
+            throw new RuntimeException(
+                'Uploaded file has no a stream because it was already moved'
             );
         }
 
@@ -183,42 +173,38 @@ class UploadedFile implements UploadedFileInterface
      *
      * @return void
      *
-     * @throws InvalidUploadedFileException
-     *         If the file has no a stream due to an error or
-     *         if the file was already moved.
-     *
-     * @throws InvalidUploadedFileOperationException
-     *         If the file cannot be read.
-     *
-     * @throws FailedUploadedFileOperationException
-     *         If the target path cannot be used.
+     * @throws RuntimeException
+     *         - If the file has no a stream due to an error;
+     *         - If the file was already moved;
+     *         - If the file cannot be read;
+     *         - If the target path cannot be used.
      */
     public function moveTo($targetPath): void
     {
         if (UPLOAD_ERR_OK <> $this->errorCode) {
-            throw new InvalidUploadedFileException(sprintf(
-                'The uploaded file cannot be moved due to the error #%d (%s)',
+            throw new RuntimeException(sprintf(
+                'Uploaded file cannot be moved due to the error #%d (%s)',
                 $this->errorCode,
                 $this->errorMessage
             ));
         }
 
         if (!isset($this->stream)) {
-            throw new InvalidUploadedFileException(
-                'The uploaded file cannot be moved because it was already moved'
+            throw new RuntimeException(
+                'Uploaded file cannot be moved because it was already moved'
             );
         }
 
         if (!$this->stream->isReadable()) {
-            throw new InvalidUploadedFileOperationException(
-                'The uploaded file cannot be moved because it is not readable'
+            throw new RuntimeException(
+                'Uploaded file cannot be moved because it is not readable'
             );
         }
 
         $targetDir = dirname($targetPath);
         if (!is_dir($targetDir) || !is_writable($targetDir)) {
-            throw new FailedUploadedFileOperationException(sprintf(
-                'The uploaded file cannot be moved because the directory "%s" is not writable',
+            throw new RuntimeException(sprintf(
+                'Uploaded file cannot be moved because the directory "%s" is not writable',
                 $targetDir
             ));
         }
@@ -230,8 +216,9 @@ class UploadedFile implements UploadedFileInterface
         }
 
         while (!$this->stream->eof()) {
-            $piece = $this->stream->read(4096);
-            $targetStream->write($piece);
+            $targetStream->write(
+                $this->stream->read(4096)
+            );
         }
 
         $targetStream->close();
@@ -271,7 +258,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Gets the file name
+     * Gets the client's file name
      *
      * @return string|null
      */
@@ -281,7 +268,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Gets the file type
+     * Gets the client's file media type
      *
      * @return string|null
      */

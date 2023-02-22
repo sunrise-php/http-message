@@ -89,7 +89,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param StreamInterface|null $body
      *
      * @throws InvalidArgumentException
-     *         If one of the parameters isn't valid.
+     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?string $method = null,

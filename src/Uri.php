@@ -151,7 +151,7 @@ class Uri implements UriInterface
      * @return UriInterface
      *
      * @throws InvalidArgumentException
-     *         If a URI cannot be created.
+     *         If the URI isn't valid.
      */
     public static function create($uri): UriInterface
     {
@@ -424,9 +424,7 @@ class Uri implements UriInterface
      */
     final protected function setScheme($scheme): void
     {
-        $component = new Scheme($scheme);
-
-        $this->scheme = $component->getValue();
+        $this->scheme = (new Scheme($scheme))->getValue();
     }
 
     /**
@@ -442,9 +440,7 @@ class Uri implements UriInterface
      */
     final protected function setUserInfo($user, $password): void
     {
-        $component = new UserInfo($user, $password);
-
-        $this->userInfo = $component->getValue();
+        $this->userInfo = (new UserInfo($user, $password))->getValue();
     }
 
     /**
@@ -459,9 +455,7 @@ class Uri implements UriInterface
      */
     final protected function setHost($host): void
     {
-        $component = new Host($host);
-
-        $this->host = $component->getValue();
+        $this->host = (new Host($host))->getValue();
     }
 
     /**
@@ -476,9 +470,7 @@ class Uri implements UriInterface
      */
     final protected function setPort($port): void
     {
-        $component = new Port($port);
-
-        $this->port = $component->getValue();
+        $this->port = (new Port($port))->getValue();
     }
 
     /**
@@ -493,9 +485,7 @@ class Uri implements UriInterface
      */
     final protected function setPath($path): void
     {
-        $component = new Path($path);
-
-        $this->path = $component->getValue();
+        $this->path = (new Path($path))->getValue();
     }
 
     /**
@@ -510,9 +500,7 @@ class Uri implements UriInterface
      */
     final protected function setQuery($query): void
     {
-        $component = new Query($query);
-
-        $this->query = $component->getValue();
+        $this->query = (new Query($query))->getValue();
     }
 
     /**
@@ -527,8 +515,6 @@ class Uri implements UriInterface
      */
     final protected function setFragment($fragment): void
     {
-        $component = new Fragment($fragment);
-
-        $this->fragment = $component->getValue();
+        $this->fragment = (new Fragment($fragment))->getValue();
     }
 }

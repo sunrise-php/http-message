@@ -26,7 +26,7 @@ use function sprintf;
 /**
  * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory
  */
-class PhpTempStream extends Stream
+final class PhpTempStream extends Stream
 {
 
     /**

@@ -25,7 +25,7 @@ use function stream_copy_to_stream;
 /**
  * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.input
  */
-class PhpInputStream extends Stream
+final class PhpInputStream extends Stream
 {
 
     /**
