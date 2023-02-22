@@ -42,6 +42,7 @@
     },
     "autoload": {
         "files": [
+            "functions/header_accept_parse.php",
             "functions/server_request_files.php",
             "functions/server_request_headers.php",
             "functions/server_request_method.php",
@@ -60,7 +61,7 @@
     "scripts": {
         "test": [
             "phpcs",
-            "psalm",
+            "psalm --no-cache",
             "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
         ],
         "build": [
