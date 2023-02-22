@@ -6,10 +6,8 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
-use Sunrise\Http\Message\Exception\FailedStreamOperationException;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidStreamException;
-use Sunrise\Http\Message\Exception\InvalidStreamOperationException;
+use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream;
 
 use function fclose;
@@ -150,7 +148,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->tell();
@@ -160,7 +158,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->tell();
@@ -170,7 +168,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDIN, false);
 
-        $this->expectException(FailedStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to get the stream pointer position');
 
         $testStream->tell();
@@ -211,7 +209,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->rewind();
@@ -221,7 +219,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->rewind();
@@ -231,7 +229,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDIN, false);
 
-        $this->expectException(InvalidStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Stream is not seekable');
 
         $testStream->rewind();
@@ -248,7 +246,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->seek(0);
@@ -258,7 +256,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->seek(0);
@@ -268,7 +266,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDIN, false);
 
-        $this->expectException(InvalidStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Stream is not seekable');
 
         $testStream->seek(0);
@@ -276,7 +274,7 @@ class StreamTest extends TestCase
 
     public function testFailedSeek(): void
     {
-        $this->expectException(FailedStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to move the stream pointer position');
 
         $this->testStream->seek(1);
@@ -316,7 +314,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->write('foo');
@@ -326,7 +324,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->write('foo');
@@ -336,7 +334,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDIN, false);
 
-        $this->expectException(InvalidStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Stream is not writable');
 
         $testStream->write('foo');
@@ -376,7 +374,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->read(1);
@@ -386,7 +384,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->read(1);
@@ -396,7 +394,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDOUT, false);
 
-        $this->expectException(InvalidStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Stream is not readable');
 
         $testStream->read(1);
@@ -413,7 +411,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->detach();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->getContents();
@@ -423,7 +421,7 @@ class StreamTest extends TestCase
     {
         $this->testStream->close();
 
-        $this->expectException(InvalidStreamException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
 
         $this->testStream->getContents();
@@ -433,7 +431,7 @@ class StreamTest extends TestCase
     {
         $testStream = new Stream(STDOUT, false);
 
-        $this->expectException(InvalidStreamOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Stream is not readable');
 
         $testStream->getContents();
