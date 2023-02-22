@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -39,11 +39,12 @@ class KeepAliveHeader extends Header
      *
      * @param array<array-key, mixed> $parameters
      *
-     * @throws InvalidHeaderValueParameterException
+     * @throws InvalidHeaderException
      *         If the parameters aren't valid.
      */
     public function __construct(array $parameters = [])
     {
+        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->parameters = $parameters;

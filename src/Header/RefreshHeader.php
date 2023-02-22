@@ -15,7 +15,7 @@ namespace Sunrise\Http\Message\Header;
  * Import classes
  */
 use Psr\Http\Message\UriInterface;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Exception\InvalidUriException;
 use Sunrise\Http\Message\Header;
 use Sunrise\Http\Message\Uri;
@@ -50,7 +50,7 @@ class RefreshHeader extends Header
      * @throws InvalidUriException
      *         If the URI isn't valid.
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the delay isn't valid.
      */
     public function __construct(int $delay, $uri)
@@ -86,13 +86,13 @@ class RefreshHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the delay isn't valid.
      */
     private function validateDelay(int $delay): void
     {
         if (! ($delay >= 0)) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The delay "%2$d" for the header "%1$s" is not valid',
                 $this->getFieldName(),
                 $delay

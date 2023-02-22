@@ -14,8 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -54,16 +53,15 @@ class ContentTypeHeader extends Header
      * @param string $type
      * @param array<array-key, mixed> $parameters
      *
-     * @throws InvalidHeaderValueException
-     *         If the type isn't valid.
-     *
-     * @throws InvalidHeaderValueParameterException
-     *         If the parameters aren't valid.
+     * @throws InvalidHeaderException
+     *         - If the type isn't valid;
+     *         - If the parameters aren't valid.
      */
     public function __construct(string $type, array $parameters = [])
     {
         $this->validateValueByRegex(self::RFC6838_CONTENT_TYPE, $type);
 
+        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->type = $type;

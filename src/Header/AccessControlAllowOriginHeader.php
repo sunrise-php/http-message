@@ -15,7 +15,7 @@ namespace Sunrise\Http\Message\Header;
  * Import classes
  */
 use Psr\Http\Message\UriInterface;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Exception\InvalidUriException;
 use Sunrise\Http\Message\Header;
 use Sunrise\Http\Message\Uri;
@@ -44,7 +44,7 @@ class AccessControlAllowOriginHeader extends Header
      * @throws InvalidUriException
      *         If the URI isn't valid.
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the URI isn't valid.
      */
     public function __construct($uri = null)
@@ -91,13 +91,13 @@ class AccessControlAllowOriginHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the URI isn't valid.
      */
     private function validateUri(UriInterface $uri): void
     {
         if ($uri->getScheme() === '' || $uri->getHost() === '') {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The URI "%2$s" for the header "%1$s" is not valid',
                 $this->getFieldName(),
                 $uri->__toString()

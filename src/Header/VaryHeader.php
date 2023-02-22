@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -31,23 +31,23 @@ class VaryHeader extends Header
     /**
      * @var list<string>
      */
-    private array $value;
+    private array $value = [];
 
     /**
      * Constructor of the class
      *
      * @param string ...$value
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the values isn't valid.
      */
     public function __construct(string ...$value)
     {
-        /** @var list<string> $value */
-
         $this->validateToken(...$value);
 
-        $this->value = $value;
+        foreach ($value as $item) {
+            $this->value[] = $item;
+        }
     }
 
     /**

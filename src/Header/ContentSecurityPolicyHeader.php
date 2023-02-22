@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -57,11 +57,12 @@ class ContentSecurityPolicyHeader extends Header
      *
      * @param array<array-key, mixed> $parameters
      *
-     * @throws InvalidHeaderValueParameterException
+     * @throws InvalidHeaderException
      *         If the parameters aren't valid.
      */
     public function __construct(array $parameters = [])
     {
+        // validate and normalize the parameters...
         $parameters = $this->validateParametersByRegex(
             $parameters,
             self::VALID_DIRECTIVE_NAME,
@@ -86,7 +87,7 @@ class ContentSecurityPolicyHeader extends Header
     {
         $directives = [];
         foreach ($this->parameters as $directive => $value) {
-            // the directive can be without value...
+            // the directive can be without value,
             // e.g. sandbox, upgrade-insecure-requests, etc.
             if ($value === '') {
                 $directives[] = $directive;

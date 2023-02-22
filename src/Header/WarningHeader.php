@@ -15,7 +15,8 @@ namespace Sunrise\Http\Message\Header;
  * Import classes
  */
 use DateTimeInterface;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Enum\WarningCode;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -30,17 +31,39 @@ class WarningHeader extends Header
 {
 
     /**
-     * HTTP Warning Codes
-     *
-     * @link https://www.iana.org/assignments/http-warn-codes/http-warn-codes.xhtml
+     * @deprecated Use the {@see WarningCode} enum.
      */
-    public const HTTP_WARNING_CODE_RESPONSE_IS_STALE = 110;
-    public const HTTP_WARNING_CODE_REVALIDATION_FAILED = 111;
-    public const HTTP_WARNING_CODE_DISCONNECTED_OPERATION = 112;
-    public const HTTP_WARNING_CODE_HEURISTIC_EXPIRATION = 113;
-    public const HTTP_WARNING_CODE_MISCELLANEOUS_WARNING = 199;
-    public const HTTP_WARNING_CODE_TRANSFORMATION_APPLIED = 214;
-    public const HTTP_WARNING_CODE_MISCELLANEOUS_PERSISTENT_WARNING = 299;
+    public const HTTP_WARNING_CODE_RESPONSE_IS_STALE = WarningCode::RESPONSE_IS_STALE;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_REVALIDATION_FAILED = WarningCode::REVALIDATION_FAILED;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_DISCONNECTED_OPERATION = WarningCode::DISCONNECTED_OPERATION;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_HEURISTIC_EXPIRATION = WarningCode::HEURISTIC_EXPIRATION;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_MISCELLANEOUS_WARNING = WarningCode::MISCELLANEOUS_WARNING;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_TRANSFORMATION_APPLIED = WarningCode::TRANSFORMATION_APPLIED;
+
+    /**
+     * @deprecated Use the {@see WarningCode} enum.
+     */
+    public const HTTP_WARNING_CODE_MISCELLANEOUS_PERSISTENT_WARNING = WarningCode::MISCELLANEOUS_PERSISTENT_WARNING;
 
     /**
      * @var int
@@ -70,8 +93,8 @@ class WarningHeader extends Header
      * @param string $text
      * @param DateTimeInterface|null $date
      *
-     * @throws InvalidHeaderValueException
-     *         If one of parameters isn't valid.
+     * @throws InvalidHeaderException
+     *         If one of arguments isn't valid.
      */
     public function __construct(int $code, string $agent, string $text, ?DateTimeInterface $date = null)
     {
@@ -114,13 +137,13 @@ class WarningHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the code isn't valid.
      */
     private function validateCode(int $code): void
     {
         if (! ($code >= 100 && $code <= 999)) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The code "%2$d" for the header "%1$s" is not valid',
                 $this->getFieldName(),
                 $code

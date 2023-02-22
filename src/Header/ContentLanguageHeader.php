@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -40,23 +40,23 @@ class ContentLanguageHeader extends Header
     /**
      * @var list<string>
      */
-    private array $languages;
+    private array $languages = [];
 
     /**
      * Constructor of the class
      *
      * @param string ...$languages
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the language codes isn't valid.
      */
     public function __construct(string ...$languages)
     {
-        /** @var list<string> $languages */
-
         $this->validateValueByRegex(self::RFC2616_LANGUAGE_TAG, ...$languages);
 
-        $this->languages = $languages;
+        foreach ($languages as $language) {
+            $this->languages[] = $language;
+        }
     }
 
     /**

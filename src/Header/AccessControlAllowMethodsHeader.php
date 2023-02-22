@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -39,16 +39,13 @@ class AccessControlAllowMethodsHeader extends Header
      *
      * @param string ...$methods
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the methods isn't valid.
      */
     public function __construct(string ...$methods)
     {
-        /** @var list<string> $methods */
-
         $this->validateToken(...$methods);
 
-        // normalize the list of methods...
         foreach ($methods as $method) {
             $this->methods[] = strtoupper($method);
         }

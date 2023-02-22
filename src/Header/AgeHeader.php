@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -38,7 +38,7 @@ class AgeHeader extends Header
      *
      * @param int $value
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the value isn't valid.
      */
     public function __construct(int $value)
@@ -71,13 +71,13 @@ class AgeHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the value isn't valid.
      */
     private function validateValue(int $value): void
     {
         if (! ($value >= 0)) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The value "%2$d" for the header "%1$s" is not valid',
                 $this->getFieldName(),
                 $value

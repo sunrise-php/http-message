@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -31,23 +31,23 @@ class AccessControlExposeHeadersHeader extends Header
     /**
      * @var list<string>
      */
-    private array $headers;
+    private array $headers = [];
 
     /**
      * Constructor of the class
      *
      * @param string ...$headers
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the header names isn't valid.
      */
     public function __construct(string ...$headers)
     {
-        /** @var list<string> $headers */
-
         $this->validateToken(...$headers);
 
-        $this->headers = $headers;
+        foreach ($headers as $header) {
+            $this->headers[] = $header;
+        }
     }
 
     /**

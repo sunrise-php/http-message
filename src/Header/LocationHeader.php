@@ -40,9 +40,7 @@ class LocationHeader extends Header
      */
     public function __construct($uri)
     {
-        $uri = Uri::create($uri);
-
-        $this->uri = $uri;
+        $this->uri = Uri::create($uri);
     }
 
     /**

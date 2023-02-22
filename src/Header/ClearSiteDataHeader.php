@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -32,23 +32,23 @@ class ClearSiteDataHeader extends Header
     /**
      * @var list<string>
      */
-    private array $directives;
+    private array $directives = [];
 
     /**
      * Constructor of the class
      *
      * @param string ...$directives
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the directives isn't valid.
      */
     public function __construct(string ...$directives)
     {
-        /** @var list<string> $directives */
-
         $this->validateQuotedString(...$directives);
 
-        $this->directives = $directives;
+        foreach ($directives as $directive) {
+            $this->directives[] = $directive;
+        }
     }
 
     /**

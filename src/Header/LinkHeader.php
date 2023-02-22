@@ -15,7 +15,7 @@ namespace Sunrise\Http\Message\Header;
  * Import classes
  */
 use Psr\Http\Message\UriInterface;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Exception\InvalidUriException;
 use Sunrise\Http\Message\Header;
 use Sunrise\Http\Message\Uri;
@@ -50,16 +50,15 @@ class LinkHeader extends Header
      * @throws InvalidUriException
      *         If the URI isn't valid.
      *
-     * @throws InvalidHeaderValueParameterException
+     * @throws InvalidHeaderException
      *         If the parameters aren't valid.
      */
     public function __construct($uri, array $parameters = [])
     {
-        $uri = Uri::create($uri);
-
+        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
-        $this->uri = $uri;
+        $this->uri = Uri::create($uri);
         $this->parameters = $parameters;
     }
 

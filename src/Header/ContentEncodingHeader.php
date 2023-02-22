@@ -14,7 +14,8 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Enum\Encoding;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -29,35 +30,45 @@ class ContentEncodingHeader extends Header
 {
 
     /**
-     * Directives
-     *
-     * @var string
+     * @deprecated Use the {@see Encoding} enum.
      */
-    public const GZIP = 'gzip';
-    public const COMPRESS = 'compress';
-    public const DEFLATE = 'deflate';
-    public const BR = 'br';
+    public const BR = Encoding::BR;
+
+    /**
+     * @deprecated Use the {@see Encoding} enum.
+     */
+    public const COMPRESS = Encoding::COMPRESS;
+
+    /**
+     * @deprecated Use the {@see Encoding} enum.
+     */
+    public const DEFLATE = Encoding::DEFLATE;
+
+    /**
+     * @deprecated Use the {@see Encoding} enum.
+     */
+    public const GZIP = Encoding::GZIP;
 
     /**
      * @var list<string>
      */
-    private array $directives;
+    private array $directives = [];
 
     /**
      * Constructor of the class
      *
      * @param string ...$directives
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If one of the directives isn't valid.
      */
     public function __construct(string ...$directives)
     {
-        /** @var list<string> $directives */
-
         $this->validateToken(...$directives);
 
-        $this->directives = $directives;
+        foreach ($directives as $directive) {
+            $this->directives[] = $directive;
+        }
     }
 
     /**

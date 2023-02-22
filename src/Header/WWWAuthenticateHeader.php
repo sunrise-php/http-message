@@ -14,8 +14,8 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueParameterException;
+use Sunrise\Http\Message\Enum\AuthenticationScheme;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -31,20 +31,54 @@ class WWWAuthenticateHeader extends Header
 {
 
     /**
-     * HTTP Authentication Schemes
-     *
-     * @link https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
+     * @deprecated Use the {@see AuthenticationScheme} enum.
      */
-    public const HTTP_AUTHENTICATE_SCHEME_BASIC         = 'Basic';
-    public const HTTP_AUTHENTICATE_SCHEME_BEARER        = 'Bearer';
-    public const HTTP_AUTHENTICATE_SCHEME_DIGEST        = 'Digest';
-    public const HTTP_AUTHENTICATE_SCHEME_HOBA          = 'HOBA';
-    public const HTTP_AUTHENTICATE_SCHEME_MUTUAL        = 'Mutual';
-    public const HTTP_AUTHENTICATE_SCHEME_NEGOTIATE     = 'Negotiate';
-    public const HTTP_AUTHENTICATE_SCHEME_OAUTH         = 'OAuth';
-    public const HTTP_AUTHENTICATE_SCHEME_SCRAM_SHA_1   = 'SCRAM-SHA-1';
-    public const HTTP_AUTHENTICATE_SCHEME_SCRAM_SHA_256 = 'SCRAM-SHA-256';
-    public const HTTP_AUTHENTICATE_SCHEME_VAPID         = 'vapid';
+    public const HTTP_AUTHENTICATE_SCHEME_BASIC = AuthenticationScheme::BASIC;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_BEARER = AuthenticationScheme::BEARER;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_DIGEST = AuthenticationScheme::DIGEST;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_HOBA = AuthenticationScheme::HOBA;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_MUTUAL = AuthenticationScheme::MUTUAL;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_NEGOTIATE = AuthenticationScheme::NEGOTIATE;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_OAUTH = AuthenticationScheme::OAUTH;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_SCRAM_SHA_1 = AuthenticationScheme::SCRAM_SHA_1;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_SCRAM_SHA_256 = AuthenticationScheme::SCRAM_SHA_256;
+
+    /**
+     * @deprecated Use the {@see AuthenticationScheme} enum.
+     */
+    public const HTTP_AUTHENTICATE_SCHEME_VAPID = AuthenticationScheme::VAPID;
 
     /**
      * @var string
@@ -62,16 +96,15 @@ class WWWAuthenticateHeader extends Header
      * @param string $scheme
      * @param array<array-key, mixed> $parameters
      *
-     * @throws InvalidHeaderValueException
-     *         If the scheme isn't valid.
-     *
-     * @throws InvalidHeaderValueParameterException
-     *         If the parameters aren't valid.
+     * @throws InvalidHeaderException
+     *         - If the scheme isn't valid;
+     *         - If the parameters aren't valid.
      */
     public function __construct(string $scheme, array $parameters = [])
     {
         $this->validateToken($scheme);
 
+        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->scheme = $scheme;

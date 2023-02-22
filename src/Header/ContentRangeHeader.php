@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -50,7 +50,7 @@ class ContentRangeHeader extends Header
      * @param int $lastBytePosition
      * @param int $instanceLength
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the range isn't valid.
      */
     public function __construct(int $firstBytePosition, int $lastBytePosition, int $instanceLength)
@@ -92,20 +92,20 @@ class ContentRangeHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the range isn't valid.
      */
     private function validateRange(int $firstBytePosition, int $lastBytePosition, int $instanceLength): void
     {
         if (! ($firstBytePosition <= $lastBytePosition)) {
-            throw new InvalidHeaderValueException(
+            throw new InvalidHeaderException(
                 'The "first-byte-pos" value of the content range ' .
                 'must be less than or equal to the "last-byte-pos" value'
             );
         }
 
         if (! ($lastBytePosition < $instanceLength)) {
-            throw new InvalidHeaderValueException(
+            throw new InvalidHeaderException(
                 'The "last-byte-pos" value of the content range ' .
                 'must be less than the "instance-length" value'
             );

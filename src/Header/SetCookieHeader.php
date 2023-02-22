@@ -16,7 +16,8 @@ namespace Sunrise\Http\Message\Header;
  */
 use DateTimeImmutable;
 use DateTimeInterface;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Enum\CookieSameSite;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -36,70 +37,65 @@ class SetCookieHeader extends Header
 {
 
     /**
-     * Cookies are not sent on normal cross-site subrequests, but
-     * are sent when a user is navigating to the origin site.
+     * Default cookie options
      *
-     * This is the default cookie value if SameSite has not been
-     * explicitly specified in recent browser versions..
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite#lax
-     *
-     * @var string
+     * @var array{
+     *   path?: ?string,
+     *   domain?: ?string,
+     *   secure?: ?bool,
+     *   httpOnly?: ?bool,
+     *   sameSite?: ?string
+     * }
      */
-    public const SAME_SITE_LAX = 'Lax';
-
-    /**
-     * Cookies will only be sent in a first-party context and not
-     * be sent along with requests initiated by third party websites.
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite#strict
-     *
-     * @var string
-     */
-    public const SAME_SITE_STRICT = 'Strict';
-
-    /**
-     * Cookies will be sent in all contexts, i.e. in responses to
-     * both first-party and cross-site requests.
-     *
-     * If SameSite=None is set, the cookie Secure attribute must
-     * also be set (or the cookie will be blocked).
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite#none
-     *
-     * @var string
-     */
-    public const SAME_SITE_NONE = 'None';
+    public const DEFAULT_OPTIONS = [
+        self::OPTION_KEY_PATH      => '/',
+        self::OPTION_KEY_DOMAIN    => null,
+        self::OPTION_KEY_SECURE    => null,
+        self::OPTION_KEY_HTTP_ONLY => true,
+        self::OPTION_KEY_SAME_SITE => CookieSameSite::LAX,
+    ];
 
     /**
      * Cookie option keys
-     *
-     * @var string
      */
     public const OPTION_KEY_PATH = 'path';
     public const OPTION_KEY_DOMAIN = 'domain';
     public const OPTION_KEY_SECURE = 'secure';
     public const OPTION_KEY_HTTP_ONLY = 'httpOnly';
-    public const OPTION_KEY_SAMESITE = 'sameSite';
+    public const OPTION_KEY_SAME_SITE = 'sameSite';
 
     /**
-     * Default cookie options
-     *
-     * @var array{
-     *        path?: ?string,
-     *        domain?: ?string,
-     *        secure?: ?bool,
-     *        httpOnly?: ?bool,
-     *        sameSite?: ?string
-     *      }
+     * @deprecated Use the {@see CookieSameSite} enum.
      */
-    protected static array $defaultOptions = [
-        self::OPTION_KEY_PATH      => '/',
-        self::OPTION_KEY_DOMAIN    => null,
-        self::OPTION_KEY_SECURE    => null,
-        self::OPTION_KEY_HTTP_ONLY => true,
-        self::OPTION_KEY_SAMESITE  => self::SAME_SITE_LAX,
-    ];
+    public const SAME_SITE_LAX = CookieSameSite::LAX;
+
+    /**
+     * @deprecated Use the {@see CookieSameSite} enum.
+     */
+    public const SAME_SITE_STRICT = CookieSameSite::STRICT;
+
+    /**
+     * @deprecated Use the {@see CookieSameSite} enum.
+     */
+    public const SAME_SITE_NONE = CookieSameSite::NONE;
+
+    /**
+     * @deprecated Use the {@see SetCookieHeader::OPTION_KEY_SAME_SITE} constant.
+     */
+    public const OPTION_KEY_SAMESITE = self::OPTION_KEY_SAME_SITE;
+
+    /**
+     * @var ?array{
+     *   path?: ?string,
+     *   domain?: ?string,
+     *   secure?: ?bool,
+     *   httpOnly?: ?bool,
+     *   sameSite?: ?string
+     * }
+     *
+     * @deprecated Use the {@see SetCookieHeader::DEFAULT_OPTIONS} constant.
+     */
+    protected static ?array $defaultOptions = null;
 
     /**
      * The cookie name
@@ -126,12 +122,12 @@ class SetCookieHeader extends Header
      * The cookie options
      *
      * @var array{
-     *        path?: ?string,
-     *        domain?: ?string,
-     *        secure?: ?bool,
-     *        httpOnly?: ?bool,
-     *        sameSite?: ?string
-     *      }
+     *   path?: ?string,
+     *   domain?: ?string,
+     *   secure?: ?bool,
+     *   httpOnly?: ?bool,
+     *   sameSite?: ?string
+     * }
      */
     private array $options;
 
@@ -141,25 +137,40 @@ class SetCookieHeader extends Header
      * @param string $name
      * @param string $value
      * @param DateTimeInterface|null $expires
-     * @param array{path?: ?string, domain?: ?string, secure?: ?bool, httpOnly?: ?bool, sameSite?: ?string} $options
+     * @param array{
+     *   path?: ?string,
+     *   domain?: ?string,
+     *   secure?: ?bool,
+     *   httpOnly?: ?bool,
+     *   sameSite?: ?string
+     * } $options
      *
-     * @throws InvalidHeaderValueException
-     *         If one of the parameters isn't valid.
+     * @throws InvalidHeaderException
+     *         If one of the arguments isn't valid.
      */
     public function __construct(string $name, string $value, ?DateTimeInterface $expires = null, array $options = [])
     {
         $this->validateCookieName($name);
 
         if (isset($options[self::OPTION_KEY_PATH])) {
-            $this->validateCookieOption(self::OPTION_KEY_PATH, $options[self::OPTION_KEY_PATH]);
+            $this->validateCookieOption(
+                self::OPTION_KEY_PATH,
+                $options[self::OPTION_KEY_PATH]
+            );
         }
 
         if (isset($options[self::OPTION_KEY_DOMAIN])) {
-            $this->validateCookieOption(self::OPTION_KEY_DOMAIN, $options[self::OPTION_KEY_DOMAIN]);
+            $this->validateCookieOption(
+                self::OPTION_KEY_DOMAIN,
+                $options[self::OPTION_KEY_DOMAIN]
+            );
         }
 
-        if (isset($options[self::OPTION_KEY_SAMESITE])) {
-            $this->validateCookieOption(self::OPTION_KEY_SAMESITE, $options[self::OPTION_KEY_SAMESITE]);
+        if (isset($options[self::OPTION_KEY_SAME_SITE])) {
+            $this->validateCookieOption(
+                self::OPTION_KEY_SAME_SITE,
+                $options[self::OPTION_KEY_SAME_SITE]
+            );
         }
 
         if ($value === '') {
@@ -167,7 +178,7 @@ class SetCookieHeader extends Header
             $expires = new DateTimeImmutable('1 year ago');
         }
 
-        $options += static::$defaultOptions;
+        $options += (static::$defaultOptions ?? static::DEFAULT_OPTIONS);
 
         $this->name = $name;
         $this->value = $value;
@@ -213,8 +224,8 @@ class SetCookieHeader extends Header
             $result .= '; HttpOnly';
         }
 
-        if (isset($this->options[self::OPTION_KEY_SAMESITE])) {
-            $result .= '; SameSite=' . $this->options[self::OPTION_KEY_SAMESITE];
+        if (isset($this->options[self::OPTION_KEY_SAME_SITE])) {
+            $result .= '; SameSite=' . $this->options[self::OPTION_KEY_SAME_SITE];
         }
 
         return $result;
@@ -227,18 +238,18 @@ class SetCookieHeader extends Header
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the cookie name isn't valid.
      */
     private function validateCookieName(string $name): void
     {
         if ('' === $name) {
-            throw new InvalidHeaderValueException('Cookie name cannot be empty');
+            throw new InvalidHeaderException('Cookie name cannot be empty');
         }
 
         // https://github.com/php/php-src/blob/02a5335b710aa36cd0c3108bfb9c6f7a57d40000/ext/standard/head.c#L93
         if (strpbrk($name, "=,; \t\r\n\013\014") !== false) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The cookie name "%s" contains prohibited characters',
                 $name
             ));
@@ -248,29 +259,29 @@ class SetCookieHeader extends Header
     /**
      * Validates the given cookie option
      *
-     * @param string $validKey
+     * @param string $key
      * @param mixed $value
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the cookie option isn't valid.
      */
-    private function validateCookieOption(string $validKey, $value): void
+    private function validateCookieOption(string $key, $value): void
     {
         if (!is_string($value)) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The cookie option "%s" must be a string',
-                $validKey
+                $key
             ));
         }
 
         // https://github.com/php/php-src/blob/02a5335b710aa36cd0c3108bfb9c6f7a57d40000/ext/standard/head.c#L103
         // https://github.com/php/php-src/blob/02a5335b710aa36cd0c3108bfb9c6f7a57d40000/ext/standard/head.c#L108
         if (strpbrk($value, ",; \t\r\n\013\014") !== false) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidHeaderException(sprintf(
                 'The cookie option "%s" contains prohibited characters',
-                $validKey
+                $key
             ));
         }
     }

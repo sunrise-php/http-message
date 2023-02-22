@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
+use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
 /**
@@ -33,7 +33,7 @@ class TrailerHeader extends Header
      *
      * @param string $value
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidHeaderException
      *         If the value isn't valid.
      */
     public function __construct(string $value)
