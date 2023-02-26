@@ -33,9 +33,9 @@ use function strtolower;
 use function trim;
 
 /**
- * ServerRequestProxy
+ * ServerRequestHelper
  */
-final class ServerRequestProxy implements ServerRequestInterface, RequestMethodInterface
+final class ServerRequestHelper implements ServerRequestInterface, RequestMethodInterface
 {
 
     /**
@@ -182,7 +182,7 @@ final class ServerRequestProxy implements ServerRequestInterface, RequestMethodI
      * @link https://tools.ietf.org/html/rfc7231#section-3.1.1.1
      * @link https://tools.ietf.org/html/rfc7231#section-5.3.2
      *
-     * @return array<string, array<string, string>>
+     * @return array<lowercase-string, array<string, string>>
      */
     public function getClientConsumedMediaTypes(): array
     {
@@ -191,13 +191,13 @@ final class ServerRequestProxy implements ServerRequestInterface, RequestMethodI
             return [];
         }
 
-        $accept = header_accept_parse($header);
-        if ($accept === []) {
+        $accepts = header_accept_like_parse($header);
+        if (empty($accepts)) {
             return [];
         }
 
         $result = [];
-        foreach ($accept as $type => $params) {
+        foreach ($accepts as $type => $params) {
             $result[strtolower($type)] = $params;
         }
 
@@ -216,12 +216,12 @@ final class ServerRequestProxy implements ServerRequestInterface, RequestMethodI
             return [];
         }
 
-        $accept = header_accept_parse($header);
-        if ($accept === []) {
+        $accepts = header_accept_like_parse($header);
+        if (empty($accepts)) {
             return [];
         }
 
-        return $accept;
+        return $accepts;
     }
 
     /**
@@ -236,12 +236,12 @@ final class ServerRequestProxy implements ServerRequestInterface, RequestMethodI
             return [];
         }
 
-        $accept = header_accept_parse($header);
-        if ($accept === []) {
+        $accepts = header_accept_like_parse($header);
+        if (empty($accepts)) {
             return [];
         }
 
-        return $accept;
+        return $accepts;
     }
 
     /**
