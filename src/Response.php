@@ -281,6 +281,10 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      */
     private function validateReasonPhrase($reasonPhrase): void
     {
+        if ('' === $reasonPhrase) {
+            return;
+        }
+
         if (!is_string($reasonPhrase)) {
             throw new InvalidArgumentException('HTTP reason phrase must be a string');
         }
