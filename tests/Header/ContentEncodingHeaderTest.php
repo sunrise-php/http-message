@@ -12,10 +12,11 @@ class ContentEncodingHeaderTest extends TestCase
 {
     public function testConstants()
     {
-        $this->assertSame('gzip', ContentEncodingHeader::GZIP);
-        $this->assertSame('compress', ContentEncodingHeader::COMPRESS);
-        $this->assertSame('deflate', ContentEncodingHeader::DEFLATE);
-        $this->assertSame('br', ContentEncodingHeader::BR);
+        $this->assertSame('aes128gcm', ContentEncodingHeader::HTTP_CONTENT_ENCODING_AES128GCM);
+        $this->assertSame('br', ContentEncodingHeader::HTTP_CONTENT_ENCODING_BR);
+        $this->assertSame('compress', ContentEncodingHeader::HTTP_CONTENT_ENCODING_COMPRESS);
+        $this->assertSame('deflate', ContentEncodingHeader::HTTP_CONTENT_ENCODING_DEFLATE);
+        $this->assertSame('gzip', ContentEncodingHeader::HTTP_CONTENT_ENCODING_GZIP);
     }
 
     public function testContracts()

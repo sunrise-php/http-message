@@ -12,10 +12,10 @@ class TransferEncodingHeaderTest extends TestCase
 {
     public function testConstants()
     {
-        $this->assertSame('chunked', TransferEncodingHeader::CHUNKED);
-        $this->assertSame('compress', TransferEncodingHeader::COMPRESS);
-        $this->assertSame('deflate', TransferEncodingHeader::DEFLATE);
-        $this->assertSame('gzip', TransferEncodingHeader::GZIP);
+        $this->assertSame('chunked', TransferEncodingHeader::HTTP_TRANSFER_ENCODING_CHUNKED);
+        $this->assertSame('compress', TransferEncodingHeader::HTTP_TRANSFER_ENCODING_COMPRESS);
+        $this->assertSame('deflate', TransferEncodingHeader::HTTP_TRANSFER_ENCODING_DEFLATE);
+        $this->assertSame('gzip', TransferEncodingHeader::HTTP_TRANSFER_ENCODING_GZIP);
     }
 
     public function testContracts()
