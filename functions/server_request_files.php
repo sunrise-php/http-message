@@ -24,6 +24,7 @@ use function is_array;
 /**
  * Import constants
  */
+use const UPLOAD_ERR_OK;
 use const UPLOAD_ERR_NO_FILE;
 
 /**
@@ -44,10 +45,16 @@ function server_request_files(?array $files = null): array
 {
     $files ??= $_FILES;
 
-    $walker = function ($path, $size, $error, $name, $type) use (&$walker) {
+    $walker = function (
+        $path,
+        $size,
+        $error,
+        $name,
+        $type
+    ) use (&$walker) {
         if (!is_array($path)) {
-            // What if the path is an empty string?
-            $stream = new FileStream($path, 'rb');
+            // It makes no sense to create a stream if the file has not been successfully uploaded.
+            $stream = UPLOAD_ERR_OK <> $error ? null : new FileStream($path, 'rb');
 
             return new UploadedFile(
                 $stream,
