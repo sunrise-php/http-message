@@ -42,7 +42,7 @@
     },
     "autoload": {
         "files": [
-            "functions/header_accept_parse.php",
+            "functions/header_accept_like_parse.php",
             "functions/server_request_files.php",
             "functions/server_request_headers.php",
             "functions/server_request_method.php",
