@@ -163,25 +163,6 @@ $header = new ClearSiteDataHeader(['*']);
 $response = $response->withHeader(...$header);
 ```
 
-#### Connection
-
-> Useful link: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection
-
-```php
-use Sunrise\Http\Message\Header\ConnectionHeader;
-use Sunrise\Http\Message\ResponseFactory;
-
-$response = (new ResponseFactory)->createResponse();
-
-// close
-$header = new ConnectionHeader(ConnectionHeader::CONNECTION_CLOSE);
-$response = $response->withHeader(...$header);
-
-// keep-alive
-$header = new ConnectionHeader(ConnectionHeader::CONNECTION_KEEP_ALIVE);
-$response = $response->withHeader(...$header);
-```
-
 #### Content-Disposition
 
 > Useful link: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
@@ -404,20 +385,6 @@ use Sunrise\Http\Message\ResponseFactory;
 $response = (new ResponseFactory)->createResponse();
 
 $header = new ExpiresHeader(new DateTime('1 day ago'));
-$response = $response->withHeader(...$header);
-```
-
-#### Keep-Alive
-
-> Useful link: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive
-
-```php
-use Sunrise\Http\Message\Header\KeepAliveHeader;
-use Sunrise\Http\Message\ResponseFactory;
-
-$response = (new ResponseFactory)->createResponse();
-
-$header = new KeepAliveHeader(['timeout' => '5', 'max' => '1000']);
 $response = $response->withHeader(...$header);
 ```
 
