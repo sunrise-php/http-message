@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Header;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Enum\Encoding;
+use Sunrise\Http\Message\Dictionary\Encoding;
 use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
@@ -30,24 +30,14 @@ class TransferEncodingHeader extends Header
 {
 
     /**
-     * @deprecated Use the {@see Encoding} enum.
+     * HTTP Transfer Encodings
+     *
+     * @link https://www.iana.org/assignments/http-parameters/http-parameters.xhtml#transfer-coding
      */
-    public const CHUNKED = Encoding::CHUNKED;
-
-    /**
-     * @deprecated Use the {@see Encoding} enum.
-     */
-    public const COMPRESS = Encoding::COMPRESS;
-
-    /**
-     * @deprecated Use the {@see Encoding} enum.
-     */
-    public const DEFLATE = Encoding::DEFLATE;
-
-    /**
-     * @deprecated Use the {@see Encoding} enum.
-     */
-    public const GZIP = Encoding::GZIP;
+    public const HTTP_TRANSFER_ENCODING_CHUNKED = 'chunked';
+    public const HTTP_TRANSFER_ENCODING_COMPRESS = 'compress';
+    public const HTTP_TRANSFER_ENCODING_DEFLATE = 'deflate';
+    public const HTTP_TRANSFER_ENCODING_GZIP = 'gzip';
 
     /**
      * @var list<string>

@@ -52,7 +52,6 @@ class ContentDispositionHeader extends Header
     {
         $this->validateToken($type);
 
-        // validate and normalize the parameters,,,
         $parameters = $this->validateParameters($parameters);
 
         $this->type = $type;

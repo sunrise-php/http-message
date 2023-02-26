@@ -15,7 +15,6 @@ namespace Sunrise\Http\Message\Header;
  * Import classes
  */
 use DateTimeInterface;
-use Sunrise\Http\Message\Enum\WarningCode;
 use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
@@ -31,39 +30,17 @@ class WarningHeader extends Header
 {
 
     /**
-     * @deprecated Use the {@see WarningCode} enum.
+     * HTTP Warning Codes
+     *
+     * @link https://www.iana.org/assignments/http-warn-codes/http-warn-codes.xhtml
      */
-    public const HTTP_WARNING_CODE_RESPONSE_IS_STALE = WarningCode::RESPONSE_IS_STALE;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_REVALIDATION_FAILED = WarningCode::REVALIDATION_FAILED;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_DISCONNECTED_OPERATION = WarningCode::DISCONNECTED_OPERATION;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_HEURISTIC_EXPIRATION = WarningCode::HEURISTIC_EXPIRATION;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_MISCELLANEOUS_WARNING = WarningCode::MISCELLANEOUS_WARNING;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_TRANSFORMATION_APPLIED = WarningCode::TRANSFORMATION_APPLIED;
-
-    /**
-     * @deprecated Use the {@see WarningCode} enum.
-     */
-    public const HTTP_WARNING_CODE_MISCELLANEOUS_PERSISTENT_WARNING = WarningCode::MISCELLANEOUS_PERSISTENT_WARNING;
+    public const HTTP_WARNING_CODE_RESPONSE_IS_STALE = 110;
+    public const HTTP_WARNING_CODE_REVALIDATION_FAILED = 111;
+    public const HTTP_WARNING_CODE_DISCONNECTED_OPERATION = 112;
+    public const HTTP_WARNING_CODE_HEURISTIC_EXPIRATION = 113;
+    public const HTTP_WARNING_CODE_MISCELLANEOUS_WARNING = 199;
+    public const HTTP_WARNING_CODE_TRANSFORMATION_APPLIED = 214;
+    public const HTTP_WARNING_CODE_MISCELLANEOUS_PERSISTENT_WARNING = 299;
 
     /**
      * @var int

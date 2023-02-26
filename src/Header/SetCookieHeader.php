@@ -16,7 +16,6 @@ namespace Sunrise\Http\Message\Header;
  */
 use DateTimeImmutable;
 use DateTimeInterface;
-use Sunrise\Http\Message\Enum\CookieSameSite;
 use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
 
@@ -37,23 +36,13 @@ class SetCookieHeader extends Header
 {
 
     /**
-     * Default cookie options
+     * Acceptable the SameSite attribute values
      *
-     * @var array{
-     *   path?: ?string,
-     *   domain?: ?string,
-     *   secure?: ?bool,
-     *   httpOnly?: ?bool,
-     *   sameSite?: ?string
-     * }
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
      */
-    public const DEFAULT_OPTIONS = [
-        self::OPTION_KEY_PATH      => '/',
-        self::OPTION_KEY_DOMAIN    => null,
-        self::OPTION_KEY_SECURE    => null,
-        self::OPTION_KEY_HTTP_ONLY => true,
-        self::OPTION_KEY_SAME_SITE => CookieSameSite::LAX,
-    ];
+    public const SAME_SITE_LAX = 'Lax';
+    public const SAME_SITE_STRICT = 'Strict';
+    public const SAME_SITE_NONE = 'None';
 
     /**
      * Cookie option keys
@@ -62,40 +51,20 @@ class SetCookieHeader extends Header
     public const OPTION_KEY_DOMAIN = 'domain';
     public const OPTION_KEY_SECURE = 'secure';
     public const OPTION_KEY_HTTP_ONLY = 'httpOnly';
-    public const OPTION_KEY_SAME_SITE = 'sameSite';
+    public const OPTION_KEY_SAMESITE = 'sameSite';
 
     /**
-     * @deprecated Use the {@see CookieSameSite} enum.
-     */
-    public const SAME_SITE_LAX = CookieSameSite::LAX;
-
-    /**
-     * @deprecated Use the {@see CookieSameSite} enum.
-     */
-    public const SAME_SITE_STRICT = CookieSameSite::STRICT;
-
-    /**
-     * @deprecated Use the {@see CookieSameSite} enum.
-     */
-    public const SAME_SITE_NONE = CookieSameSite::NONE;
-
-    /**
-     * @deprecated Use the {@see SetCookieHeader::OPTION_KEY_SAME_SITE} constant.
-     */
-    public const OPTION_KEY_SAMESITE = self::OPTION_KEY_SAME_SITE;
-
-    /**
-     * @var ?array{
-     *   path?: ?string,
-     *   domain?: ?string,
-     *   secure?: ?bool,
-     *   httpOnly?: ?bool,
-     *   sameSite?: ?string
-     * }
+     * Default cookie options
      *
-     * @deprecated Use the {@see SetCookieHeader::DEFAULT_OPTIONS} constant.
+     * @var array{path?: ?string, domain?: ?string, secure?: ?bool, httpOnly?: ?bool, sameSite?: ?string}
      */
-    protected static ?array $defaultOptions = null;
+    protected static array $defaultOptions = [
+        self::OPTION_KEY_PATH      => '/',
+        self::OPTION_KEY_DOMAIN    => null,
+        self::OPTION_KEY_SECURE    => null,
+        self::OPTION_KEY_HTTP_ONLY => true,
+        self::OPTION_KEY_SAMESITE  => self::SAME_SITE_LAX,
+    ];
 
     /**
      * The cookie name
@@ -112,7 +81,7 @@ class SetCookieHeader extends Header
     private string $value;
 
     /**
-     * The cookie expiration date
+     * The cookie's expiration date
      *
      * @var DateTimeInterface|null
      */
@@ -121,13 +90,7 @@ class SetCookieHeader extends Header
     /**
      * The cookie options
      *
-     * @var array{
-     *   path?: ?string,
-     *   domain?: ?string,
-     *   secure?: ?bool,
-     *   httpOnly?: ?bool,
-     *   sameSite?: ?string
-     * }
+     * @var array{path?: ?string, domain?: ?string, secure?: ?bool, httpOnly?: ?bool, sameSite?: ?string}
      */
     private array $options;
 
@@ -137,13 +100,7 @@ class SetCookieHeader extends Header
      * @param string $name
      * @param string $value
      * @param DateTimeInterface|null $expires
-     * @param array{
-     *   path?: ?string,
-     *   domain?: ?string,
-     *   secure?: ?bool,
-     *   httpOnly?: ?bool,
-     *   sameSite?: ?string
-     * } $options
+     * @param array{path?: ?string, domain?: ?string, secure?: ?bool, httpOnly?: ?bool, sameSite?: ?string} $options
      *
      * @throws InvalidHeaderException
      *         If one of the arguments isn't valid.
@@ -166,10 +123,10 @@ class SetCookieHeader extends Header
             );
         }
 
-        if (isset($options[self::OPTION_KEY_SAME_SITE])) {
+        if (isset($options[self::OPTION_KEY_SAMESITE])) {
             $this->validateCookieOption(
-                self::OPTION_KEY_SAME_SITE,
-                $options[self::OPTION_KEY_SAME_SITE]
+                self::OPTION_KEY_SAMESITE,
+                $options[self::OPTION_KEY_SAMESITE]
             );
         }
 
@@ -178,7 +135,7 @@ class SetCookieHeader extends Header
             $expires = new DateTimeImmutable('1 year ago');
         }
 
-        $options += (static::$defaultOptions ?? static::DEFAULT_OPTIONS);
+        $options += static::$defaultOptions;
 
         $this->name = $name;
         $this->value = $value;
@@ -224,8 +181,8 @@ class SetCookieHeader extends Header
             $result .= '; HttpOnly';
         }
 
-        if (isset($this->options[self::OPTION_KEY_SAME_SITE])) {
-            $result .= '; SameSite=' . $this->options[self::OPTION_KEY_SAME_SITE];
+        if (isset($this->options[self::OPTION_KEY_SAMESITE])) {
+            $result .= '; SameSite=' . $this->options[self::OPTION_KEY_SAMESITE];
         }
 
         return $result;

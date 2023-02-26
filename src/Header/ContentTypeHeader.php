@@ -61,7 +61,6 @@ class ContentTypeHeader extends Header
     {
         $this->validateValueByRegex(self::RFC6838_CONTENT_TYPE, $type);
 
-        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->type = $type;

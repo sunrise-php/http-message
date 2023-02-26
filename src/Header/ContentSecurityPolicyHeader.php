@@ -62,7 +62,6 @@ class ContentSecurityPolicyHeader extends Header
      */
     public function __construct(array $parameters = [])
     {
-        // validate and normalize the parameters...
         $parameters = $this->validateParametersByRegex(
             $parameters,
             self::VALID_DIRECTIVE_NAME,

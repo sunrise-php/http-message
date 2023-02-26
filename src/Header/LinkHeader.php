@@ -55,7 +55,6 @@ class LinkHeader extends Header
      */
     public function __construct($uri, array $parameters = [])
     {
-        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->uri = Uri::create($uri);

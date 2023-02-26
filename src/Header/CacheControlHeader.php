@@ -44,7 +44,6 @@ class CacheControlHeader extends Header
      */
     public function __construct(array $parameters)
     {
-        // validate and normalize the parameters...
         $parameters = $this->validateParameters($parameters);
 
         $this->parameters = $parameters;
@@ -65,15 +64,20 @@ class CacheControlHeader extends Header
     {
         $segments = [];
         foreach ($this->parameters as $name => $value) {
-            // the construction <foo=> isn't valid...
+            // e.g., no-cache
             if ($value === '') {
                 $segments[] = $name;
                 continue;
             }
 
-            $format = $this->isToken($value) ? '%s=%s' : '%s="%s"';
+            // e.g., max-age=604800
+            if ($this->isToken($value)) {
+                $segments[] = sprintf('%s=%s', $name, $value);
+                continue;
+            }
 
-            $segments[] = sprintf($format, $name, $value);
+            // e.g., community="UCI"
+            $segments[] = sprintf('%s="%s"', $name, $value);
         }
 
         return implode(', ', $segments);

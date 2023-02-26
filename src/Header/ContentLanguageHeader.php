@@ -35,7 +35,7 @@ class ContentLanguageHeader extends Header
      *
      * @var string
      */
-    public const RFC2616_LANGUAGE_TAG = '/^[a-zA-Z]{1,8}(?:\-[a-zA-Z]{1,8})?$/';
+    public const RFC2616_LANGUAGE_TAG = '/^[a-zA-Z]{1,8}(?:-[a-zA-Z]{1,8})?$/';
 
     /**
      * @var list<string>
