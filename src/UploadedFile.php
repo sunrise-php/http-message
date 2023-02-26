@@ -58,14 +58,21 @@ class UploadedFile implements UploadedFileInterface
      */
     public const UPLOAD_ERRORS = [
         UPLOAD_ERR_OK         => 'No error',
-        UPLOAD_ERR_INI_SIZE   => 'Uploaded file exceeds the upload_max_filesize directive in php.ini',
-        UPLOAD_ERR_FORM_SIZE  => 'Uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the form',
+        UPLOAD_ERR_INI_SIZE   => 'Uploaded file exceeds the upload_max_filesize directive in the php.ini',
+        UPLOAD_ERR_FORM_SIZE  => 'Uploaded file exceeds the MAX_FILE_SIZE directive in the HTML form',
         UPLOAD_ERR_PARTIAL    => 'Uploaded file was only partially uploaded',
         UPLOAD_ERR_NO_FILE    => 'No file was uploaded',
-        UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+        UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary directory',
         UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
-        UPLOAD_ERR_EXTENSION  => 'File upload stopped by extension',
+        UPLOAD_ERR_EXTENSION  => 'File upload was stopped by a PHP extension',
     ];
+
+    /**
+     * Description of unknown error
+     *
+     * @var string
+     */
+    public const UNKNOWN_ERROR_TEXT = 'Unknown error';
 
     /**
      * The file stream
@@ -112,14 +119,14 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Constructor of the class
      *
-     * @param StreamInterface $stream
+     * @param StreamInterface|null $stream
      * @param int|null $size
      * @param int $error
      * @param string|null $clientFilename
      * @param string|null $clientMediaType
      */
     public function __construct(
-        StreamInterface $stream,
+        ?StreamInterface $stream,
         ?int $size = null,
         int $error = UPLOAD_ERR_OK,
         ?string $clientFilename = null,
@@ -129,7 +136,7 @@ class UploadedFile implements UploadedFileInterface
             $this->stream = $stream;
         }
 
-        $message = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
+        $message = self::UPLOAD_ERRORS[$error] ?? self::UNKNOWN_ERROR_TEXT;
 
         $this->size = $size;
         $this->errorCode = $error;
