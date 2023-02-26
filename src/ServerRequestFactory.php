@@ -47,11 +47,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $uploadedFiles = null,
         ?array $parsedBody = null
     ): ServerRequestInterface {
-        $serverParams  = $serverParams  ?? $_SERVER;
-        $queryParams   = $queryParams   ?? $_GET;
-        $cookieParams  = $cookieParams  ?? $_COOKIE;
-        $uploadedFiles = $uploadedFiles ?? $_FILES;
-        $parsedBody    = $parsedBody    ?? $_POST;
+        $serverParams  ??= $_SERVER;
+        $queryParams   ??= $_GET;
+        $cookieParams  ??= $_COOKIE;
+        $uploadedFiles ??= $_FILES;
+        $parsedBody    ??= $_POST;
 
         return new ServerRequest(
             server_request_protocol_version($serverParams),
