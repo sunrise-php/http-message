@@ -44,9 +44,9 @@ final class HtmlResponse extends Response
     {
         parent::__construct($statusCode);
 
-        $this->setBody($this->createBody($html));
-
         $this->setHeader('Content-Type', 'text/html; charset=utf-8');
+
+        $this->setBody($this->createBody($html));
     }
 
     /**

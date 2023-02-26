@@ -50,9 +50,9 @@ final class JsonResponse extends Response
     {
         parent::__construct($statusCode);
 
-        $this->setBody($this->createBody($data, $flags, $depth));
-
         $this->setHeader('Content-Type', 'application/json; charset=utf-8');
+
+        $this->setBody($this->createBody($data, $flags, $depth));
     }
 
     /**
