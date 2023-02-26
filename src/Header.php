@@ -37,7 +37,16 @@ abstract class Header implements HeaderInterface
 {
 
     /**
-     * Regular Expression for a token validation
+     * DateTime format according to RFC-822
+     *
+     * @link https://www.rfc-editor.org/rfc/rfc822#section-5
+     *
+     * @var string
+     */
+    public const RFC822_DATE_TIME_FORMAT = 'D, d M y H:i:s O';
+
+    /**
+     * Regular Expression for a token validation according to RFC-7230
      *
      * @link https://tools.ietf.org/html/rfc7230#section-3.2
      *
@@ -46,7 +55,7 @@ abstract class Header implements HeaderInterface
     public const RFC7230_VALID_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
 
     /**
-     * Regular Expression for a field value validation
+     * Regular Expression for a field value validation according to RFC-7230
      *
      * @link https://tools.ietf.org/html/rfc7230#section-3.2
      *
@@ -55,22 +64,13 @@ abstract class Header implements HeaderInterface
     public const RFC7230_VALID_FIELD_VALUE = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
 
     /**
-     * Regular Expression for a quoted string validation
+     * Regular Expression for a quoted string validation according to RFC-7230
      *
      * @link https://tools.ietf.org/html/rfc7230#section-3.2
      *
      * @var string
      */
-    public const RFC7230_VALID_QUOTED_STRING = '/^[\x09\x20\x21\x23-\x5B\x5D-\x7E\x80-\xFF]*$/';
-
-    /**
-     * Date and time format
-     *
-     * @link https://www.rfc-editor.org/rfc/rfc822#section-5
-     *
-     * @var string
-     */
-    public const RFC822_DATE_TIME_FORMAT = 'D, d M y H:i:s O';
+    public const RFC7230_VALID_QUOTED_STRING = '/^(?:[\x5C][\x22]|[\x09\x20\x21\x23-\x5B\x5D-\x7E\x80-\xFF])*$/';
 
     /**
      * {@inheritdoc}
