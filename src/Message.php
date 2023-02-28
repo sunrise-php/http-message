@@ -40,18 +40,18 @@ abstract class Message implements MessageInterface
 {
 
     /**
-     * Default HTTP version
-     *
-     * @var string
-     */
-    public const DEFAULT_HTTP_VERSION = '1.1';
-
-    /**
      * Supported HTTP versions
      *
      * @var list<string>
      */
     public const SUPPORTED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
+
+    /**
+     * Default HTTP version
+     *
+     * @var string
+     */
+    public const DEFAULT_HTTP_VERSION = '1.1';
 
     /**
      * The message HTTP version
@@ -142,15 +142,13 @@ abstract class Message implements MessageInterface
      */
     public function getHeader($name): array
     {
-        if (!$this->hasHeader($name)) {
+        $key = strtolower($name);
+
+        if (empty($this->headerNames[$key])) {
             return [];
         }
 
-        $key = strtolower($name);
-        $originalName = $this->headerNames[$key];
-        $value = $this->headers[$originalName];
-
-        return $value;
+        return $this->headers[$this->headerNames[$key]];
     }
 
     /**
@@ -295,8 +293,8 @@ abstract class Message implements MessageInterface
         $this->headerNames[$key] ??= $name;
         $this->headers[$this->headerNames[$key]] ??= [];
 
-        foreach ($value as $subvalue) {
-            $this->headers[$this->headerNames[$key]][] = $subvalue;
+        foreach ($value as $item) {
+            $this->headers[$this->headerNames[$key]][] = $item;
         }
     }
 
@@ -383,7 +381,7 @@ abstract class Message implements MessageInterface
             throw new InvalidArgumentException('HTTP header name must be a string');
         }
 
-        if (!preg_match(Header::RFC7230_VALID_TOKEN, $name)) {
+        if (!preg_match(HeaderInterface::RFC7230_TOKEN_REGEX, $name)) {
             throw new InvalidArgumentException('HTTP header name is invalid');
         }
     }
@@ -391,7 +389,7 @@ abstract class Message implements MessageInterface
     /**
      * Validates the given header value
      *
-     * @param string $validName
+     * @param string $name
      * @param array $value
      *
      * @return void
@@ -399,12 +397,12 @@ abstract class Message implements MessageInterface
      * @throws InvalidArgumentException
      *         If the header value isn't valid.
      */
-    private function validateHeaderValue(string $validName, array $value): void
+    private function validateHeaderValue(string $name, array $value): void
     {
         if ([] === $value) {
             throw new InvalidArgumentException(sprintf(
                 'The "%s" HTTP header value cannot be an empty array',
-                $validName,
+                $name,
             ));
         }
 
@@ -416,15 +414,15 @@ abstract class Message implements MessageInterface
             if (!is_string($item)) {
                 throw new InvalidArgumentException(sprintf(
                     'The "%s[%s]" HTTP header value must be a string',
-                    $validName,
+                    $name,
                     $key
                 ));
             }
 
-            if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $item)) {
+            if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $item)) {
                 throw new InvalidArgumentException(sprintf(
                     'The "%s[%s]" HTTP header value is invalid',
-                    $validName,
+                    $name,
                     $key
                 ));
             }

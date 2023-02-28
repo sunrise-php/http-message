@@ -16,6 +16,7 @@ namespace Sunrise\Http\Message\Header;
  */
 use DateTimeInterface;
 use Sunrise\Http\Message\Header;
+use Sunrise\Http\Message\HeaderUtils;
 
 /**
  * @link https://tools.ietf.org/html/rfc2616#section-14.29
@@ -52,6 +53,6 @@ class LastModifiedHeader extends Header
      */
     public function getFieldValue(): string
     {
-        return $this->formatDateTime($this->timestamp);
+        return HeaderUtils::formatDate($this->timestamp);
     }
 }

@@ -20,6 +20,7 @@ use Sunrise\Http\Message\Header;
 /**
  * Import functions
  */
+use function explode;
 use function sprintf;
 
 /**
@@ -27,15 +28,6 @@ use function sprintf;
  */
 class ContentTypeHeader extends Header
 {
-
-    /**
-     * Regular Expression for a content type validation
-     *
-     * @link https://tools.ietf.org/html/rfc6838#section-4.2
-     *
-     * @var string
-     */
-    public const RFC6838_CONTENT_TYPE = '/^[\dA-Za-z][\d\w\!#\$&\+\-\.\^]*(?:\/[\dA-Za-z][\d\w\!#\$&\+\-\.\^]*)?$/';
 
     /**
      * @var string
@@ -59,7 +51,11 @@ class ContentTypeHeader extends Header
      */
     public function __construct(string $type, array $parameters = [])
     {
-        $this->validateValueByRegex(self::RFC6838_CONTENT_TYPE, $type);
+        if (strpos($type, '/') === false) {
+            $type .= '/*';
+        }
+
+        $this->validateToken(...explode('/', $type, 2));
 
         $parameters = $this->validateParameters($parameters);
 

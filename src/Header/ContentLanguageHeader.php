@@ -29,15 +29,6 @@ class ContentLanguageHeader extends Header
 {
 
     /**
-     * Regular Expression for a language tag validation
-     *
-     * @link https://tools.ietf.org/html/rfc2616#section-3.10
-     *
-     * @var string
-     */
-    public const RFC2616_LANGUAGE_TAG = '/^[a-zA-Z]{1,8}(?:-[a-zA-Z]{1,8})?$/';
-
-    /**
      * @var list<string>
      */
     private array $languages = [];
@@ -52,7 +43,7 @@ class ContentLanguageHeader extends Header
      */
     public function __construct(string ...$languages)
     {
-        $this->validateValueByRegex(self::RFC2616_LANGUAGE_TAG, ...$languages);
+        $this->validateToken(...$languages);
 
         foreach ($languages as $language) {
             $this->languages[] = $language;

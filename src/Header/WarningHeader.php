@@ -17,6 +17,7 @@ namespace Sunrise\Http\Message\Header;
 use DateTimeInterface;
 use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
+use Sunrise\Http\Message\HeaderUtils;
 
 /**
  * Import functions
@@ -101,7 +102,7 @@ class WarningHeader extends Header
         $value = sprintf('%s %s "%s"', $this->code, $this->agent, $this->text);
 
         if (isset($this->date)) {
-            $value .= sprintf(' "%s"', $this->formatDateTime($this->date));
+            $value .= sprintf(' "%s"', HeaderUtils::formatDate($this->date));
         }
 
         return $value;

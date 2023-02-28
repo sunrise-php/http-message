@@ -326,7 +326,7 @@ use Sunrise\Http\Message\ResponseFactory;
 
 $response = (new ResponseFactory)->createResponse();
 
-$header = new ContentTypeHeader('application/json', ['charset' => 'utf-8']);
+$header = new ContentTypeHeader('application', 'json', ['charset' => 'utf-8']);
 $response = $response->withHeader(...$header);
 ```
 

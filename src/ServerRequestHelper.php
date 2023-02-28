@@ -263,7 +263,7 @@ final class ServerRequestHelper implements ServerRequestInterface, RequestMethod
         }
 
         foreach ($consumes as $consumed) {
-            if ($this->equalsMediaTypes($consumed, $produced)) {
+            if (media_types_compare($consumed, $produced)) {
                 return true;
             }
         }
@@ -295,7 +295,7 @@ final class ServerRequestHelper implements ServerRequestInterface, RequestMethod
 
         foreach ($produces as $a) {
             foreach ($consumes as $b => $_) {
-                if ($this->equalsMediaTypes($a, $b)) {
+                if (media_types_compare($a, $b)) {
                     return true;
                 }
             }

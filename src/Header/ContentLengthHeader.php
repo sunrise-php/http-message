@@ -36,7 +36,7 @@ class ContentLengthHeader extends Header
     /**
      * Constructor of the class
      *
-     * @param int $value
+     * @param int<0, max> $value
      *
      * @throws InvalidHeaderException
      *         If the value isn't valid.

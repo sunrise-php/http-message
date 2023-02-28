@@ -36,7 +36,7 @@ final class Scheme implements ComponentInterface
      *
      * @var string
      */
-    private const VALIDATE_REGEX = '/^(?:[A-Za-z][0-9A-Za-z\+\-\.]*)?$/';
+    private const VALIDATION_REGEX = '/^(?:[A-Za-z][0-9A-Za-z\+\-\.]*)?$/';
 
     /**
      * The component value
@@ -63,7 +63,7 @@ final class Scheme implements ComponentInterface
             throw new InvalidUriComponentException('URI component "scheme" must be a string');
         }
 
-        if (!preg_match(self::VALIDATE_REGEX, $value)) {
+        if (!preg_match(self::VALIDATION_REGEX, $value)) {
             throw new InvalidUriComponentException('Invalid URI component "scheme"');
         }
 

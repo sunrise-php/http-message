@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Sunrise\Http\Message\Exception\InvalidHeaderException;
 use Sunrise\Http\Message\Header;
+use Sunrise\Http\Message\HeaderUtils;
 
 /**
  * Import functions
@@ -161,7 +162,7 @@ class SetCookieHeader extends Header
         $result = sprintf('%s=%s', $name, $value);
 
         if (isset($this->expires)) {
-            $result .= '; Expires=' . $this->formatDateTime($this->expires);
+            $result .= '; Expires=' . HeaderUtils::formatDate($this->expires);
             $result .= '; Max-Age=' . max($this->expires->getTimestamp() - time(), 0);
         }
 

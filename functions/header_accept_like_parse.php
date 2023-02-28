@@ -144,7 +144,7 @@ function header_accept_like_parse(string $header): ?array
         }
 
         // ignoring backslashes before double quotes in the quoted parameter value...
-        if (($char . $next) === '\"' && $inQuotes) {
+        if ($char === '\\' && $next === '"' && $inQuotes) {
             continue;
         }
 

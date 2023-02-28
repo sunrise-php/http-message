@@ -40,7 +40,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      *
-     * @var array<int, string>
+     * @var array<int<100, 599>, non-empty-string>
      */
     public const REASON_PHRASES = [
 
@@ -124,20 +124,6 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     public const DEFAULT_STATUS_CODE = self::STATUS_OK;
 
     /**
-     * Default response reason phrase
-     *
-     * @var string
-     */
-    public const DEFAULT_REASON_PHRASE = self::REASON_PHRASES[self::DEFAULT_STATUS_CODE];
-
-    /**
-     * Reason phrase for unknown status code
-     *
-     * @var string
-     */
-    public const UNKNOWN_STATUS_CODE_REASON_PHRASE = 'Unknown Status Code';
-
-    /**
      * The response's status code
      *
      * @var int
@@ -149,7 +135,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @var string
      */
-    private string $reasonPhrase = self::DEFAULT_REASON_PHRASE;
+    private string $reasonPhrase = self::REASON_PHRASES[self::DEFAULT_STATUS_CODE];
 
     /**
      * Constrictor of the class
@@ -237,7 +223,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         $this->validateReasonPhrase($reasonPhrase);
 
         if ('' === $reasonPhrase) {
-            $reasonPhrase = self::REASON_PHRASES[$statusCode] ?? self::UNKNOWN_STATUS_CODE_REASON_PHRASE;
+            $reasonPhrase = self::REASON_PHRASES[$statusCode] ?? 'Unknown Status Code';
         }
 
         $this->statusCode = $statusCode;
@@ -289,7 +275,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
             throw new InvalidArgumentException('HTTP reason phrase must be a string');
         }
 
-        if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $reasonPhrase)) {
+        if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $reasonPhrase)) {
             throw new InvalidArgumentException('Invalid HTTP reason phrase');
         }
     }

@@ -36,7 +36,8 @@ final class User implements ComponentInterface
      *
      * @var string
      */
-    private const NORMALIZE_REGEX = '/(?:(?:%[0-9A-Fa-f]{2}|[0-9A-Za-z\-\._~\!\$&\'\(\)\*\+,;\=]+)|(.?))/u';
+    // phpcs:ignore Generic.Files.LineLength
+    private const NORMALIZATION_REGEX = '/(?:(?:%[0-9A-Fa-f]{2}|[\x21\x24\x26-\x2e\x30-\x39\x3b\x3d\x41-\x5a\x5f\x61-\x7a\x7e]+)|(.?))/u';
 
     /**
      * The component value
@@ -63,7 +64,7 @@ final class User implements ComponentInterface
             throw new InvalidUriComponentException('URI component "user" must be a string');
         }
 
-        $this->value = preg_replace_callback(self::NORMALIZE_REGEX, function (array $match): string {
+        $this->value = preg_replace_callback(self::NORMALIZATION_REGEX, function (array $match): string {
             /** @var array{0: string, 1?: string} $match */
 
             return isset($match[1]) ? rawurlencode($match[1]) : $match[0];

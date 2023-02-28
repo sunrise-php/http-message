@@ -27,6 +27,34 @@ interface HeaderInterface extends IteratorAggregate
 {
 
     /**
+     * Date format according to RFC-822
+     *
+     * @var string
+     */
+    public const RFC822_DATE_FORMAT = 'D, d M y H:i:s O';
+
+    /**
+     * Regular Expression for a token validation according to RFC-7230
+     *
+     * @var string
+     */
+    public const RFC7230_TOKEN_REGEX = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
+
+    /**
+     * Regular Expression for a field-value validation according to RFC-7230
+     *
+     * @var string
+     */
+    public const RFC7230_FIELD_VALUE_REGEX = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
+
+    /**
+     * Regular Expression for a quoted-string validation according to RFC-7230
+     *
+     * @var string
+     */
+    public const RFC7230_QUOTED_STRING_REGEX = '/^(?:[\x5C][\x22]|[\x09\x20\x21\x23-\x5B\x5D-\x7E\x80-\xFF])*$/';
+
+    /**
      * Gets the header field name
      *
      * @return string
@@ -42,8 +70,6 @@ interface HeaderInterface extends IteratorAggregate
 
     /**
      * Converts the header field to a string
-     *
-     * @link http://php.net/manual/en/language.oop5.magic.php#object.tostring
      *
      * @return string
      */

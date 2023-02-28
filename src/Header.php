@@ -37,42 +37,6 @@ abstract class Header implements HeaderInterface
 {
 
     /**
-     * DateTime format according to RFC-822
-     *
-     * @link https://www.rfc-editor.org/rfc/rfc822#section-5
-     *
-     * @var string
-     */
-    public const RFC822_DATE_TIME_FORMAT = 'D, d M y H:i:s O';
-
-    /**
-     * Regular Expression for a token validation according to RFC-7230
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-3.2
-     *
-     * @var string
-     */
-    public const RFC7230_VALID_TOKEN = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
-
-    /**
-     * Regular Expression for a field value validation according to RFC-7230
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-3.2
-     *
-     * @var string
-     */
-    public const RFC7230_VALID_FIELD_VALUE = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
-
-    /**
-     * Regular Expression for a quoted string validation according to RFC-7230
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-3.2
-     *
-     * @var string
-     */
-    public const RFC7230_VALID_QUOTED_STRING = '/^(?:[\x5C][\x22]|[\x09\x20\x21\x23-\x5B\x5D-\x7E\x80-\xFF])*$/';
-
-    /**
      * {@inheritdoc}
      */
     final public function getIterator(): Traversable
@@ -98,7 +62,7 @@ abstract class Header implements HeaderInterface
      */
     final protected function isToken(string $token): bool
     {
-        return preg_match(self::RFC7230_VALID_TOKEN, $token) === 1;
+        return preg_match(HeaderInterface::RFC7230_TOKEN_REGEX, $token) === 1;
     }
 
     /**
@@ -113,22 +77,7 @@ abstract class Header implements HeaderInterface
      */
     final protected function validateToken(string ...$tokens): void
     {
-        $this->validateValueByRegex(self::RFC7230_VALID_TOKEN, ...$tokens);
-    }
-
-    /**
-     * Validates the given field value(s)
-     *
-     * @param string ...$fieldValues
-     *
-     * @return void
-     *
-     * @throws InvalidHeaderException
-     *         If one of the field values isn't valid.
-     */
-    final protected function validateFieldValue(string ...$fieldValues): void
-    {
-        $this->validateValueByRegex(self::RFC7230_VALID_FIELD_VALUE, ...$fieldValues);
+        $this->validateValueByRegex(HeaderInterface::RFC7230_TOKEN_REGEX, ...$tokens);
     }
 
     /**
@@ -143,7 +92,7 @@ abstract class Header implements HeaderInterface
      */
     final protected function validateQuotedString(string ...$quotedStrings): void
     {
-        $this->validateValueByRegex(self::RFC7230_VALID_QUOTED_STRING, ...$quotedStrings);
+        $this->validateValueByRegex(HeaderInterface::RFC7230_QUOTED_STRING_REGEX, ...$quotedStrings);
     }
 
     /**
@@ -161,8 +110,8 @@ abstract class Header implements HeaderInterface
     {
         return $this->validateParametersByRegex(
             $parameters,
-            self::RFC7230_VALID_TOKEN,
-            self::RFC7230_VALID_QUOTED_STRING
+            HeaderInterface::RFC7230_TOKEN_REGEX,
+            HeaderInterface::RFC7230_QUOTED_STRING_REGEX
         );
     }
 
@@ -231,27 +180,5 @@ abstract class Header implements HeaderInterface
         /** @var array<string, string> $parameters */
 
         return $parameters;
-    }
-
-    /**
-     * Formats the given date-time object
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-3.2
-     *
-     * @param DateTimeInterface $dateTime
-     *
-     * @return string
-     */
-    final protected function formatDateTime(DateTimeInterface $dateTime): string
-    {
-        if ($dateTime instanceof DateTime) {
-            return (clone $dateTime)
-                ->setTimezone(new DateTimeZone('GMT'))
-                ->format(self::RFC822_DATE_TIME_FORMAT);
-        }
-
-        return $dateTime
-            ->setTimezone(new DateTimeZone('GMT'))
-            ->format(self::RFC822_DATE_TIME_FORMAT);
     }
 }

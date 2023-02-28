@@ -68,13 +68,6 @@ class UploadedFile implements UploadedFileInterface
     ];
 
     /**
-     * Description of unknown error
-     *
-     * @var string
-     */
-    public const UNKNOWN_ERROR_TEXT = 'Unknown error';
-
-    /**
      * The file stream
      *
      * @var StreamInterface|null
@@ -136,7 +129,7 @@ class UploadedFile implements UploadedFileInterface
             $this->stream = $stream;
         }
 
-        $message = self::UPLOAD_ERRORS[$error] ?? self::UNKNOWN_ERROR_TEXT;
+        $message = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
 
         $this->size = $size;
         $this->errorCode = $error;
