@@ -64,7 +64,7 @@ use Sunrise\Http\Message\Response\JsonResponse;
 $response = new JsonResponse(200, $data);
 ```
 
-You can also specify [encoding flags](https://www.php.net/manual/en/json.constants.php#constant.json-hex-tag) and maximum nesting depth like bellow:
+You can also specify [encoding flags](https://www.php.net/manual/en/json.constants.php#constant.json-hex-tag) and maximum nesting depth like below:
 
 ```php
 $response = new JsonResponse(200, $data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE, 512);
@@ -102,7 +102,7 @@ $memoryStream = new PhpMemoryStream('r+b');
 
 #### PHP temporary stream
 
-More details about the stream at [the official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
+More details about the stream at the [official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
 
 ```php
 use Sunrise\Http\Message\Stream\PhpTempStream;
@@ -174,7 +174,7 @@ Any exceptions of this package can be caught through the interface:
 use Sunrise\Http\Message\Exception\ExceptionInterface;
 
 try {
-    // some code with the package...
+    // some code of this package...
 } catch (ExceptionInterface $e) {
     // the package error...
 }
