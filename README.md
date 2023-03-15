@@ -17,8 +17,6 @@ composer require sunrise/http-message
 
 ## Documentation navigation
 
-- [Headers as objects](#headers-as-objects)
-- - [Implemented headers](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md)
 - [Server request from global environment](#server-request-from-global-environment)
 - [HTML and JSON responses](#html-and-json-responses)
 - - [HTML response](#html-response)
@@ -35,46 +33,6 @@ composer require sunrise/http-message
 ## How to use
 
 ⚠️ We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
-
-### Headers as objects
-
-If you want to use headers as objects, then follow the example below:
-
-```php
-use Sunrise\Http\Message\HeaderInterface;
-
-final class SomeHeader implements HeaderInterface
-{
-    // some code...
-}
-
-$message->withHeader(...new SomeHeader());
-```
-
-... or you can extend your header from the base header which contains the necessary methods for validation and formatting:
-
-```php
-use Sunrise\Http\Message\Header;
-
-final class SomeHeader extends Header
-{
-    // some code...
-}
-
-$message->withHeader(...new SomeHeader());
-```
-
-Below is an example of how you can set cookies using the already implemented [Set-Cookie](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md#Set-Cookie) header:
-
-```php
-use Sunrise\Http\Message\Header\SetCookieHeader;
-
-$cookie = new SetCookieHeader('sessionid', '38afes7a8');
-
-$message->withAddedHeader(...$cookie);
-```
-
-You can see already implemented headers [here](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md).
 
 ### Server request from global environment
 
