@@ -17,10 +17,6 @@ namespace Sunrise\Http\Message;
 use IteratorAggregate;
 
 /**
- * <code>
- *   $response->withHeader(...new SetCookieHeader('foo', 'bar'))
- * </code>
- *
  * @extends IteratorAggregate<int, string>
  */
 interface HeaderInterface extends IteratorAggregate
@@ -34,21 +30,21 @@ interface HeaderInterface extends IteratorAggregate
     public const RFC822_DATE_FORMAT = 'D, d M y H:i:s O';
 
     /**
-     * Regular Expression for a token validation according to RFC-7230
+     * Regular Expression used for a token validation according to RFC-7230
      *
      * @var string
      */
     public const RFC7230_TOKEN_REGEX = '/^[\x21\x23-\x27\x2A\x2B\x2D\x2E\x30-\x39\x41-\x5A\x5E-\x7A\x7C\x7E]+$/';
 
     /**
-     * Regular Expression for a field-value validation according to RFC-7230
+     * Regular Expression used for a field-value validation according to RFC-7230
      *
      * @var string
      */
     public const RFC7230_FIELD_VALUE_REGEX = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
 
     /**
-     * Regular Expression for a quoted-string validation according to RFC-7230
+     * Regular Expression used for a quoted-string validation according to RFC-7230
      *
      * @var string
      */
@@ -69,7 +65,7 @@ interface HeaderInterface extends IteratorAggregate
     public function getFieldValue(): string;
 
     /**
-     * Converts the header field to a string
+     * Converts the header to a field
      *
      * @return string
      */

@@ -37,25 +37,18 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 {
 
     /**
-     * Regular Expression for a request target validation
+     * Regular Expression used for a request target validation
      *
      * @var string
      */
     public const RFC7230_REQUEST_TARGET_REGEX = '/^[\x21-\x7E\x80-\xFF]+$/';
 
     /**
-     * Default request method
-     *
-     * @var string
-     */
-    public const DEFAULT_METHOD = self::METHOD_GET;
-
-    /**
      * The request method (aka verb)
      *
      * @var string
      */
-    private string $method = self::DEFAULT_METHOD;
+    private string $method = self::METHOD_GET;
 
     /**
      * The request URI

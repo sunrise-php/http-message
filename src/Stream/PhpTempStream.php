@@ -14,7 +14,6 @@ namespace Sunrise\Http\Message\Stream;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Stream;
 
 /**
@@ -33,16 +32,10 @@ final class PhpTempStream extends Stream
      * Constructor of the class
      *
      * @param string $mode
-     * @param int $maxmemory
-     *
-     * @throws InvalidArgumentException
+     * @param int<0, max> $maxmemory
      */
     public function __construct(string $mode = 'r+b', int $maxmemory = 2097152)
     {
-        if ($maxmemory < 0) {
-            throw new InvalidArgumentException('Argument #2 ($maxmemory) must be greater than or equal to 0');
-        }
-
         parent::__construct(fopen(sprintf('php://temp/maxmemory:%d', $maxmemory), $mode));
     }
 }

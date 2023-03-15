@@ -32,11 +32,11 @@ final class Scheme implements ComponentInterface
 {
 
     /**
-     * Regular expression to validate the component value
+     * Regular expression used for the component validation
      *
      * @var string
      */
-    private const VALIDATION_REGEX = '/^(?:[A-Za-z][0-9A-Za-z\+\-\.]*)?$/';
+    private const VALIDATION_REGEX = '/^(?:[A-Za-z][0-9A-Za-z\x2b\x2d\x2e]*)?$/';
 
     /**
      * The component value

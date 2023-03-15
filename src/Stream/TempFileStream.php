@@ -35,14 +35,12 @@ final class TempFileStream extends Stream
     /**
      * Constructor of the class
      *
-     * @param string|null $prefix
+     * @param string $prefix
      *
      * @throws RuntimeException
      */
-    public function __construct(?string $prefix = null)
+    public function __construct(string $prefix = '')
     {
-        $prefix ??= 'sunrisephp';
-
         $dirname = sys_get_temp_dir();
         if (!is_writable($dirname)) {
             throw new RuntimeException('Temporary files directory is not writable');

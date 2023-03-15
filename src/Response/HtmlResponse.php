@@ -50,7 +50,7 @@ final class HtmlResponse extends Response
     }
 
     /**
-     * Creates the response body from the given HTML
+     * Creates the response body from the given HTML data
      *
      * @param mixed $html
      *

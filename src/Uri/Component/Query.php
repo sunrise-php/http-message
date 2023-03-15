@@ -32,12 +32,12 @@ final class Query implements ComponentInterface
 {
 
     /**
-     * Regular expression to normalize the component value
+     * Regular expression used for the component normalization
      *
      * @var string
      */
     // phpcs:ignore Generic.Files.LineLength
-    private const NORMALIZATION_REGEX = '/(?:(?:%[0-9A-Fa-f]{2}|[\x21\x24\x26-\x3b\x3d\x3f-\x5a\x5f\x61-\x7a\x7e]+)|(.?))/u';
+    private const NORMALIZATION_REGEX = '/(?:%[0-9A-Fa-f]{2}|[\x21\x24\x26-\x3b\x3d\x3f-\x5a\x5f\x61-\x7a\x7e]+)|(.?)/u';
 
     /**
      * The component value

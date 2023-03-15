@@ -117,25 +117,18 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     ];
 
     /**
-     * Default response status code
-     *
-     * @var int
-     */
-    public const DEFAULT_STATUS_CODE = self::STATUS_OK;
-
-    /**
      * The response's status code
      *
      * @var int
      */
-    private int $statusCode = self::DEFAULT_STATUS_CODE;
+    private int $statusCode = self::STATUS_OK;
 
     /**
      * The response's reason phrase
      *
      * @var string
      */
-    private string $reasonPhrase = self::REASON_PHRASES[self::DEFAULT_STATUS_CODE];
+    private string $reasonPhrase = self::REASON_PHRASES[self::STATUS_OK];
 
     /**
      * Constrictor of the class

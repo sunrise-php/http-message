@@ -129,11 +129,9 @@ class UploadedFile implements UploadedFileInterface
             $this->stream = $stream;
         }
 
-        $message = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
-
         $this->size = $size;
         $this->errorCode = $error;
-        $this->errorMessage = $message;
+        $this->errorMessage = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
         $this->clientFilename = $clientFilename;
         $this->clientMediaType = $clientMediaType;
     }
