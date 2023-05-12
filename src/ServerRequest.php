@@ -61,14 +61,14 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @var array
      */
-    private array $uploadedFiles;
+    private array $uploadedFiles = [];
 
     /**
      * The request's parsed body
      *
      * @var array|object|null
      */
-    private $parsedBody;
+    private $parsedBody = null;
 
     /**
      * The request attributes
@@ -109,17 +109,23 @@ class ServerRequest extends Request implements ServerRequestInterface
         $parsedBody = null,
         array $attributes = []
     ) {
+        parent::__construct($method, $uri, $headers, $body);
+
         if (isset($protocolVersion)) {
             $this->setProtocolVersion($protocolVersion);
         }
 
-        parent::__construct($method, $uri, $headers, $body);
+        if (!empty($uploadedFiles)) {
+            $this->setUploadedFiles($uploadedFiles);
+        }
+
+        if (isset($parsedBody)) {
+            $this->setParsedBody($parsedBody);
+        }
 
         $this->serverParams = $serverParams;
         $this->queryParams = $queryParams;
         $this->cookieParams = $cookieParams;
-        $this->setUploadedFiles($uploadedFiles);
-        $this->setParsedBody($parsedBody);
         $this->attributes = $attributes;
     }
 
@@ -350,17 +356,11 @@ class ServerRequest extends Request implements ServerRequestInterface
         }
 
         /**
-         * @param mixed $file
-         *
-         * @return void
-         *
-         * @throws InvalidArgumentException
-         *
          * @psalm-suppress MissingClosureParamType
          */
         array_walk_recursive($files, static function ($file): void {
             if (! ($file instanceof UploadedFileInterface)) {
-                throw new InvalidArgumentException('Invalid uploaded files');
+                throw new InvalidArgumentException('Invalid uploaded file');
             }
         });
     }

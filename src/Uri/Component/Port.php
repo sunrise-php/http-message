@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Uri\Component;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
  * Import functions
@@ -41,7 +41,7 @@ final class Port implements ComponentInterface
      *
      * @param mixed $value
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the component isn't valid.
      */
     public function __construct($value)
@@ -54,11 +54,11 @@ final class Port implements ComponentInterface
         }
 
         if (!is_int($value)) {
-            throw new InvalidUriComponentException('URI component "port" must be an integer');
+            throw new InvalidArgumentException('URI component "port" must be an integer');
         }
 
         if (!($value >= $min && $value <= $max)) {
-            throw new InvalidUriComponentException('Invalid URI component "port"');
+            throw new InvalidArgumentException('Invalid URI component "port"');
         }
 
         $this->value = $value;

@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Uri\Component;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
  * Import functions
@@ -51,7 +51,7 @@ final class Password implements ComponentInterface
      *
      * @param mixed $value
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the component isn't valid.
      */
     public function __construct($value)
@@ -61,10 +61,10 @@ final class Password implements ComponentInterface
         }
 
         if (!is_string($value)) {
-            throw new InvalidUriComponentException('URI component "password" must be a string');
+            throw new InvalidArgumentException('URI component "password" must be a string');
         }
 
-        $this->value = preg_replace_callback(self::NORMALIZATION_REGEX, function (array $match): string {
+        $this->value = (string) preg_replace_callback(self::NORMALIZATION_REGEX, function (array $match): string {
             /** @var array{0: string, 1?: string} $match */
 
             return isset($match[1]) ? rawurlencode($match[1]) : $match[0];
@@ -78,7 +78,7 @@ final class Password implements ComponentInterface
      *
      * @return Password
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      */
     public static function create($password): Password
     {

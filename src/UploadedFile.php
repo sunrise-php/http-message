@@ -54,7 +54,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @link https://www.php.net/manual/en/features.file-upload.errors.php
      *
-     * @var array<int, string>
+     * @var array<int, non-empty-string>
      */
     public const UPLOAD_ERRORS = [
         UPLOAD_ERR_OK         => 'No error',
@@ -125,6 +125,7 @@ class UploadedFile implements UploadedFileInterface
         ?string $clientFilename = null,
         ?string $clientMediaType = null
     ) {
+        // It doesn't make sense to keep the stream if the file wasn't successfully uploaded...
         if (UPLOAD_ERR_OK === $error) {
             $this->stream = $stream;
         }

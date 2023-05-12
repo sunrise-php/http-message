@@ -16,8 +16,6 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
-use Sunrise\Http\Message\Exception\InvalidUriException;
 use Sunrise\Http\Message\Uri\Component\Fragment;
 use Sunrise\Http\Message\Uri\Component\Host;
 use Sunrise\Http\Message\Uri\Component\Path;
@@ -97,7 +95,7 @@ class Uri implements UriInterface
      *
      * @param string $uri
      *
-     * @throws InvalidUriException
+     * @throws InvalidArgumentException
      *         If the URI isn't valid.
      */
     public function __construct(string $uri = '')
@@ -108,7 +106,7 @@ class Uri implements UriInterface
 
         $components = parse_url($uri);
         if ($components === false) {
-            throw new InvalidUriException('Unable to parse URI');
+            throw new InvalidArgumentException('Unable to parse URI');
         }
 
         if (isset($components['scheme'])) {
@@ -169,7 +167,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the scheme isn't valid.
      */
     public function withScheme($scheme): UriInterface
@@ -183,7 +181,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the user information isn't valid.
      */
     public function withUserInfo($user, $password = null): UriInterface
@@ -197,7 +195,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the host isn't valid.
      */
     public function withHost($host): UriInterface
@@ -211,7 +209,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the port isn't valid.
      */
     public function withPort($port): UriInterface
@@ -225,7 +223,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the path isn't valid.
      */
     public function withPath($path): UriInterface
@@ -239,7 +237,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the query isn't valid.
      */
     public function withQuery($query): UriInterface
@@ -253,7 +251,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the fragment isn't valid.
      */
     public function withFragment($fragment): UriInterface
@@ -419,7 +417,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the scheme isn't valid.
      */
     final protected function setScheme($scheme): void
@@ -435,7 +433,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the user information isn't valid.
      */
     final protected function setUserInfo($user, $password): void
@@ -450,7 +448,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the host isn't valid.
      */
     final protected function setHost($host): void
@@ -465,7 +463,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the port isn't valid.
      */
     final protected function setPort($port): void
@@ -480,7 +478,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the path isn't valid.
      */
     final protected function setPath($path): void
@@ -495,7 +493,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the query isn't valid.
      */
     final protected function setQuery($query): void
@@ -510,7 +508,7 @@ class Uri implements UriInterface
      *
      * @return void
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the fragment isn't valid.
      */
     final protected function setFragment($fragment): void

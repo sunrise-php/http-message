@@ -169,7 +169,7 @@ class Stream implements StreamInterface
     public function tell(): int
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream without a resource so the operation is not possible');
+            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
         }
 
         $result = ftell($this->resource);
@@ -224,7 +224,7 @@ class Stream implements StreamInterface
     public function seek($offset, $whence = SEEK_SET): void
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream without a resource so the operation is not possible');
+            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
         }
 
         if (!$this->isSeekable()) {
@@ -270,7 +270,7 @@ class Stream implements StreamInterface
     public function write($string): int
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream without a resource so the operation is not possible');
+            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
         }
 
         if (!$this->isWritable()) {
@@ -316,7 +316,7 @@ class Stream implements StreamInterface
     public function read($length): string
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream without a resource so the operation is not possible');
+            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
         }
 
         if (!$this->isReadable()) {
@@ -343,7 +343,7 @@ class Stream implements StreamInterface
     public function getContents(): string
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream without a resource so the operation is not possible');
+            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
         }
 
         if (!$this->isReadable()) {
@@ -384,7 +384,7 @@ class Stream implements StreamInterface
     /**
      * Gets the stream size
      *
-     * Returns NULL if the stream without a resource,
+     * Returns NULL if the stream doesn't have a resource,
      * or if the stream size cannot be determined.
      *
      * @link http://php.net/manual/en/function.fstat.php

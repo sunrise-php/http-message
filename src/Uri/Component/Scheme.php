@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Uri\Component;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
  * Import functions
@@ -50,7 +50,7 @@ final class Scheme implements ComponentInterface
      *
      * @param mixed $value
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the component isn't valid.
      */
     public function __construct($value)
@@ -60,11 +60,11 @@ final class Scheme implements ComponentInterface
         }
 
         if (!is_string($value)) {
-            throw new InvalidUriComponentException('URI component "scheme" must be a string');
+            throw new InvalidArgumentException('URI component "scheme" must be a string');
         }
 
         if (!preg_match(self::VALIDATION_REGEX, $value)) {
-            throw new InvalidUriComponentException('Invalid URI component "scheme"');
+            throw new InvalidArgumentException('Invalid URI component "scheme"');
         }
 
         // the component is case-insensitive...

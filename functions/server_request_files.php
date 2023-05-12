@@ -30,7 +30,7 @@ use const UPLOAD_ERR_NO_FILE;
 /**
  * Gets the request's uploaded files
  *
- * Note that not sent files will not be handled.
+ * Please note that unsent files will not be handled.
  *
  * @param array|null $files
  *
@@ -45,24 +45,12 @@ function server_request_files(?array $files = null): array
 {
     $files ??= $_FILES;
 
-    $walker = function (
-        $path,
-        $size,
-        $error,
-        $name,
-        $type
-    ) use (&$walker) {
+    $walker = static function ($path, $size, $error, $name, $type) use (&$walker) {
         if (!is_array($path)) {
             // It makes no sense to create a stream if the file has not been successfully uploaded.
             $stream = UPLOAD_ERR_OK <> $error ? null : new FileStream($path, 'rb');
 
-            return new UploadedFile(
-                $stream,
-                $size,
-                $error,
-                $name,
-                $type
-            );
+            return new UploadedFile($stream, $size, $error, $name, $type);
         }
 
         $result = [];

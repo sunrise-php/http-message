@@ -134,7 +134,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets a header value from the message by the given name
+     * Gets a header value(s) from the message by the given name
      *
      * @param string $name
      *
@@ -144,7 +144,7 @@ abstract class Message implements MessageInterface
     {
         $key = strtolower($name);
 
-        if (empty($this->headerNames[$key])) {
+        if (!isset($this->headerNames[$key])) {
             return [];
         }
 
@@ -160,12 +160,13 @@ abstract class Message implements MessageInterface
      */
     public function getHeaderLine($name): string
     {
-        $value = $this->getHeader($name);
-        if ([] === $value) {
+        $key = strtolower($name);
+
+        if (!isset($this->headerNames[$key])) {
             return '';
         }
 
-        return implode(',', $value);
+        return implode(',', $this->headers[$this->headerNames[$key]]);
     }
 
     /**

@@ -42,7 +42,7 @@ final class JsonResponse extends Response
      * @param int $statusCode
      * @param mixed $data
      * @param int $flags
-     * @param int $depth
+     * @param int<1, max> $depth
      *
      * @throws InvalidArgumentException
      */
@@ -60,7 +60,7 @@ final class JsonResponse extends Response
      *
      * @param mixed $data
      * @param int $flags
-     * @param int $depth
+     * @param int<1, max> $depth
      *
      * @return StreamInterface
      *
@@ -72,10 +72,8 @@ final class JsonResponse extends Response
             return $data;
         }
 
-        $flags |= JSON_THROW_ON_ERROR;
-
         try {
-            $payload = json_encode($data, $flags, $depth);
+            $payload = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (JsonException $e) {
             throw new InvalidArgumentException(sprintf(
                 'Unable to create JSON response due to invalid JSON data: %s',

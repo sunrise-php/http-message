@@ -41,7 +41,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @var string
      */
-    public const RFC7230_REQUEST_TARGET_REGEX = '/^[\x21-\x7E\x80-\xFF]+$/';
+    private const RFC7230_REQUEST_TARGET_REGEX = '/^[\x21-\x7E\x80-\xFF]+$/';
 
     /**
      * The request method (aka verb)
