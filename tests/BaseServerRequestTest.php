@@ -144,7 +144,7 @@ abstract class BaseServerRequestTest extends BaseRequestTest
     public function testSetInvalidUploadedFiles(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid uploaded files');
+        $this->expectExceptionMessage('Invalid uploaded file');
 
         $this->createSubject()->withUploadedFiles(['foo' => 'bar']);
     }
@@ -293,7 +293,7 @@ abstract class BaseServerRequestTest extends BaseRequestTest
     public function testConstructorWithInvalidUploadedFiles(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid uploaded files');
+        $this->expectExceptionMessage('Invalid uploaded file');
 
         $subject = $this->createSubjectWithUploadedFiles(['foo' => 'bar']);
 

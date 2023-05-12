@@ -7,8 +7,6 @@ namespace Sunrise\Http\Message\Tests;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
-use Sunrise\Http\Message\Exception\InvalidUriException;
 use Sunrise\Http\Message\Uri;
 
 use function strtolower;
@@ -49,7 +47,7 @@ class UriTest extends TestCase
 
     public function testConstructorWithInvalidUri(): void
     {
-        $this->expectException(InvalidUriException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to parse URI');
 
         new Uri(':');
@@ -272,7 +270,7 @@ class UriTest extends TestCase
 
     public function testWithInvalidScheme(): void
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid URI component "scheme"');
 
         (new Uri(self::TEST_URI))->withScheme('scheme:');
@@ -297,7 +295,7 @@ class UriTest extends TestCase
 
     public function testWithPortLessThanZero(): void
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid URI component "port"');
 
         (new Uri(self::TEST_URI))->withPort(-1);
@@ -305,7 +303,7 @@ class UriTest extends TestCase
 
     public function testWithPortEqualsZero(): void
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid URI component "port"');
 
         (new Uri(self::TEST_URI))->withPort(0);
@@ -313,7 +311,7 @@ class UriTest extends TestCase
 
     public function testWithPortGreaterThan65535(): void
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid URI component "port"');
 
         (new Uri(self::TEST_URI))->withPort(2 ** 16);
@@ -347,7 +345,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForScheme($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "scheme" must be a string');
 
         (new Uri)->withScheme($value);
@@ -358,7 +356,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForUser($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "user" must be a string');
 
         (new Uri)->withUserInfo($value);
@@ -369,7 +367,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForPass($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "password" must be a string');
 
         (new Uri)->withUserInfo('user', $value);
@@ -380,7 +378,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForHost($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "host" must be a string');
 
         (new Uri)->withHost($value);
@@ -391,7 +389,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForPort($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "port" must be an integer');
 
         (new Uri)->withPort($value);
@@ -402,7 +400,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForPath($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "path" must be a string');
 
         (new Uri)->withPath($value);
@@ -413,7 +411,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForQuery($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "query" must be a string');
 
         (new Uri)->withQuery($value);
@@ -424,7 +422,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidDataTypeForFragment($value)
     {
-        $this->expectException(InvalidUriComponentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('URI component "fragment" must be a string');
 
         (new Uri)->withFragment($value);

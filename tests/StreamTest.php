@@ -149,7 +149,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->tell();
     }
@@ -159,7 +159,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->tell();
     }
@@ -210,7 +210,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->rewind();
     }
@@ -220,7 +220,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->rewind();
     }
@@ -247,7 +247,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->seek(0);
     }
@@ -257,7 +257,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->seek(0);
     }
@@ -315,7 +315,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->write('foo');
     }
@@ -325,7 +325,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->write('foo');
     }
@@ -375,7 +375,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->read(1);
     }
@@ -385,7 +385,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->read(1);
     }
@@ -412,7 +412,7 @@ class StreamTest extends TestCase
         $this->testStream->detach();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->getContents();
     }
@@ -422,7 +422,7 @@ class StreamTest extends TestCase
         $this->testStream->close();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The stream without a resource so the operation is not possible');
+        $this->expectExceptionMessage('The stream does not have a resource, so the operation is not possible');
 
         $this->testStream->getContents();
     }
