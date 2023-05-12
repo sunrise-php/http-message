@@ -64,7 +64,7 @@ final class Password implements ComponentInterface
             throw new InvalidArgumentException('URI component "password" must be a string');
         }
 
-        $this->value = (string) preg_replace_callback(self::NORMALIZATION_REGEX, function (array $match): string {
+        $this->value = preg_replace_callback(self::NORMALIZATION_REGEX, static function (array $match): string {
             /** @var array{0: string, 1?: string} $match */
 
             return isset($match[1]) ? rawurlencode($match[1]) : $match[0];
