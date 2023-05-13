@@ -59,7 +59,7 @@ class Stream implements StreamInterface
      *
      * @var bool
      */
-    private $autoClose;
+    private bool $autoClose;
 
     /**
      * Constructor of the class
@@ -169,7 +169,7 @@ class Stream implements StreamInterface
     public function tell(): int
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
+            throw new RuntimeException('Stream has no resource');
         }
 
         $result = ftell($this->resource);
@@ -224,7 +224,7 @@ class Stream implements StreamInterface
     public function seek($offset, $whence = SEEK_SET): void
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isSeekable()) {
@@ -270,7 +270,7 @@ class Stream implements StreamInterface
     public function write($string): int
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isWritable()) {
@@ -308,6 +308,8 @@ class Stream implements StreamInterface
      * @link http://php.net/manual/en/function.fread.php
      *
      * @param int $length
+     * @psalm-param int $length
+     * @phpstan-param int<0, max> $length
      *
      * @return string
      *
@@ -316,7 +318,7 @@ class Stream implements StreamInterface
     public function read($length): string
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isReadable()) {
@@ -343,7 +345,7 @@ class Stream implements StreamInterface
     public function getContents(): string
     {
         if (!is_resource($this->resource)) {
-            throw new RuntimeException('The stream does not have a resource, so the operation is not possible');
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isReadable()) {

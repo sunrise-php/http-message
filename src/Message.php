@@ -40,11 +40,11 @@ abstract class Message implements MessageInterface
 {
 
     /**
-     * Supported HTTP versions
+     * Allowed HTTP versions
      *
      * @var list<string>
      */
-    public const SUPPORTED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
+    public const ALLOWED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
 
     /**
      * Default HTTP version
@@ -68,7 +68,7 @@ abstract class Message implements MessageInterface
     private array $headers = [];
 
     /**
-     * Original header names (see $headers)
+     * Original header names
      *
      * @var array<string, string>
      */
@@ -357,8 +357,8 @@ abstract class Message implements MessageInterface
      */
     private function validateProtocolVersion($protocolVersion): void
     {
-        if (!in_array($protocolVersion, self::SUPPORTED_HTTP_VERSIONS, true)) {
-            throw new InvalidArgumentException('Invalid or unsupported HTTP version');
+        if (!in_array($protocolVersion, self::ALLOWED_HTTP_VERSIONS, true)) {
+            throw new InvalidArgumentException('Unallowed HTTP version');
         }
     }
 
@@ -391,7 +391,7 @@ abstract class Message implements MessageInterface
      * Validates the given header value
      *
      * @param string $name
-     * @param array $value
+     * @param array<array-key, mixed> $value
      *
      * @return void
      *

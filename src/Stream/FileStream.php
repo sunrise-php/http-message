@@ -14,9 +14,8 @@ namespace Sunrise\Http\Message\Stream;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\RuntimeException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Stream;
-use Throwable;
 
 /**
  * Import functions
@@ -37,18 +36,14 @@ final class FileStream extends Stream
      * @param string $filename
      * @param string $mode
      *
-     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function __construct(string $filename, string $mode)
     {
-        try {
-            $resource = fopen($filename, $mode);
-        } catch (Throwable $e) {
-            $resource = false;
-        }
+        $resource = @fopen($filename, $mode);
 
         if (!is_resource($resource)) {
-            throw new RuntimeException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Unable to open the file "%s" in the mode "%s"',
                 $filename,
                 $mode

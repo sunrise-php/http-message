@@ -106,7 +106,7 @@ class Uri implements UriInterface
 
         $components = parse_url($uri);
         if ($components === false) {
-            throw new InvalidArgumentException('Unable to parse URI');
+            throw new InvalidArgumentException('Invalid URI');
         }
 
         if (isset($components['scheme'])) {

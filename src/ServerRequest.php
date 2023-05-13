@@ -38,42 +38,42 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * The server parameters
      *
-     * @var array
+     * @var array<array-key, mixed>
      */
     private array $serverParams;
 
     /**
      * The request's query parameters
      *
-     * @var array
+     * @var array<array-key, mixed>
      */
     private array $queryParams;
 
     /**
      * The request's cookie parameters
      *
-     * @var array
+     * @var array<array-key, mixed>
      */
     private array $cookieParams;
 
     /**
      * The request's uploaded files
      *
-     * @var array
+     * @var array<array-key, mixed>
      */
     private array $uploadedFiles = [];
 
     /**
      * The request's parsed body
      *
-     * @var array|object|null
+     * @var array<array-key, mixed>|object|null
      */
     private $parsedBody = null;
 
     /**
      * The request attributes
      *
-     * @var array
+     * @var array<array-key, mixed>
      */
     private array $attributes;
 
@@ -86,12 +86,12 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array<string, string|string[]>|null $headers
      * @param StreamInterface|null $body
      *
-     * @param array $serverParams
-     * @param array $queryParams
-     * @param array $cookieParams
-     * @param array $uploadedFiles
-     * @param array|object|null $parsedBody
-     * @param array $attributes
+     * @param array<array-key, mixed> $serverParams
+     * @param array<array-key, mixed> $queryParams
+     * @param array<array-key, mixed> $cookieParams
+     * @param array<array-key, mixed> $uploadedFiles
+     * @param array<array-key, mixed>|object|null $parsedBody
+     * @param array<array-key, mixed> $attributes
      *
      * @throws InvalidArgumentException
      *         If one of the arguments isn't valid.
@@ -132,7 +132,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the server parameters
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getServerParams(): array
     {
@@ -142,7 +142,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the request's query parameters
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getQueryParams(): array
     {
@@ -152,7 +152,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Creates a new instance of the request with the given query parameters
      *
-     * @param array $query
+     * @param array<array-key, mixed> $query
      *
      * @return static
      */
@@ -167,7 +167,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the request's cookie parameters
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getCookieParams(): array
     {
@@ -177,7 +177,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Creates a new instance of the request with the given cookie parameters
      *
-     * @param array $cookies
+     * @param array<array-key, mixed> $cookies
      *
      * @return static
      */
@@ -192,7 +192,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the request's uploaded files
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getUploadedFiles(): array
     {
@@ -202,7 +202,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Creates a new instance of the request with the given uploaded files
      *
-     * @param array $uploadedFiles
+     * @param array<array-key, mixed> $uploadedFiles
      *
      * @return static
      *
@@ -220,7 +220,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the request's parsed body
      *
-     * @return array|object|null
+     * @return array<array-key, mixed>|object|null
      */
     public function getParsedBody()
     {
@@ -230,7 +230,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Creates a new instance of the request with the given parsed body
      *
-     * @param array|object|null $data
+     * @param array<array-key, mixed>|object|null $data
      *
      * @return static
      *
@@ -248,7 +248,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Gets the request attributes
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getAttributes(): array
     {
@@ -308,7 +308,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Sets the given uploaded files to the request
      *
-     * @param array $files
+     * @param array<array-key, mixed> $files
      *
      * @return void
      *
@@ -325,7 +325,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Sets the given parsed body to the request
      *
-     * @param array|object|null $data
+     * @param array<array-key, mixed>|object|null $data
      *
      * @return void
      *
@@ -342,7 +342,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Validates the given uploaded files
      *
-     * @param array $files
+     * @param array<array-key, mixed> $files
      *
      * @return void
      *

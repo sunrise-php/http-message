@@ -16,6 +16,7 @@ namespace Sunrise\Http\Message;
  */
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream\FileStream;
 
@@ -125,7 +126,8 @@ class UploadedFile implements UploadedFileInterface
         ?string $clientFilename = null,
         ?string $clientMediaType = null
     ) {
-        // It doesn't make sense to keep the stream if the file wasn't successfully uploaded...
+        // It doesn't make sense to keep the stream
+        // if the file wasn't successfully uploaded...
         if (UPLOAD_ERR_OK === $error) {
             $this->stream = $stream;
         }
@@ -172,11 +174,13 @@ class UploadedFile implements UploadedFileInterface
      *
      * @return void
      *
+     * @throws InvalidArgumentException
+     *         If the target path cannot be used.
+     *
      * @throws RuntimeException
      *         - If the file has no a stream due to an error;
      *         - If the file was already moved;
-     *         - If the file cannot be read;
-     *         - If the target path cannot be used.
+     *         - If the file cannot be read.
      */
     public function moveTo($targetPath): void
     {
@@ -200,24 +204,21 @@ class UploadedFile implements UploadedFileInterface
             );
         }
 
-        $targetDir = dirname($targetPath);
-        if (!is_dir($targetDir) || !is_writable($targetDir)) {
-            throw new RuntimeException(sprintf(
-                'Uploaded file cannot be moved because the directory "%s" is not writable',
-                $targetDir
+        try {
+            $targetStream = new FileStream($targetPath, 'wb');
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgumentException(sprintf(
+                'Uploaded file cannot be moved due to the error: %s',
+                $e->getMessage()
             ));
         }
-
-        $targetStream = new FileStream($targetPath, 'wb');
 
         if ($this->stream->isSeekable()) {
             $this->stream->rewind();
         }
 
         while (!$this->stream->eof()) {
-            $targetStream->write(
-                $this->stream->read(4096)
-            );
+            $targetStream->write($this->stream->read(4096));
         }
 
         $targetStream->close();
