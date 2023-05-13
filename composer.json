@@ -11,8 +11,8 @@
         "message",
         "request",
         "response",
-        "uri",
         "stream",
+        "uri",
         "upload",
         "rfc-7230",
         "psr-7",
@@ -61,6 +61,7 @@
         "test": [
             "phpcs",
             "psalm --no-cache",
+            "phpstan analyse src --level=9",
             "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
         ],
         "build": [
