@@ -40,7 +40,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      *
-     * @var array<int, string>
+     * @var array<int<100, 599>, non-empty-string>
      */
     public const REASON_PHRASES = [
 
@@ -117,39 +117,18 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     ];
 
     /**
-     * Default response status code
-     *
-     * @var int
-     */
-    public const DEFAULT_STATUS_CODE = self::STATUS_OK;
-
-    /**
-     * Default response reason phrase
-     *
-     * @var string
-     */
-    public const DEFAULT_REASON_PHRASE = self::REASON_PHRASES[self::DEFAULT_STATUS_CODE];
-
-    /**
-     * Reason phrase for unknown status code
-     *
-     * @var string
-     */
-    public const UNKNOWN_STATUS_CODE_REASON_PHRASE = 'Unknown Status Code';
-
-    /**
      * The response's status code
      *
      * @var int
      */
-    private int $statusCode = self::DEFAULT_STATUS_CODE;
+    private int $statusCode = self::STATUS_OK;
 
     /**
      * The response's reason phrase
      *
      * @var string
      */
-    private string $reasonPhrase = self::DEFAULT_REASON_PHRASE;
+    private string $reasonPhrase = self::REASON_PHRASES[self::STATUS_OK];
 
     /**
      * Constrictor of the class
@@ -160,7 +139,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      * @param StreamInterface|null $body
      *
      * @throws InvalidArgumentException
-     *         If one of the parameters isn't valid.
+     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?int $statusCode = null,
@@ -237,7 +216,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         $this->validateReasonPhrase($reasonPhrase);
 
         if ('' === $reasonPhrase) {
-            $reasonPhrase = self::REASON_PHRASES[$statusCode] ?? self::UNKNOWN_STATUS_CODE_REASON_PHRASE;
+            $reasonPhrase = self::REASON_PHRASES[$statusCode] ?? 'Unknown Status Code';
         }
 
         $this->statusCode = $statusCode;
@@ -281,11 +260,15 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      */
     private function validateReasonPhrase($reasonPhrase): void
     {
+        if ('' === $reasonPhrase) {
+            return;
+        }
+
         if (!is_string($reasonPhrase)) {
             throw new InvalidArgumentException('HTTP reason phrase must be a string');
         }
 
-        if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $reasonPhrase)) {
+        if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $reasonPhrase)) {
             throw new InvalidArgumentException('Invalid HTTP reason phrase');
         }
     }

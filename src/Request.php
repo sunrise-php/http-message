@@ -37,34 +37,18 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 {
 
     /**
-     * Regular Expression for a request target validation
-     *
-     * @link https://tools.ietf.org/html/rfc7230#section-5.3
+     * Regular Expression used for a request target validation
      *
      * @var string
      */
-    public const RFC7230_VALID_REQUEST_TARGET = '/^[\x21-\x7E\x80-\xFF]+$/';
-
-    /**
-     * Default request method
-     *
-     * @var string
-     */
-    public const DEFAULT_METHOD = self::METHOD_GET;
-
-    /**
-     * Default request URI
-     *
-     * @var string
-     */
-    public const DEFAULT_URI = '/';
+    private const RFC7230_REQUEST_TARGET_REGEX = '/^[\x21-\x7E\x80-\xFF]+$/';
 
     /**
      * The request method (aka verb)
      *
      * @var string
      */
-    private string $method = self::DEFAULT_METHOD;
+    private string $method = self::METHOD_GET;
 
     /**
      * The request URI
@@ -89,7 +73,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param StreamInterface|null $body
      *
      * @throws InvalidArgumentException
-     *         If one of the parameters isn't valid.
+     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?string $method = null,
@@ -101,7 +85,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
             $this->setMethod($method);
         }
 
-        $this->setUri($uri ?? self::DEFAULT_URI);
+        $this->setUri($uri ?? '/');
 
         if (isset($headers)) {
             $this->setHeaders($headers);
@@ -304,7 +288,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
             throw new InvalidArgumentException('HTTP method must be a string');
         }
 
-        if (!preg_match(Header::RFC7230_VALID_TOKEN, $method)) {
+        if (!preg_match(HeaderInterface::RFC7230_TOKEN_REGEX, $method)) {
             throw new InvalidArgumentException('Invalid HTTP method');
         }
     }
@@ -329,7 +313,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
             throw new InvalidArgumentException('HTTP request target must be a string');
         }
 
-        if (!preg_match(self::RFC7230_VALID_REQUEST_TARGET, $requestTarget)) {
+        if (!preg_match(self::RFC7230_REQUEST_TARGET_REGEX, $requestTarget)) {
             throw new InvalidArgumentException('Invalid HTTP request target');
         }
     }

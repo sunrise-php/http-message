@@ -31,17 +31,10 @@ use function json_encode;
 use const JSON_THROW_ON_ERROR;
 
 /**
- * JSON Response
+ * JSON response
  */
-class JsonResponse extends Response
+final class JsonResponse extends Response
 {
-
-    /**
-     * The response content type
-     *
-     * @var string
-     */
-    public const CONTENT_TYPE = 'application/json; charset=utf-8';
 
     /**
      * Constructor of the class
@@ -49,17 +42,17 @@ class JsonResponse extends Response
      * @param int $statusCode
      * @param mixed $data
      * @param int $flags
-     * @param int $depth
+     * @param int<1, max> $depth
      *
      * @throws InvalidArgumentException
      */
     public function __construct(int $statusCode, $data, int $flags = 0, int $depth = 512)
     {
-        $body = $this->createBody($data, $flags, $depth);
+        parent::__construct($statusCode);
 
-        $headers = ['Content-Type' => self::CONTENT_TYPE];
+        $this->setBody($this->createBody($data, $flags, $depth));
 
-        parent::__construct($statusCode, null, $headers, $body);
+        $this->setHeader('Content-Type', 'application/json; charset=utf-8');
     }
 
     /**
@@ -67,12 +60,11 @@ class JsonResponse extends Response
      *
      * @param mixed $data
      * @param int $flags
-     * @param int $depth
+     * @param int<1, max> $depth
      *
      * @return StreamInterface
      *
      * @throws InvalidArgumentException
-     *         If the response body cannot be created from the given JSON data.
      */
     private function createBody($data, int $flags, int $depth): StreamInterface
     {
@@ -80,10 +72,8 @@ class JsonResponse extends Response
             return $data;
         }
 
-        $flags |= JSON_THROW_ON_ERROR;
-
         try {
-            $payload = json_encode($data, $flags, $depth);
+            $payload = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (JsonException $e) {
             throw new InvalidArgumentException(sprintf(
                 'Unable to create JSON response due to invalid JSON data: %s',

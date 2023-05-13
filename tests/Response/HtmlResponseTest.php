@@ -39,7 +39,7 @@ class HtmlResponseTest extends TestCase
     public function testConstructorWithUnexpectedHtml(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to create HTML response due to invalid body');
+        $this->expectExceptionMessage('Unable to create HTML response due to unexpected HTML data');
 
         new HtmlResponse(200, null);
     }

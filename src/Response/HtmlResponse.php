@@ -27,17 +27,10 @@ use function is_string;
 use function method_exists;
 
 /**
- * HTML Response
+ * HTML response
  */
-class HtmlResponse extends Response
+final class HtmlResponse extends Response
 {
-
-    /**
-     * The response content type
-     *
-     * @var string
-     */
-    public const CONTENT_TYPE = 'text/html; charset=utf-8';
 
     /**
      * Constructor of the class
@@ -49,22 +42,21 @@ class HtmlResponse extends Response
      */
     public function __construct(int $statusCode, $html)
     {
-        $body = $this->createBody($html);
+        parent::__construct($statusCode);
 
-        $headers = ['Content-Type' => self::CONTENT_TYPE];
+        $this->setBody($this->createBody($html));
 
-        parent::__construct($statusCode, null, $headers, $body);
+        $this->setHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
     /**
-     * Creates the response body from the given HTML
+     * Creates the response body from the given HTML data
      *
      * @param mixed $html
      *
      * @return StreamInterface
      *
      * @throws InvalidArgumentException
-     *         If the response body cannot be created from the given HTML.
      */
     private function createBody($html): StreamInterface
     {
@@ -78,7 +70,7 @@ class HtmlResponse extends Response
         }
 
         if (!is_string($html)) {
-            throw new InvalidArgumentException('Unable to create HTML response due to invalid body');
+            throw new InvalidArgumentException('Unable to create HTML response due to unexpected HTML data');
         }
 
         $stream = new PhpTempStream('r+b');

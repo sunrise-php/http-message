@@ -6,11 +6,11 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
-use Sunrise\Http\Message\Exception\FailedUploadedFileOperationException;
-use Sunrise\Http\Message\Exception\InvalidUploadedFileException;
-use Sunrise\Http\Message\Exception\InvalidUploadedFileOperationException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
+use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream\FileStream;
 use Sunrise\Http\Message\Stream\PhpTempStream;
+use Sunrise\Http\Message\Stream\TempFileStream;
 use Sunrise\Http\Message\Stream\TmpfileStream;
 use Sunrise\Http\Message\UploadedFile;
 
@@ -63,11 +63,11 @@ class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile(new PhpTempStream(), null, $errorCode);
 
-        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? UploadedFile::UNKNOWN_ERROR_TEXT;
+        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown error';
 
-        $this->expectException(InvalidUploadedFileException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(sprintf(
-            'The uploaded file has no a stream due to the error #%d (%s)',
+            'Uploaded file has no a stream due to the error #%d (%s)',
             $errorCode,
             $errorMessage
         ));
@@ -82,9 +82,9 @@ class UploadedFileTest extends TestCase
         $file = new UploadedFile(new PhpTempStream());
         $file->moveTo($tmpfile->getMetadata('uri'));
 
-        $this->expectException(InvalidUploadedFileException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'The uploaded file has no a stream because it was already moved'
+            'Uploaded file has no a stream because it was already moved'
         );
 
         $file->getStream();
@@ -93,7 +93,7 @@ class UploadedFileTest extends TestCase
     public function testMove(): void
     {
         // will be deleted after the move
-        $srcStream = FileStream::tempFile();
+        $srcStream = new TempFileStream();
         $srcStream->write('foo');
         $srcPath = $srcStream->getMetadata('uri');
 
@@ -115,11 +115,11 @@ class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile(new PhpTempStream(), null, $errorCode);
 
-        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? UploadedFile::UNKNOWN_ERROR_TEXT;
+        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown error';
 
-        $this->expectException(InvalidUploadedFileException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(sprintf(
-            'The uploaded file cannot be moved due to the error #%d (%s)',
+            'Uploaded file cannot be moved due to the error #%d (%s)',
             $errorCode,
             $errorMessage
         ));
@@ -134,9 +134,9 @@ class UploadedFileTest extends TestCase
         $file = new UploadedFile(new PhpTempStream());
         $file->moveTo($tmpfile->getMetadata('uri'));
 
-        $this->expectException(InvalidUploadedFileException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'The uploaded file cannot be moved because it was already moved'
+            'Uploaded file cannot be moved because it was already moved'
         );
 
         $file->moveTo('/foo');
@@ -148,9 +148,9 @@ class UploadedFileTest extends TestCase
 
         $file = new UploadedFile(new FileStream($tmpfile->getMetadata('uri'), 'w'));
 
-        $this->expectException(InvalidUploadedFileOperationException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'The uploaded file cannot be moved because it is not readable'
+            'Uploaded file cannot be moved because it is not readable'
         );
 
         $file->moveTo('/foo');
@@ -160,10 +160,10 @@ class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile(new PhpTempStream());
 
-        $this->expectException(FailedUploadedFileOperationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The uploaded file cannot be moved because ' .
-            'the directory "/4c32dad5-181f-46b7-a86a-15568e11fdf9" is not writable'
+            'Uploaded file cannot be moved due to the error: ' .
+            'Unable to open the file "/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo" in the mode "wb"'
         );
 
         $file->moveTo('/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo');

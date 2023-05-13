@@ -29,11 +29,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * Creates a new request from superglobals variables
      *
-     * @param array|null $serverParams
-     * @param array|null $queryParams
-     * @param array|null $cookieParams
-     * @param array|null $uploadedFiles
-     * @param array|null $parsedBody
+     * @param array<array-key, mixed>|null $serverParams
+     * @param array<array-key, mixed>|null $queryParams
+     * @param array<array-key, mixed>|null $cookieParams
+     * @param array<array-key, mixed>|null $uploadedFiles
+     * @param array<array-key, mixed>|null $parsedBody
      *
      * @return ServerRequestInterface
      *
@@ -47,11 +47,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $uploadedFiles = null,
         ?array $parsedBody = null
     ): ServerRequestInterface {
-        $serverParams  = $serverParams  ?? $_SERVER;
-        $queryParams   = $queryParams   ?? $_GET;
-        $cookieParams  = $cookieParams  ?? $_COOKIE;
-        $uploadedFiles = $uploadedFiles ?? $_FILES;
-        $parsedBody    = $parsedBody    ?? $_POST;
+        $serverParams ??= $_SERVER;
+        $queryParams ??= $_GET;
+        $cookieParams ??= $_COOKIE;
+        $uploadedFiles ??= $_FILES;
+        $parsedBody ??= $_POST;
 
         return new ServerRequest(
             server_request_protocol_version($serverParams),
@@ -68,7 +68,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Creates a new request
+     *
+     * @param string $method
+     * @param mixed $uri
+     * @param array<array-key, mixed> $serverParams
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {

@@ -17,8 +17,6 @@ composer require sunrise/http-message
 
 ## Documentation navigation
 
-- [Headers as objects](#headers-as-objects)
-- - [Implemented headers](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md)
 - [Server request from global environment](#server-request-from-global-environment)
 - [HTML and JSON responses](#html-and-json-responses)
 - - [HTML response](#html-response)
@@ -34,47 +32,7 @@ composer require sunrise/http-message
 
 ## How to use
 
-⚠️ We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
-
-### Headers as objects
-
-If you want to use headers as objects, then follow the example below:
-
-```php
-use Sunrise\Http\Message\HeaderInterface;
-
-final class SomeHeader implements HeaderInterface
-{
-    // some code...
-}
-
-$message->withHeader(...new SomeHeader());
-```
-
-... or you can extend your header from the base header which contains the necessary methods for validation and formatting:
-
-```php
-use Sunrise\Http\Message\Header;
-
-final class SomeHeader extends Header
-{
-    // some code...
-}
-
-$message->withHeader(...new SomeHeader());
-```
-
-Below is an example of how you can set cookies using the already implemented [Set-Cookie](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md#Set-Cookie) header:
-
-```php
-use Sunrise\Http\Message\Header\SetCookieHeader;
-
-$cookie = new SetCookieHeader('sessionid', '38afes7a8');
-
-$message->withAddedHeader(...$cookie);
-```
-
-You can see already implemented headers [here](https://github.com/sunrise-php/http-message/blob/master/docs/headers.md).
+We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
 
 ### Server request from global environment
 
@@ -106,7 +64,7 @@ use Sunrise\Http\Message\Response\JsonResponse;
 $response = new JsonResponse(200, $data);
 ```
 
-You can also specify [encoding flags](https://www.php.net/manual/en/json.constants.php#constant.json-hex-tag) and maximum nesting depth like bellow:
+You can also specify [encoding flags](https://www.php.net/manual/en/json.constants.php#constant.json-hex-tag) and maximum nesting depth like below:
 
 ```php
 $response = new JsonResponse(200, $data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE, 512);
@@ -144,7 +102,7 @@ $memoryStream = new PhpMemoryStream('r+b');
 
 #### PHP temporary stream
 
-More details about the stream at [the official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
+More details about the stream at the [official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
 
 ```php
 use Sunrise\Http\Message\Stream\PhpTempStream;
@@ -177,6 +135,17 @@ $tmpfileStream = new TmpfileStream();
 $tmpfileStream->getMetadata('uri');
 ```
 
+If you don't need the above behavior, you can use another temporary file stream:
+
+```php
+use Sunrise\Http\Message\Stream\TempFileStream;
+
+$tempFileStream = new TempFileStream();
+
+// Returns the file path...
+$tempFileStream->getMetadata('uri');
+```
+
 ### PSR-7 and PSR-17
 
 The following classes implement PSR-7:
@@ -205,9 +174,9 @@ Any exceptions of this package can be caught through the interface:
 use Sunrise\Http\Message\Exception\ExceptionInterface;
 
 try {
-    // some code with the package...
+    // some code...
 } catch (ExceptionInterface $e) {
-    // the package error...
+    // some logic...
 }
 ```
 

@@ -14,7 +14,7 @@ namespace Sunrise\Http\Message\Uri\Component;
 /**
  * Import classes
  */
-use Sunrise\Http\Message\Exception\InvalidUriComponentException;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
  * Import functions
@@ -32,11 +32,12 @@ final class Query implements ComponentInterface
 {
 
     /**
-     * Regular expression to normalize the component value
+     * Regular expression used for the component normalization
      *
      * @var string
      */
-    private const NORMALIZE_REGEX = '/(?:(?:%[0-9A-Fa-f]{2}|[0-9A-Za-z\-\._~\!\$&\'\(\)\*\+,;\=\:@\/\?]+)|(.?))/u';
+    // phpcs:ignore Generic.Files.LineLength
+    private const NORMALIZATION_REGEX = '/(?:%[0-9A-Fa-f]{2}|[\x21\x24\x26-\x3b\x3d\x3f-\x5a\x5f\x61-\x7a\x7e]+)|(.?)/u';
 
     /**
      * The component value
@@ -50,7 +51,7 @@ final class Query implements ComponentInterface
      *
      * @param mixed $value
      *
-     * @throws InvalidUriComponentException
+     * @throws InvalidArgumentException
      *         If the component isn't valid.
      */
     public function __construct($value)
@@ -60,14 +61,17 @@ final class Query implements ComponentInterface
         }
 
         if (!is_string($value)) {
-            throw new InvalidUriComponentException('URI component "query" must be a string');
+            throw new InvalidArgumentException('URI component "query" must be a string');
         }
 
-        $this->value = preg_replace_callback(self::NORMALIZE_REGEX, function (array $match): string {
-            /** @var array{0: string, 1?: string} $match */
-
-            return isset($match[1]) ? rawurlencode($match[1]) : $match[0];
-        }, $value);
+        $this->value = (string) preg_replace_callback(
+            self::NORMALIZATION_REGEX,
+            static function (array $match): string {
+                /** @var array{0: string, 1?: string} $match */
+                return isset($match[1]) ? rawurlencode($match[1]) : $match[0];
+            },
+            $value
+        );
     }
 
     /**

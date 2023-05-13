@@ -17,9 +17,6 @@ namespace Sunrise\Http\Message;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidHeaderException;
-use Sunrise\Http\Message\Exception\InvalidHeaderNameException;
-use Sunrise\Http\Message\Exception\InvalidHeaderValueException;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
 /**
@@ -43,18 +40,18 @@ abstract class Message implements MessageInterface
 {
 
     /**
+     * Allowed HTTP versions
+     *
+     * @var list<string>
+     */
+    public const ALLOWED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
+
+    /**
      * Default HTTP version
      *
      * @var string
      */
     public const DEFAULT_HTTP_VERSION = '1.1';
-
-    /**
-     * Supported HTTP versions
-     *
-     * @var list<string>
-     */
-    public const SUPPORTED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
 
     /**
      * The message HTTP version
@@ -71,7 +68,7 @@ abstract class Message implements MessageInterface
     private array $headers = [];
 
     /**
-     * Original header names (see $headers)
+     * Original header names
      *
      * @var array<string, string>
      */
@@ -137,7 +134,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets a header value from the message by the given name
+     * Gets a header value(s) from the message by the given name
      *
      * @param string $name
      *
@@ -145,15 +142,13 @@ abstract class Message implements MessageInterface
      */
     public function getHeader($name): array
     {
-        if (!$this->hasHeader($name)) {
+        $key = strtolower($name);
+
+        if (!isset($this->headerNames[$key])) {
             return [];
         }
 
-        $key = strtolower($name);
-        $originalName = $this->headerNames[$key];
-        $value = $this->headers[$originalName];
-
-        return $value;
+        return $this->headers[$this->headerNames[$key]];
     }
 
     /**
@@ -165,12 +160,13 @@ abstract class Message implements MessageInterface
      */
     public function getHeaderLine($name): string
     {
-        $value = $this->getHeader($name);
-        if ([] === $value) {
+        $key = strtolower($name);
+
+        if (!isset($this->headerNames[$key])) {
             return '';
         }
 
-        return implode(',', $value);
+        return implode(',', $this->headers[$this->headerNames[$key]]);
     }
 
     /**
@@ -181,7 +177,7 @@ abstract class Message implements MessageInterface
      *
      * @return static
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     public function withHeader($name, $value): MessageInterface
@@ -200,7 +196,7 @@ abstract class Message implements MessageInterface
      *
      * @return static
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     public function withAddedHeader($name, $value): MessageInterface
@@ -277,7 +273,7 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If the header isn't valid.
      */
     final protected function setHeader($name, $value, bool $replace = true): void
@@ -298,8 +294,8 @@ abstract class Message implements MessageInterface
         $this->headerNames[$key] ??= $name;
         $this->headers[$this->headerNames[$key]] ??= [];
 
-        foreach ($value as $subvalue) {
-            $this->headers[$this->headerNames[$key]][] = $subvalue;
+        foreach ($value as $item) {
+            $this->headers[$this->headerNames[$key]][] = $item;
         }
     }
 
@@ -310,7 +306,7 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderException
+     * @throws InvalidArgumentException
      *         If one of the headers isn't valid.
      */
     final protected function setHeaders(array $headers): void
@@ -361,8 +357,8 @@ abstract class Message implements MessageInterface
      */
     private function validateProtocolVersion($protocolVersion): void
     {
-        if (!in_array($protocolVersion, self::SUPPORTED_HTTP_VERSIONS, true)) {
-            throw new InvalidArgumentException('Invalid or unsupported HTTP version');
+        if (!in_array($protocolVersion, self::ALLOWED_HTTP_VERSIONS, true)) {
+            throw new InvalidArgumentException('Unallowed HTTP version');
         }
     }
 
@@ -373,62 +369,62 @@ abstract class Message implements MessageInterface
      *
      * @return void
      *
-     * @throws InvalidHeaderNameException
+     * @throws InvalidArgumentException
      *         If the header name isn't valid.
      */
     private function validateHeaderName($name): void
     {
         if ($name === '') {
-            throw new InvalidHeaderNameException('HTTP header name cannot be an empty');
+            throw new InvalidArgumentException('HTTP header name cannot be an empty');
         }
 
         if (!is_string($name)) {
-            throw new InvalidHeaderNameException('HTTP header name must be a string');
+            throw new InvalidArgumentException('HTTP header name must be a string');
         }
 
-        if (!preg_match(Header::RFC7230_VALID_TOKEN, $name)) {
-            throw new InvalidHeaderNameException('HTTP header name is invalid');
+        if (!preg_match(HeaderInterface::RFC7230_TOKEN_REGEX, $name)) {
+            throw new InvalidArgumentException('HTTP header name is invalid');
         }
     }
 
     /**
      * Validates the given header value
      *
-     * @param string $validName
-     * @param array $value
+     * @param string $name
+     * @param array<array-key, mixed> $value
      *
      * @return void
      *
-     * @throws InvalidHeaderValueException
+     * @throws InvalidArgumentException
      *         If the header value isn't valid.
      */
-    private function validateHeaderValue(string $validName, array $value): void
+    private function validateHeaderValue(string $name, array $value): void
     {
         if ([] === $value) {
-            throw new InvalidHeaderValueException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The "%s" HTTP header value cannot be an empty array',
-                $validName,
+                $name,
             ));
         }
 
-        foreach ($value as $i => $subvalue) {
-            if ('' === $subvalue) {
+        foreach ($value as $key => $item) {
+            if ('' === $item) {
                 continue;
             }
 
-            if (!is_string($subvalue)) {
-                throw new InvalidHeaderValueException(sprintf(
-                    'The "%s[%d]" HTTP header value must be a string',
-                    $validName,
-                    $i
+            if (!is_string($item)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The "%s[%s]" HTTP header value must be a string',
+                    $name,
+                    $key
                 ));
             }
 
-            if (!preg_match(Header::RFC7230_VALID_FIELD_VALUE, $subvalue)) {
-                throw new InvalidHeaderValueException(sprintf(
-                    'The "%s[%d]" HTTP header value is invalid',
-                    $validName,
-                    $i
+            if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $item)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The "%s[%s]" HTTP header value is invalid',
+                    $name,
+                    $key
                 ));
             }
         }

@@ -70,7 +70,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetProtocolVersionAsNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         $this->createSubject()->withProtocolVersion(null);
     }
@@ -78,7 +78,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetProtocolVersionAsNumber(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         $this->createSubject()->withProtocolVersion(1.1);
     }
@@ -89,7 +89,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetInvalidProtocolVersion($protocolVersion): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         $this->createSubject()->withProtocolVersion($protocolVersion);
     }
@@ -645,7 +645,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithInvalidProtocolVersion(string $protocolVersion): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         $subject = $this->createSubjectWithProtocolVersion($protocolVersion);
 

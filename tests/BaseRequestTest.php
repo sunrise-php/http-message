@@ -398,7 +398,7 @@ abstract class BaseRequestTest extends BaseMessageTest
     public function testConstructorWithInvalidUri(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to parse URI');
+        $this->expectExceptionMessage('Invalid URI');
 
         $subject = $this->createSubjectWithUri(':');
 

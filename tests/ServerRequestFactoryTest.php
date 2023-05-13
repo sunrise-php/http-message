@@ -74,7 +74,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testCreateServerRequestWithInvalidUri(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to parse URI');
+        $this->expectExceptionMessage('Invalid URI');
 
         (new ServerRequestFactory)->createServerRequest('GET', ':');
     }
@@ -101,7 +101,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testCreateServerRequestWithServerParamsWithUnsupportedProtocolVersion(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         (new ServerRequestFactory)->createServerRequest('GET', new Uri(), ['SERVER_PROTOCOL' => 'HTTP/3']);
     }
@@ -195,7 +195,7 @@ class ServerRequestFactoryTest extends TestCase
         $_SERVER = ['SERVER_PROTOCOL' => 'HTTP/3'];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or unsupported HTTP version');
+        $this->expectExceptionMessage('Unallowed HTTP version');
 
         ServerRequestFactory::fromGlobals();
     }
@@ -267,7 +267,7 @@ class ServerRequestFactoryTest extends TestCase
         $_SERVER = ['HTTP_HOST' => 'localhost:65536'];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to parse URI');
+        $this->expectExceptionMessage('Invalid URI');
 
         ServerRequestFactory::fromGlobals();
     }

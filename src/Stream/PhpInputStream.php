@@ -25,7 +25,7 @@ use function stream_copy_to_stream;
 /**
  * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.input
  */
-class PhpInputStream extends Stream
+final class PhpInputStream extends Stream
 {
 
     /**
@@ -33,12 +33,15 @@ class PhpInputStream extends Stream
      */
     public function __construct()
     {
+        /** @var resource */
         $input = fopen('php://input', 'rb');
-        $resource = fopen('php://temp', 'r+b');
 
-        stream_copy_to_stream($input, $resource);
+        /** @var resource */
+        $handle = fopen('php://temp', 'r+b');
 
-        parent::__construct($resource);
+        stream_copy_to_stream($input, $handle);
+
+        parent::__construct($handle);
 
         $this->rewind();
     }

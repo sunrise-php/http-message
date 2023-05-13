@@ -15,10 +15,8 @@ namespace Sunrise\Http\Message;
  * Import classes
  */
 use Psr\Http\Message\StreamInterface;
-use Sunrise\Http\Message\Exception\FailedStreamOperationException;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
-use Sunrise\Http\Message\Exception\InvalidStreamException;
-use Sunrise\Http\Message\Exception\InvalidStreamOperationException;
+use Sunrise\Http\Message\Exception\RuntimeException;
 use Throwable;
 
 /**
@@ -61,7 +59,7 @@ class Stream implements StreamInterface
      *
      * @var bool
      */
-    private $autoClose;
+    private bool $autoClose;
 
     /**
      * Constructor of the class
@@ -90,7 +88,7 @@ class Stream implements StreamInterface
      * @return StreamInterface
      *
      * @throws InvalidArgumentException
-     *         If a stream cannot be created.
+     *         If the stream cannot be initialized with the resource.
      */
     public static function create($resource): StreamInterface
     {
@@ -166,18 +164,17 @@ class Stream implements StreamInterface
      *
      * @return int
      *
-     * @throws InvalidStreamException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function tell(): int
     {
         if (!is_resource($this->resource)) {
-            throw InvalidStreamException::noResource();
+            throw new RuntimeException('Stream has no resource');
         }
 
         $result = ftell($this->resource);
         if ($result === false) {
-            throw new FailedStreamOperationException('Unable to get the stream pointer position');
+            throw new RuntimeException('Unable to get the stream pointer position');
         }
 
         return $result;
@@ -205,9 +202,7 @@ class Stream implements StreamInterface
      *
      * @return void
      *
-     * @throws InvalidStreamException
-     * @throws InvalidStreamOperationException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function rewind(): void
     {
@@ -224,23 +219,21 @@ class Stream implements StreamInterface
      *
      * @return void
      *
-     * @throws InvalidStreamException
-     * @throws InvalidStreamOperationException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function seek($offset, $whence = SEEK_SET): void
     {
         if (!is_resource($this->resource)) {
-            throw InvalidStreamException::noResource();
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isSeekable()) {
-            throw new InvalidStreamOperationException('Stream is not seekable');
+            throw new RuntimeException('Stream is not seekable');
         }
 
         $result = fseek($this->resource, $offset, $whence);
         if ($result !== 0) {
-            throw new FailedStreamOperationException('Unable to move the stream pointer position');
+            throw new RuntimeException('Unable to move the stream pointer position');
         }
     }
 
@@ -272,23 +265,21 @@ class Stream implements StreamInterface
      *
      * @return int
      *
-     * @throws InvalidStreamException
-     * @throws InvalidStreamOperationException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function write($string): int
     {
         if (!is_resource($this->resource)) {
-            throw InvalidStreamException::noResource();
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isWritable()) {
-            throw new InvalidStreamOperationException('Stream is not writable');
+            throw new RuntimeException('Stream is not writable');
         }
 
         $result = fwrite($this->resource, $string);
         if ($result === false) {
-            throw new FailedStreamOperationException('Unable to write to the stream');
+            throw new RuntimeException('Unable to write to the stream');
         }
 
         return $result;
@@ -317,26 +308,26 @@ class Stream implements StreamInterface
      * @link http://php.net/manual/en/function.fread.php
      *
      * @param int $length
+     * @psalm-param int $length
+     * @phpstan-param int<0, max> $length
      *
      * @return string
      *
-     * @throws InvalidStreamException
-     * @throws InvalidStreamOperationException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function read($length): string
     {
         if (!is_resource($this->resource)) {
-            throw InvalidStreamException::noResource();
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isReadable()) {
-            throw new InvalidStreamOperationException('Stream is not readable');
+            throw new RuntimeException('Stream is not readable');
         }
 
         $result = fread($this->resource, $length);
         if ($result === false) {
-            throw new FailedStreamOperationException('Unable to read from the stream');
+            throw new RuntimeException('Unable to read from the stream');
         }
 
         return $result;
@@ -349,23 +340,21 @@ class Stream implements StreamInterface
      *
      * @return string
      *
-     * @throws InvalidStreamException
-     * @throws InvalidStreamOperationException
-     * @throws FailedStreamOperationException
+     * @throws RuntimeException
      */
     public function getContents(): string
     {
         if (!is_resource($this->resource)) {
-            throw InvalidStreamException::noResource();
+            throw new RuntimeException('Stream has no resource');
         }
 
         if (!$this->isReadable()) {
-            throw new InvalidStreamOperationException('Stream is not readable');
+            throw new RuntimeException('Stream is not readable');
         }
 
         $result = stream_get_contents($this->resource);
         if ($result === false) {
-            throw new FailedStreamOperationException('Unable to read the remainder of the stream');
+            throw new RuntimeException('Unable to read the remainder of the stream');
         }
 
         return $result;
@@ -397,7 +386,7 @@ class Stream implements StreamInterface
     /**
      * Gets the stream size
      *
-     * Returns NULL if the stream without a resource,
+     * Returns NULL if the stream doesn't have a resource,
      * or if the stream size cannot be determined.
      *
      * @link http://php.net/manual/en/function.fstat.php

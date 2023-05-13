@@ -20,34 +20,38 @@ use Sunrise\Http\Message\Stream;
 /**
  * Import functions
  */
+use function fopen;
 use function is_resource;
 use function is_writable;
 use function sys_get_temp_dir;
-use function tmpfile;
+use function tempnam;
 
 /**
- * The tmpfile() function opens a unique temporary file in binary
- * read/write (w+b) mode. The file will be automatically deleted
- * when it is closed or the program terminates.
- *
- * @link https://www.php.net/tmpfile
+ * TempFileStream
  */
-final class TmpfileStream extends Stream
+final class TempFileStream extends Stream
 {
 
     /**
      * Constructor of the class
      *
+     * @param string $prefix
+     *
      * @throws RuntimeException
      */
-    public function __construct()
+    public function __construct(string $prefix = '')
     {
         $dirname = sys_get_temp_dir();
         if (!is_writable($dirname)) {
             throw new RuntimeException('Temporary files directory is not writable');
         }
 
-        $resource = tmpfile();
+        $filename = tempnam($dirname, $prefix);
+        if ($filename === false) {
+            throw new RuntimeException('Temporary file name cannot be generated');
+        }
+
+        $resource = fopen($filename, 'w+b');
         if (!is_resource($resource)) {
             throw new RuntimeException('Temporary file cannot be created or opened');
         }

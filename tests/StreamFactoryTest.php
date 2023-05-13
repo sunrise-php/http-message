@@ -55,7 +55,7 @@ class StreamFactoryTest extends TestCase
 
     public function testCreateStreamFromInvalidFile(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Unable to open the file "/55EF8096-7A6A-4C85-9BCD-6A5958376AB8" in the mode "r"'
         );

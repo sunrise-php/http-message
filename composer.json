@@ -7,10 +7,10 @@
         "fenric",
         "sunrise",
         "http",
+        "header",
         "message",
         "request",
         "response",
-        "header",
         "stream",
         "uri",
         "upload",
@@ -60,7 +60,8 @@
     "scripts": {
         "test": [
             "phpcs",
-            "psalm",
+            "psalm --no-cache",
+            "phpstan analyse src --level=9",
             "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
         ],
         "build": [
