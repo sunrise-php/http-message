@@ -32,7 +32,7 @@ composer require sunrise/http-message
 
 ## How to use
 
-⚠️ We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
+We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
 
 ### Server request from global environment
 
@@ -174,9 +174,9 @@ Any exceptions of this package can be caught through the interface:
 use Sunrise\Http\Message\Exception\ExceptionInterface;
 
 try {
-    // some code of this package...
+    // some code...
 } catch (ExceptionInterface $e) {
-    // the package error...
+    // some logic...
 }
 ```
 
