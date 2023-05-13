@@ -6,6 +6,7 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
+use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream\FileStream;
 use Sunrise\Http\Message\Stream\PhpTempStream;
@@ -159,10 +160,10 @@ class UploadedFileTest extends TestCase
     {
         $file = new UploadedFile(new PhpTempStream());
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Uploaded file cannot be moved because ' .
-            'the directory "/4c32dad5-181f-46b7-a86a-15568e11fdf9" is not writable'
+            'Uploaded file cannot be moved due to the error: ' .
+            'Unable to open the file "/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo" in the mode "wb"'
         );
 
         $file->moveTo('/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo');

@@ -70,7 +70,7 @@ class RequestFactoryTest extends TestCase
     public function testCreateRequestWithInvalidUri(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to parse URI');
+        $this->expectExceptionMessage('Invalid URI');
 
         (new RequestFactory)->createRequest('GET', ':');
     }

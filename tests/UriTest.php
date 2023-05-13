@@ -48,7 +48,7 @@ class UriTest extends TestCase
     public function testConstructorWithInvalidUri(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to parse URI');
+        $this->expectExceptionMessage('Invalid URI');
 
         new Uri(':');
     }

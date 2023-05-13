@@ -15,6 +15,13 @@ class UploadedFileIntegrationTest extends BaseUploadedFileIntegrationTest
     /**
      * {@inheritdoc}
      */
+    protected $skippedTests = [
+        'testGetSize' => 'The test does not conform to the required behavior described in PSR-7',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
     public function createSubject(): UploadedFileInterface
     {
         return new UploadedFile(new TmpfileStream());
