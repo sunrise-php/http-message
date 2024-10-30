@@ -72,9 +72,7 @@ $response = new \Sunrise\Http\Message\Response\JsonResponse(200, [], JSON_UNESCA
 #### HTML Response
 
 ```php
-/** @var $html string|Stringable */
-
-$response = new \Sunrise\Http\Message\Response\HtmlResponse(200, $html);
+$response = new \Sunrise\Http\Message\Response\HtmlResponse(200, '<h1>Welcome!</h1>');
 ```
 
 ### Streams
@@ -114,9 +112,7 @@ You can also specify a memory limit. When this limit is reached, PHP will switch
 > Please note that the default memory limit is 2MB.
 
 ```php
-$maxMemory = 1e+6; // 1MB
-
-$stream = new PhpTempStream('r+b', $maxMemory);
+$stream = new \Sunrise\Http\Message\Stream\PhpTempStream('r+b', 1e+6);
 ```
 
 #### Temporary File Stream
@@ -126,19 +122,15 @@ For more details about the behavior of temporary files, visit [the official page
 The stream opens a unique temporary file in binary read/write mode (w+b). The file will be automatically deleted when it is closed or when the program terminates.
 
 ```php
-$tmpfileStream = new \Sunrise\Http\Message\Stream\TmpfileStream();
-
-// Returns the file path...
-$stream->getMetadata('uri');
+$stream = new \Sunrise\Http\Message\Stream\TmpfileStream();
+$stream->getMetadata('uri'); // the file path
 ```
 
 If you don't require the behavior described above, you can use an alternative temporary file stream:
 
 ```php
-$tempFileStream = new \Sunrise\Http\Message\Stream\TempFileStream();
-
-// Returns the file path...
-$stream->getMetadata('uri');
+$stream = new \Sunrise\Http\Message\Stream\TempFileStream();
+$stream->getMetadata('uri'); // the file path
 ```
 
 ### PSR-7 and PSR-17
