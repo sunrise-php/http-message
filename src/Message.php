@@ -17,18 +17,20 @@ use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
 use function implode;
-use function in_array;
 use function is_array;
 use function is_string;
 use function preg_match;
-use function sprintf;
 use function strtolower;
 
 abstract class Message implements MessageInterface
 {
+    /**
+     * @deprecated 3.2.0
+     */
     public const ALLOWED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
 
-    public const DEFAULT_HTTP_VERSION = self::ALLOWED_HTTP_VERSIONS[1];
+    public const HTTP_VERSION_REGEX = '/^[0-9](?:[.][0-9])?$/';
+    public const DEFAULT_HTTP_VERSION = '1.1';
 
     private string $protocolVersion = self::DEFAULT_HTTP_VERSION;
 
@@ -252,8 +254,16 @@ abstract class Message implements MessageInterface
      */
     private function validateProtocolVersion($protocolVersion): void
     {
-        if (!in_array($protocolVersion, self::ALLOWED_HTTP_VERSIONS, true)) {
-            throw new InvalidArgumentException('Unallowed HTTP version');
+        if ($protocolVersion === '') {
+            throw new InvalidArgumentException('HTTP version cannot be an empty');
+        }
+
+        if (!is_string($protocolVersion)) {
+            throw new InvalidArgumentException('HTTP version must be a string');
+        }
+
+        if (!preg_match(self::HTTP_VERSION_REGEX, $protocolVersion)) {
+            throw new InvalidArgumentException('HTTP version is invalid');
         }
     }
 
@@ -289,10 +299,7 @@ abstract class Message implements MessageInterface
     private function validateHeaderValue(string $name, array $value): void
     {
         if ($value === []) {
-            throw new InvalidArgumentException(sprintf(
-                'The value of the HTTP header "%s" cannot be an empty array',
-                $name,
-            ));
+            throw new InvalidArgumentException("The value of the HTTP header {$name} cannot be an empty array");
         }
 
         foreach ($value as $key => $item) {
@@ -301,19 +308,11 @@ abstract class Message implements MessageInterface
             }
 
             if (!is_string($item)) {
-                throw new InvalidArgumentException(sprintf(
-                    'The value of the HTTP header "%s[%s]" must be a string',
-                    $name,
-                    $key
-                ));
+                throw new InvalidArgumentException("The value of the HTTP header {$name}[{$key}] must be a string");
             }
 
             if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $item)) {
-                throw new InvalidArgumentException(sprintf(
-                    'The value of the HTTP header "%s[%s]" is invalid',
-                    $name,
-                    $key
-                ));
+                throw new InvalidArgumentException("The value of the HTTP header {$name}[{$key}] is invalid");
             }
         }
     }

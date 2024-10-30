@@ -7,6 +7,7 @@ namespace Sunrise\Http\Message\Tests;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
+use Sunrise\Http\Message\Message;
 use Sunrise\Http\Message\Stream\TmpfileStream;
 use Sunrise\Http\Message\ServerRequestFactory;
 use Sunrise\Http\Message\Uri;
@@ -98,12 +99,14 @@ class ServerRequestFactoryTest extends TestCase
             ->getProtocolVersion());
     }
 
-    public function testCreateServerRequestWithServerParamsWithUnsupportedProtocolVersion(): void
+    public function testCreateServerRequestWithServerParamsWithInvalidProtocolVersion(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unallowed HTTP version');
+        $metaVars = ['SERVER_PROTOCOL' => 'HTTP/!'];
 
-        (new ServerRequestFactory)->createServerRequest('GET', new Uri(), ['SERVER_PROTOCOL' => 'HTTP/3']);
+        $serverRequest = (new ServerRequestFactory)
+            ->createServerRequest('GET', new Uri(), $metaVars);
+
+        $this->assertSame(Message::DEFAULT_HTTP_VERSION, $serverRequest->getProtocolVersion());
     }
 
     /**
@@ -121,7 +124,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testCreateServerRequestWithServerParamsWithInvalidHeader(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header "X-Foo[0]" is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
 
         (new ServerRequestFactory)->createServerRequest('GET', new Uri(), ['HTTP_X_FOO' => "\0"]);
     }
@@ -190,14 +193,13 @@ class ServerRequestFactoryTest extends TestCase
      * @runInSeparateProcess
      * @preserveGlobalState
      */
-    public function testCreateServerRequestFromGlobalsWithUnsupportedProtocolVersion(): void
+    public function testCreateServerRequestFromGlobalsWithInvalidProtocolVersion(): void
     {
-        $_SERVER = ['SERVER_PROTOCOL' => 'HTTP/3'];
+        $_SERVER = ['SERVER_PROTOCOL' => 'HTTP/!'];
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unallowed HTTP version');
+        $serverRequest = ServerRequestFactory::fromGlobals();
 
-        ServerRequestFactory::fromGlobals();
+        $this->assertSame(Message::DEFAULT_HTTP_VERSION, $serverRequest->getProtocolVersion());
     }
 
     /**
@@ -297,7 +299,7 @@ class ServerRequestFactoryTest extends TestCase
         $_SERVER = ['HTTP_X_FOO' => "\0"];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header "X-Foo[0]" is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
 
         ServerRequestFactory::fromGlobals();
     }
