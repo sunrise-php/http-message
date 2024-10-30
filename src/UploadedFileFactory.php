@@ -11,28 +11,16 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
-/**
- * Import constants
- */
 use const UPLOAD_ERR_OK;
 
-/**
- * UploadedFileFactory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class UploadedFileFactory implements UploadedFileFactoryInterface
 {
-
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createUploadedFile(
         StreamInterface $stream,

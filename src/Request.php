@@ -11,69 +11,29 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
-/**
- * Import functions
- */
 use function is_string;
 use function preg_match;
 use function strncmp;
 
-/**
- * HTTP Request Message
- *
- * @link https://tools.ietf.org/html/rfc7230
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class Request extends Message implements RequestInterface, RequestMethodInterface
 {
-
-    /**
-     * Regular Expression used for a request target validation
-     *
-     * @var string
-     */
     private const RFC7230_REQUEST_TARGET_REGEX = '/^[\x21-\x7E\x80-\xFF]+$/';
 
-    /**
-     * The request method (aka verb)
-     *
-     * @var string
-     */
     private string $method = self::METHOD_GET;
-
-    /**
-     * The request URI
-     *
-     * @var UriInterface
-     */
     private UriInterface $uri;
-
-    /**
-     * The request target
-     *
-     * @var string|null
-     */
     private ?string $requestTarget = null;
 
     /**
-     * Constructor of the class
-     *
-     * @param string|null $method
      * @param mixed $uri
      * @param array<string, string|string[]>|null $headers
-     * @param StreamInterface|null $body
      *
      * @throws InvalidArgumentException
-     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?string $method = null,
@@ -81,25 +41,23 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
         ?array $headers = null,
         ?StreamInterface $body = null
     ) {
-        if (isset($method)) {
+        if ($method !== null) {
             $this->setMethod($method);
         }
 
         $this->setUri($uri ?? '/');
 
-        if (isset($headers)) {
+        if ($headers !== null) {
             $this->setHeaders($headers);
         }
 
-        if (isset($body)) {
+        if ($body !== null) {
             $this->setBody($body);
         }
     }
 
     /**
-     * Gets the request method
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getMethod(): string
     {
@@ -107,14 +65,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * Creates a new instance of the request with the given method
-     *
-     * @param string $method
-     *
-     * @return static
-     *
-     * @throws InvalidArgumentException
-     *         If the method isn't valid.
+     * @inheritDoc
      */
     public function withMethod($method): RequestInterface
     {
@@ -125,9 +76,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * Gets the request URI
-     *
-     * @return UriInterface
+     * @inheritDoc
      */
     public function getUri(): UriInterface
     {
@@ -135,12 +84,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * Creates a new instance of the request with the given URI
-     *
-     * @param UriInterface $uri
-     * @param bool $preserveHost
-     *
-     * @return static
+     * @inheritDoc
      */
     public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
     {
@@ -151,13 +95,11 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * Gets the request target
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getRequestTarget(): string
     {
-        if (isset($this->requestTarget)) {
+        if ($this->requestTarget !== null) {
             return $this->requestTarget;
         }
 
@@ -181,14 +123,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
     }
 
     /**
-     * Creates a new instance of the request with the given request target
-     *
-     * @param mixed $requestTarget
-     *
-     * @return static
-     *
-     * @throws InvalidArgumentException
-     *         If the request target isn't valid.
+     * @inheritDoc
      */
     public function withRequestTarget($requestTarget): RequestInterface
     {
@@ -203,10 +138,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @param string $method
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the method isn't valid.
      */
     final protected function setMethod($method): void
     {
@@ -221,10 +153,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      * @param mixed $uri
      * @param bool $preserveHost
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the URI isn't valid.
      */
     final protected function setUri($uri, $preserveHost = false): void
     {
@@ -240,7 +169,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
         }
 
         $port = $this->uri->getPort();
-        if (isset($port)) {
+        if ($port !== null) {
             $host .= ':' . $port;
         }
 
@@ -252,10 +181,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @param mixed $requestTarget
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the request target isn't valid.
      */
     final protected function setRequestTarget($requestTarget): void
     {
@@ -273,14 +199,11 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @param mixed $method
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the method isn't valid.
      */
     private function validateMethod($method): void
     {
-        if ('' === $method) {
+        if ($method === '') {
             throw new InvalidArgumentException('HTTP method cannot be an empty');
         }
 
@@ -298,14 +221,11 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
      *
      * @param mixed $requestTarget
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the request target isn't valid.
      */
     private function validateRequestTarget($requestTarget): void
     {
-        if ('' === $requestTarget) {
+        if ($requestTarget === '') {
             throw new InvalidArgumentException('HTTP request target cannot be an empty');
         }
 

@@ -11,20 +11,10 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import functions
- */
 use function sprintf;
 use function sscanf;
 
 /**
- * Gets the request's protocol version
- *
- * @param array|null $serverParams
- *
- * @return string
- *
- * @link http://php.net/manual/en/reserved.variables.server.php
  * @link https://datatracker.ietf.org/doc/html/rfc3875#section-4.1.16
  */
 function server_request_protocol_version(?array $serverParams = null): string

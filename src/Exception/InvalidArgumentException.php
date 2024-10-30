@@ -11,14 +11,6 @@
 
 namespace Sunrise\Http\Message\Exception;
 
-/**
- * Import classes
- */
-use InvalidArgumentException as BaseInvalidArgumentException;
-
-/**
- * InvalidArgumentException
- */
-class InvalidArgumentException extends BaseInvalidArgumentException implements ExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

@@ -11,30 +11,17 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
-/**
- * Import functions
- */
 use function is_int;
 use function is_string;
 use function preg_match;
 
-/**
- * HTTP Response Message
- *
- * @link https://tools.ietf.org/html/rfc7230
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class Response extends Message implements ResponseInterface, StatusCodeInterface
 {
-
     /**
      * List of Reason Phrases
      *
@@ -43,13 +30,11 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      * @var array<int<100, 599>, non-empty-string>
      */
     public const REASON_PHRASES = [
-
         // 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
         103 => 'Early Hints',
-
         // 2xx
         200 => 'OK',
         201 => 'Created',
@@ -61,7 +46,6 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         207 => 'Multi-Status',
         208 => 'Already Reported',
         226 => 'IM Used',
-
         // 3xx
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
@@ -71,7 +55,6 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         305 => 'Use Proxy',
         307 => 'Temporary Redirect',
         308 => 'Permanent Redirect',
-
         // 4xx
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -101,7 +84,6 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
         451 => 'Unavailable For Legal Reasons',
-
         // 5xx
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
@@ -116,30 +98,13 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         511 => 'Network Authentication Required',
     ];
 
-    /**
-     * The response's status code
-     *
-     * @var int
-     */
     private int $statusCode = self::STATUS_OK;
-
-    /**
-     * The response's reason phrase
-     *
-     * @var string
-     */
     private string $reasonPhrase = self::REASON_PHRASES[self::STATUS_OK];
 
     /**
-     * Constrictor of the class
-     *
-     * @param int|null $statusCode
-     * @param string|null $reasonPhrase
      * @param array<string, string|string[]>|null $headers
-     * @param StreamInterface|null $body
      *
      * @throws InvalidArgumentException
-     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?int $statusCode = null,
@@ -147,23 +112,21 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
         ?array $headers = null,
         ?StreamInterface $body = null
     ) {
-        if (isset($statusCode)) {
+        if ($statusCode !== null) {
             $this->setStatus($statusCode, $reasonPhrase ?? '');
         }
 
-        if (isset($headers)) {
+        if ($headers !== null) {
             $this->setHeaders($headers);
         }
 
-        if (isset($body)) {
+        if ($body !== null) {
             $this->setBody($body);
         }
     }
 
     /**
-     * Gets the response's status code
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getStatusCode(): int
     {
@@ -171,9 +134,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     }
 
     /**
-     * Gets the response's reason phrase
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getReasonPhrase(): string
     {
@@ -181,15 +142,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
     }
 
     /**
-     * Creates a new instance of the response with the given status code
-     *
-     * @param int $code
-     * @param string $reasonPhrase
-     *
-     * @return static
-     *
-     * @throws InvalidArgumentException
-     *         If the status isn't valid.
+     * @inheritDoc
      */
     public function withStatus($code, $reasonPhrase = ''): ResponseInterface
     {
@@ -205,17 +158,14 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      * @param int $statusCode
      * @param string $reasonPhrase
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the status isn't valid.
      */
     final protected function setStatus($statusCode, $reasonPhrase): void
     {
         $this->validateStatusCode($statusCode);
         $this->validateReasonPhrase($reasonPhrase);
 
-        if ('' === $reasonPhrase) {
+        if ($reasonPhrase === '') {
             $reasonPhrase = self::REASON_PHRASES[$statusCode] ?? 'Unknown Status Code';
         }
 
@@ -230,10 +180,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @param mixed $statusCode
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the status code isn't valid.
      */
     private function validateStatusCode($statusCode): void
     {
@@ -241,7 +188,7 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
             throw new InvalidArgumentException('HTTP status code must be an integer');
         }
 
-        if (! ($statusCode >= 100 && $statusCode <= 599)) {
+        if (!($statusCode >= 100 && $statusCode <= 599)) {
             throw new InvalidArgumentException('Invalid HTTP status code');
         }
     }
@@ -253,14 +200,11 @@ class Response extends Message implements ResponseInterface, StatusCodeInterface
      *
      * @param mixed $reasonPhrase
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the reason phrase isn't valid.
      */
     private function validateReasonPhrase($reasonPhrase): void
     {
-        if ('' === $reasonPhrase) {
+        if ($reasonPhrase === '') {
             return;
         }
 

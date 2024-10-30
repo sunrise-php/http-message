@@ -11,47 +11,25 @@
 
 namespace Sunrise\Http\Message\Uri\Component;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
-/**
- * Import functions
- */
 use function is_string;
 use function preg_match;
 use function strtolower;
 
 /**
- * URI component "scheme"
- *
  * @link https://tools.ietf.org/html/rfc3986#section-3.1
  */
 final class Scheme implements ComponentInterface
 {
-
-    /**
-     * Regular expression used for the component validation
-     *
-     * @var string
-     */
     private const VALIDATION_REGEX = '/^(?:[A-Za-z][0-9A-Za-z\x2b\x2d\x2e]*)?$/';
 
-    /**
-     * The component value
-     *
-     * @var string
-     */
     private string $value = '';
 
     /**
-     * Constructor of the class
-     *
      * @param mixed $value
      *
      * @throws InvalidArgumentException
-     *         If the component isn't valid.
      */
     public function __construct($value)
     {

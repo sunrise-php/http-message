@@ -11,17 +11,11 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
-/**
- * Import functions
- */
 use function implode;
 use function in_array;
 use function is_array;
@@ -30,61 +24,28 @@ use function preg_match;
 use function sprintf;
 use function strtolower;
 
-/**
- * Hypertext Transfer Protocol Message
- *
- * @link https://tools.ietf.org/html/rfc7230
- * @link https://www.php-fig.org/psr/psr-7/
- */
 abstract class Message implements MessageInterface
 {
-
-    /**
-     * Allowed HTTP versions
-     *
-     * @var list<string>
-     */
     public const ALLOWED_HTTP_VERSIONS = ['1.0', '1.1', '2.0', '2'];
 
-    /**
-     * Default HTTP version
-     *
-     * @var string
-     */
-    public const DEFAULT_HTTP_VERSION = '1.1';
+    public const DEFAULT_HTTP_VERSION = self::ALLOWED_HTTP_VERSIONS[1];
 
-    /**
-     * The message HTTP version
-     *
-     * @var string
-     */
     private string $protocolVersion = self::DEFAULT_HTTP_VERSION;
 
     /**
-     * The message headers
-     *
      * @var array<string, list<string>>
      */
     private array $headers = [];
 
     /**
-     * Original header names
-     *
      * @var array<string, string>
      */
     private array $headerNames = [];
 
-    /**
-     * The message body
-     *
-     * @var StreamInterface|null
-     */
     private ?StreamInterface $body = null;
 
     /**
-     * Gets the message HTTP version
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getProtocolVersion(): string
     {
@@ -92,14 +53,9 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Creates a new instance of the message with the given HTTP version
-     *
-     * @param string $version
-     *
-     * @return static
+     * @inheritDoc
      *
      * @throws InvalidArgumentException
-     *         If the HTTP version isn't valid.
      */
     public function withProtocolVersion($version): MessageInterface
     {
@@ -110,9 +66,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets the message headers
-     *
-     * @return array<string, list<string>>
+     * @inheritDoc
      */
     public function getHeaders(): array
     {
@@ -120,11 +74,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Checks if a header exists in the message by the given name
-     *
-     * @param string $name
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function hasHeader($name): bool
     {
@@ -134,11 +84,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets a header value(s) from the message by the given name
-     *
-     * @param string $name
-     *
-     * @return list<string>
+     * @inheritDoc
      */
     public function getHeader($name): array
     {
@@ -152,11 +98,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets a header value as a string from the message by the given name
-     *
-     * @param string $name
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getHeaderLine($name): string
     {
@@ -170,15 +112,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Creates a new instance of the message with the given header overwriting the old header
-     *
-     * @param string $name
-     * @param string|string[] $value
-     *
-     * @return static
-     *
-     * @throws InvalidArgumentException
-     *         If the header isn't valid.
+     * @inheritDoc
      */
     public function withHeader($name, $value): MessageInterface
     {
@@ -189,15 +123,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Creates a new instance of the message with the given header NOT overwriting the old header
-     *
-     * @param string $name
-     * @param string|string[] $value
-     *
-     * @return static
-     *
-     * @throws InvalidArgumentException
-     *         If the header isn't valid.
+     * @inheritDoc
      */
     public function withAddedHeader($name, $value): MessageInterface
     {
@@ -208,11 +134,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Creates a new instance of the message without a header by the given name
-     *
-     * @param string $name
-     *
-     * @return static
+     * @inheritDoc
      */
     public function withoutHeader($name): MessageInterface
     {
@@ -223,9 +145,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Gets the message body
-     *
-     * @return StreamInterface
+     * @inheritDoc
      */
     public function getBody(): StreamInterface
     {
@@ -233,11 +153,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Creates a new instance of the message with the given body
-     *
-     * @param StreamInterface $body
-     *
-     * @return static
+     * @inheritDoc
      */
     public function withBody(StreamInterface $body): MessageInterface
     {
@@ -252,10 +168,7 @@ abstract class Message implements MessageInterface
      *
      * @param string $protocolVersion
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the HTTP version isn't valid.
      */
     final protected function setProtocolVersion($protocolVersion): void
     {
@@ -269,12 +182,8 @@ abstract class Message implements MessageInterface
      *
      * @param string $name
      * @param string|string[] $value
-     * @param bool $replace
-     *
-     * @return void
      *
      * @throws InvalidArgumentException
-     *         If the header isn't valid.
      */
     final protected function setHeader($name, $value, bool $replace = true): void
     {
@@ -285,9 +194,7 @@ abstract class Message implements MessageInterface
         $this->validateHeaderName($name);
         $this->validateHeaderValue($name, $value);
 
-        if ($replace) {
-            $this->deleteHeader($name);
-        }
+        $replace and $this->deleteHeader($name);
 
         $key = strtolower($name);
 
@@ -304,10 +211,7 @@ abstract class Message implements MessageInterface
      *
      * @param array<string, string|string[]> $headers
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If one of the headers isn't valid.
      */
     final protected function setHeaders(array $headers): void
     {
@@ -320,8 +224,6 @@ abstract class Message implements MessageInterface
      * Deletes a header from the message by the given name
      *
      * @param string $name
-     *
-     * @return void
      */
     final protected function deleteHeader($name): void
     {
@@ -335,10 +237,6 @@ abstract class Message implements MessageInterface
 
     /**
      * Sets the given body to the message
-     *
-     * @param StreamInterface $body
-     *
-     * @return void
      */
     final protected function setBody(StreamInterface $body): void
     {
@@ -350,10 +248,7 @@ abstract class Message implements MessageInterface
      *
      * @param mixed $protocolVersion
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the HTTP version isn't valid.
      */
     private function validateProtocolVersion($protocolVersion): void
     {
@@ -367,10 +262,7 @@ abstract class Message implements MessageInterface
      *
      * @param mixed $name
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the header name isn't valid.
      */
     private function validateHeaderName($name): void
     {
@@ -390,31 +282,27 @@ abstract class Message implements MessageInterface
     /**
      * Validates the given header value
      *
-     * @param string $name
      * @param array<array-key, mixed> $value
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the header value isn't valid.
      */
     private function validateHeaderValue(string $name, array $value): void
     {
-        if ([] === $value) {
+        if ($value === []) {
             throw new InvalidArgumentException(sprintf(
-                'The "%s" HTTP header value cannot be an empty array',
+                'The value of the HTTP header "%s" cannot be an empty array',
                 $name,
             ));
         }
 
         foreach ($value as $key => $item) {
-            if ('' === $item) {
+            if ($item === '') {
                 continue;
             }
 
             if (!is_string($item)) {
                 throw new InvalidArgumentException(sprintf(
-                    'The "%s[%s]" HTTP header value must be a string',
+                    'The value of the HTTP header "%s[%s]" must be a string',
                     $name,
                     $key
                 ));
@@ -422,7 +310,7 @@ abstract class Message implements MessageInterface
 
             if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $item)) {
                 throw new InvalidArgumentException(sprintf(
-                    'The "%s[%s]" HTTP header value is invalid',
+                    'The value of the HTTP header "%s[%s]" is invalid',
                     $name,
                     $key
                 ));

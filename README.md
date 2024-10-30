@@ -15,26 +15,24 @@
 composer require sunrise/http-message
 ```
 
-## Documentation navigation
+## Documentation Navigation
 
-- [Server request from global environment](#server-request-from-global-environment)
-- [HTML and JSON responses](#html-and-json-responses)
-- - [HTML response](#html-response)
-- - [JSON response](#json-response)
+- [Server Request from Global Environment](#server-request-from-global-environment)
+- [Typed Messages](#typed-messages)
 - [Streams](#streams)
-- - [File stream](#file-stream)
-- - [PHP input stream](#php-input-stream)
-- - [PHP memory stream](#php-memory-stream)
-- - [PHP temporary stream](#php-temporary-stream)
-- - [Temporary file stream](#temporary-file-stream)
+- - [File Stream](#file-stream)
+- - [PHP Input Stream](#php-input-stream)
+- - [PHP Memory Stream](#php-memory-stream)
+- - [PHP Temporary Stream](#php-temporary-stream)
+- - [Temporary File Stream](#temporary-file-stream)
 - [PSR-7 and PSR-17](#psr-7-and-psr-17)
 - [Exceptions](#exceptions)
 
-## How to use
+## How to Use
 
 We highly recommend that you study [PSR-7](https://www.php-fig.org/psr/psr-7/) and [PSR-17](https://www.php-fig.org/psr/psr-17/) because only superficial examples will be presented below.
 
-### Server request from global environment
+### Server Request from Global Environment
 
 ```php
 use Sunrise\Http\Message\ServerRequestFactory;
@@ -42,19 +40,47 @@ use Sunrise\Http\Message\ServerRequestFactory;
 $request = ServerRequestFactory::fromGlobals();
 ```
 
-### HTML and JSON responses
+### Typed Messages
 
-#### HTML response
+#### JSON Request
 
 ```php
-use Sunrise\Http\Message\Response\HtmlResponse;
+use Sunrise\Http\Message\Request\JsonRequest;
 
-/** @var $html string|Stringable */
+/** @var $data mixed */
 
-$response = new HtmlResponse(200, $html);
+$request = new JsonRequest('GET', '/', $data);
 ```
 
-#### JSON response
+You can also specify [encoding flags](https://www.php.net/manual/en/json.constants.php#constant.json-hex-tag) and maximum nesting depth like below:
+
+```php
+$request = new JsonRequest('GET', '/', $data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE, 512);
+```
+
+#### URL Encoded Request
+
+```php
+use Sunrise\Http\Message\Request\UrlEncodedRequest;
+
+/** @var $data mixed */
+
+$request = new UrlEncodedRequest('GET', '/', $data);
+```
+
+You can also specify [encoding type](https://www.php.net/manual/ru/url.constants.php#constant.php-query-rfc1738) like below:
+
+```php
+use Sunrise\Http\Message\Request\UrlEncodedRequest;
+
+$encodingType = UrlEncodedRequest::ENCODING_TYPE_RFC1738;
+// or
+$encodingType = UrlEncodedRequest::ENCODING_TYPE_RFC3986;
+
+$request = new UrlEncodedRequest('GET', '/', $data, $encodingType);
+```
+
+#### JSON Response
 
 ```php
 use Sunrise\Http\Message\Response\JsonResponse;
@@ -70,9 +96,19 @@ You can also specify [encoding flags](https://www.php.net/manual/en/json.constan
 $response = new JsonResponse(200, $data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE, 512);
 ```
 
+#### HTML Response
+
+```php
+use Sunrise\Http\Message\Response\HtmlResponse;
+
+/** @var $html string|Stringable */
+
+$response = new HtmlResponse(200, $html);
+```
+
 ### Streams
 
-#### File stream
+#### File Stream
 
 ```php
 use Sunrise\Http\Message\Stream\FileStream;
@@ -80,7 +116,7 @@ use Sunrise\Http\Message\Stream\FileStream;
 $fileStream = new FileStream('/folder/file', 'r+b');
 ```
 
-#### PHP input stream
+#### PHP Input Stream
 
 More details about the stream at the [official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.input).
 
@@ -90,7 +126,7 @@ use Sunrise\Http\Message\Stream\PhpInputStream;
 $inputStream = new PhpInputStream();
 ```
 
-#### PHP memory stream
+#### PHP Memory Stream
 
 More details about the stream at the [official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
 
@@ -100,7 +136,7 @@ use Sunrise\Http\Message\Stream\PhpMemoryStream;
 $memoryStream = new PhpMemoryStream('r+b');
 ```
 
-#### PHP temporary stream
+#### PHP Temporary Stream
 
 More details about the stream at the [official page](https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory).
 
@@ -110,7 +146,7 @@ use Sunrise\Http\Message\Stream\PhpTempStream;
 $tempStream = new PhpTempStream('r+b');
 ```
 
-You can also specify the memory limit, when the limit is reached, PHP will start using the temporary file instead of memory.
+You can also specify the memory limit; when the limit is reached, PHP will start using the temporary file instead of memory.
 
 > Please note that the default memory limit is 2MB.
 
@@ -120,7 +156,7 @@ $maxMemory = 1e+6; // 1MB
 $tempStream = new PhpTempStream('r+b', $maxMemory);
 ```
 
-#### Temporary file stream
+#### Temporary File Stream
 
 More details about the temporary file behaviour at [the official page](https://www.php.net/manual/en/function.tmpfile).
 
@@ -168,7 +204,7 @@ The following classes implement PSR-17:
 
 ### Exceptions
 
-Any exceptions of this package can be caught through the interface:
+Any exceptions from this package can be caught through the interface:
 
 ```php
 use Sunrise\Http\Message\Exception\ExceptionInterface;
@@ -182,13 +218,13 @@ try {
 
 ---
 
-## Test run
+## Test Run
 
 ```bash
 composer test
 ```
 
-## Useful links
+## Useful Links
 
 - https://tools.ietf.org/html/rfc7230
 - https://www.php-fig.org/psr/psr-7/

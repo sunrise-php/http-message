@@ -11,9 +11,6 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\UriInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Uri\Component\Fragment;
@@ -24,79 +21,23 @@ use Sunrise\Http\Message\Uri\Component\Query;
 use Sunrise\Http\Message\Uri\Component\Scheme;
 use Sunrise\Http\Message\Uri\Component\UserInfo;
 
-/**
- * Import functions
- */
 use function is_string;
 use function ltrim;
 use function parse_url;
 use function strncmp;
 
-/**
- * Uniform Resource Identifier
- *
- * @link https://tools.ietf.org/html/rfc3986
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class Uri implements UriInterface
 {
-
-    /**
-     * Scheme of the URI
-     *
-     * @var string
-     */
     private string $scheme = '';
-
-    /**
-     * User Information of the URI
-     *
-     * @var string
-     */
     private string $userInfo = '';
-
-    /**
-     * Host of the URI
-     *
-     * @var string
-     */
     private string $host = '';
-
-    /**
-     * Port of the URI
-     *
-     * @var int|null
-     */
     private ?int $port = null;
-
-    /**
-     * Path of the URI
-     *
-     * @var string
-     */
     private string $path = '';
-
-    /**
-     * Query of the URI
-     *
-     * @var string
-     */
     private string $query = '';
-
-    /**
-     * Fragment of the URI
-     *
-     * @var string
-     */
     private string $fragment = '';
 
     /**
-     * Constructor of the class
-     *
-     * @param string $uri
-     *
      * @throws InvalidArgumentException
-     *         If the URI isn't valid.
      */
     public function __construct(string $uri = '')
     {
@@ -104,52 +45,13 @@ class Uri implements UriInterface
             return;
         }
 
-        $components = parse_url($uri);
-        if ($components === false) {
-            throw new InvalidArgumentException('Invalid URI');
-        }
-
-        if (isset($components['scheme'])) {
-            $this->setScheme($components['scheme']);
-        }
-
-        if (isset($components['user'])) {
-            $this->setUserInfo(
-                $components['user'],
-                $components['pass'] ?? null
-            );
-        }
-
-        if (isset($components['host'])) {
-            $this->setHost($components['host']);
-        }
-
-        if (isset($components['port'])) {
-            $this->setPort($components['port']);
-        }
-
-        if (isset($components['path'])) {
-            $this->setPath($components['path']);
-        }
-
-        if (isset($components['query'])) {
-            $this->setQuery($components['query']);
-        }
-
-        if (isset($components['fragment'])) {
-            $this->setFragment($components['fragment']);
-        }
+        $this->parseUri($uri);
     }
 
     /**
-     * Creates a URI
-     *
      * @param mixed $uri
      *
-     * @return UriInterface
-     *
      * @throws InvalidArgumentException
-     *         If the URI isn't valid.
      */
     public static function create($uri): UriInterface
     {
@@ -165,10 +67,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     *         If the scheme isn't valid.
+     * @inheritDoc
      */
     public function withScheme($scheme): UriInterface
     {
@@ -179,10 +78,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @throws InvalidArgumentException
-     *         If the user information isn't valid.
      */
     public function withUserInfo($user, $password = null): UriInterface
     {
@@ -193,10 +91,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     *         If the host isn't valid.
+     * @inheritDoc
      */
     public function withHost($host): UriInterface
     {
@@ -207,10 +102,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     *         If the port isn't valid.
+     * @inheritDoc
      */
     public function withPort($port): UriInterface
     {
@@ -221,10 +113,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     *         If the path isn't valid.
+     * @inheritDoc
      */
     public function withPath($path): UriInterface
     {
@@ -235,10 +124,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws InvalidArgumentException
-     *         If the query isn't valid.
+     * @inheritDoc
      */
     public function withQuery($query): UriInterface
     {
@@ -249,10 +135,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @throws InvalidArgumentException
-     *         If the fragment isn't valid.
      */
     public function withFragment($fragment): UriInterface
     {
@@ -263,7 +148,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getScheme(): string
     {
@@ -271,7 +156,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getUserInfo(): string
     {
@@ -279,7 +164,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHost(): string
     {
@@ -287,7 +172,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getPort(): ?int
     {
@@ -305,7 +190,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getPath(): string
     {
@@ -318,7 +203,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getQuery(): string
     {
@@ -326,7 +211,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getFragment(): string
     {
@@ -334,7 +219,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getAuthority(): string
     {
@@ -357,7 +242,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __toString(): string
     {
@@ -411,14 +296,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given scheme to the URI
-     *
      * @param mixed $scheme
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the scheme isn't valid.
      */
     final protected function setScheme($scheme): void
     {
@@ -426,15 +306,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given user information to the URI
-     *
      * @param mixed $user
      * @param mixed $password
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the user information isn't valid.
      */
     final protected function setUserInfo($user, $password): void
     {
@@ -442,14 +317,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given host to the URI
-     *
      * @param mixed $host
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the host isn't valid.
      */
     final protected function setHost($host): void
     {
@@ -457,14 +327,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given port to the URI
-     *
      * @param mixed $port
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the port isn't valid.
      */
     final protected function setPort($port): void
     {
@@ -472,14 +337,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given path to the URI
-     *
      * @param mixed $path
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the path isn't valid.
      */
     final protected function setPath($path): void
     {
@@ -487,14 +347,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given query to the URI
-     *
      * @param mixed $query
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the query isn't valid.
      */
     final protected function setQuery($query): void
     {
@@ -502,17 +357,45 @@ class Uri implements UriInterface
     }
 
     /**
-     * Sets the given fragment to the URI
-     *
      * @param mixed $fragment
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the fragment isn't valid.
      */
     final protected function setFragment($fragment): void
     {
         $this->fragment = (new Fragment($fragment))->getValue();
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function parseUri(string $uri): void
+    {
+        $components = parse_url($uri);
+        if ($components === false) {
+            throw new InvalidArgumentException('Invalid URI');
+        }
+
+        if (isset($components['scheme'])) {
+            $this->setScheme($components['scheme']);
+        }
+        if (isset($components['user'])) {
+            $this->setUserInfo($components['user'], $components['pass'] ?? null);
+        }
+        if (isset($components['host'])) {
+            $this->setHost($components['host']);
+        }
+        if (isset($components['port'])) {
+            $this->setPort($components['port']);
+        }
+        if (isset($components['path'])) {
+            $this->setPath($components['path']);
+        }
+        if (isset($components['query'])) {
+            $this->setQuery($components['query']);
+        }
+        if (isset($components['fragment'])) {
+            $this->setFragment($components['fragment']);
+        }
     }
 }

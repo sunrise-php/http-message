@@ -36,14 +36,14 @@ class JsonResponseTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Unable to create JSON response due to invalid JSON data: ' .
+            'Unable to create the JSON response due to an invalid data: ' .
             'Maximum stack depth exceeded'
         );
 
         new JsonResponse(200, [], 0, 0);
     }
 
-    public function testConstructorWithStreamBody(): void
+    public function testConstructorWithStream(): void
     {
         $body = $this->createMock(StreamInterface::class);
         $response = new JsonResponse(200, $body);

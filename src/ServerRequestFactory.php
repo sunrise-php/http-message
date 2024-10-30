@@ -11,31 +11,18 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Sunrise\Http\Message\Stream\PhpInputStream;
 
-/**
- * ServerRequestFactory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class ServerRequestFactory implements ServerRequestFactoryInterface
 {
-
     /**
-     * Creates a new request from superglobals variables
-     *
      * @param array<array-key, mixed>|null $serverParams
      * @param array<array-key, mixed>|null $queryParams
      * @param array<array-key, mixed>|null $cookieParams
      * @param array<array-key, mixed>|null $uploadedFiles
      * @param array<array-key, mixed>|null $parsedBody
-     *
-     * @return ServerRequestInterface
      *
      * @link http://php.net/manual/en/language.variables.superglobals.php
      * @link https://www.php-fig.org/psr/psr-15/meta/
@@ -68,9 +55,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     }
 
     /**
-     * Creates a new request
+     * {@inheritDoc}
      *
-     * @param string $method
      * @param mixed $uri
      * @param array<array-key, mixed> $serverParams
      */

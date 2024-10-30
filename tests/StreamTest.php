@@ -15,6 +15,7 @@ use function fopen;
 use function is_resource;
 use function stream_get_meta_data;
 
+use const PHP_VERSION_ID;
 use const STDIN;
 use const STDOUT;
 
@@ -51,7 +52,7 @@ class StreamTest extends TestCase
         $this->assertSame($this->testResource, Stream::create($this->testResource)->detach());
     }
 
-    public function testCreateWithUnexpectedOperand(): void
+    public function testCreateWithInvalidArgument(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unexpected stream resource');
@@ -274,6 +275,10 @@ class StreamTest extends TestCase
 
     public function testFailedSeek(): void
     {
+        if (PHP_VERSION_ID >= 80300) {
+            $this->markTestSkipped('Not relevant for this version of the PHP.');
+        }
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to move the stream pointer position');
 

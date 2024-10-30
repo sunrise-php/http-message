@@ -11,27 +11,12 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Stream;
 
-/**
- * Import functions
- */
 use function fopen;
 
-/**
- * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory
- */
 final class PhpMemoryStream extends Stream
 {
-
-    /**
-     * Constructor of the class
-     *
-     * @param string $mode
-     */
     public function __construct(string $mode = 'r+b')
     {
         parent::__construct(fopen('php://memory', $mode));

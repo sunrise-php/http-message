@@ -11,38 +11,34 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Stream;
 
-/**
- * Import functions
- */
 use function fopen;
+use function fseek;
 use function stream_copy_to_stream;
 
-/**
- * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.input
- */
+use const SEEK_SET;
+
 final class PhpInputStream extends Stream
 {
-
-    /**
-     * Constructor of the class
-     */
     public function __construct()
     {
-        /** @var resource */
+        parent::__construct(self::copyInput());
+    }
+
+    /**
+     * @return resource
+     */
+    private static function copyInput()
+    {
+        /** @var resource $input */
         $input = fopen('php://input', 'rb');
+        /** @var resource $resource */
+        $resource = fopen('php://temp', 'r+b');
 
-        /** @var resource */
-        $handle = fopen('php://temp', 'r+b');
+        stream_copy_to_stream($input, $resource);
+        fseek($resource, 0, SEEK_SET);
 
-        stream_copy_to_stream($input, $handle);
-
-        parent::__construct($handle);
-
-        $this->rewind();
+        return $resource;
     }
 }

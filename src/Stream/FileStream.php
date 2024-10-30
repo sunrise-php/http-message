@@ -11,36 +11,36 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Stream;
+use Throwable;
 
-/**
- * Import functions
- */
 use function fopen;
 use function is_resource;
 use function sprintf;
 
-/**
- * FileStream
- */
 final class FileStream extends Stream
 {
-
     /**
-     * Constructor of the class
-     *
-     * @param string $filename
-     * @param string $mode
-     *
      * @throws InvalidArgumentException
      */
     public function __construct(string $filename, string $mode)
     {
-        $resource = @fopen($filename, $mode);
+        parent::__construct(self::openFile($filename, $mode));
+    }
+
+    /**
+     * @return resource
+     *
+     * @throws InvalidArgumentException
+     */
+    private static function openFile(string $filename, string $mode)
+    {
+        try {
+            $resource = @fopen($filename, $mode);
+        } catch (Throwable $e) {
+            $resource = false;
+        }
 
         if (!is_resource($resource)) {
             throw new InvalidArgumentException(sprintf(
@@ -50,6 +50,6 @@ final class FileStream extends Stream
             ));
         }
 
-        parent::__construct($resource);
+        return $resource;
     }
 }

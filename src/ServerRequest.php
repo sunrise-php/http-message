@@ -11,68 +11,44 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
-/**
- * Import functions
- */
 use function array_key_exists;
 use function array_walk_recursive;
 use function is_array;
 use function is_object;
 
-/**
- * ServerRequest
- *
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class ServerRequest extends Request implements ServerRequestInterface
 {
-
     /**
-     * The server parameters
-     *
      * @var array<array-key, mixed>
      */
     private array $serverParams;
 
     /**
-     * The request's query parameters
-     *
      * @var array<array-key, mixed>
      */
     private array $queryParams;
 
     /**
-     * The request's cookie parameters
-     *
      * @var array<array-key, mixed>
      */
     private array $cookieParams;
 
     /**
-     * The request's uploaded files
-     *
      * @var array<array-key, mixed>
      */
     private array $uploadedFiles = [];
 
     /**
-     * The request's parsed body
-     *
      * @var array<array-key, mixed>|object|null
      */
     private $parsedBody = null;
 
     /**
-     * The request attributes
-     *
      * @var array<array-key, mixed>
      */
     private array $attributes;
@@ -80,11 +56,8 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Constructor of the class
      *
-     * @param string|null $protocolVersion
-     * @param string|null $method
      * @param mixed $uri
      * @param array<string, string|string[]>|null $headers
-     * @param StreamInterface|null $body
      *
      * @param array<array-key, mixed> $serverParams
      * @param array<array-key, mixed> $queryParams
@@ -94,7 +67,6 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array<array-key, mixed> $attributes
      *
      * @throws InvalidArgumentException
-     *         If one of the arguments isn't valid.
      */
     public function __construct(
         ?string $protocolVersion = null,
@@ -111,15 +83,15 @@ class ServerRequest extends Request implements ServerRequestInterface
     ) {
         parent::__construct($method, $uri, $headers, $body);
 
-        if (isset($protocolVersion)) {
+        if ($protocolVersion !== null) {
             $this->setProtocolVersion($protocolVersion);
         }
 
-        if (!empty($uploadedFiles)) {
+        if ($uploadedFiles !== []) {
             $this->setUploadedFiles($uploadedFiles);
         }
 
-        if (isset($parsedBody)) {
+        if ($parsedBody !== null) {
             $this->setParsedBody($parsedBody);
         }
 
@@ -130,7 +102,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the server parameters
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>
      */
@@ -140,7 +112,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request's query parameters
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>
      */
@@ -150,7 +122,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request with the given query parameters
+     * {@inheritDoc}
      *
      * @param array<array-key, mixed> $query
      *
@@ -165,7 +137,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request's cookie parameters
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>
      */
@@ -175,7 +147,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request with the given cookie parameters
+     * {@inheritDoc}
      *
      * @param array<array-key, mixed> $cookies
      *
@@ -190,7 +162,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request's uploaded files
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>
      */
@@ -200,14 +172,13 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request with the given uploaded files
+     * {@inheritDoc}
      *
      * @param array<array-key, mixed> $uploadedFiles
      *
      * @return static
      *
      * @throws InvalidArgumentException
-     *         If one of the files isn't valid.
      */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
@@ -218,7 +189,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request's parsed body
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>|object|null
      */
@@ -228,14 +199,13 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request with the given parsed body
+     * {@inheritDoc}
      *
      * @param array<array-key, mixed>|object|null $data
      *
      * @return static
      *
      * @throws InvalidArgumentException
-     *         If the data isn't valid.
      */
     public function withParsedBody($data): ServerRequestInterface
     {
@@ -246,7 +216,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request attributes
+     * {@inheritDoc}
      *
      * @return array<array-key, mixed>
      */
@@ -256,9 +226,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Gets the request's attribute value by the given name
-     *
-     * Returns the default value if the attribute wasn't found.
+     * {@inheritDoc}
      *
      * @param array-key $name
      * @param mixed $default
@@ -275,7 +243,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request with the given attribute
+     * {@inheritDoc}
      *
      * @param array-key $name
      * @param mixed $value
@@ -291,7 +259,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     }
 
     /**
-     * Creates a new instance of the request without an attribute with the given name
+     * {@inheritDoc}
      *
      * @param array-key $name
      *
@@ -310,10 +278,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @param array<array-key, mixed> $files
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If one of the files isn't valid.
      */
     final protected function setUploadedFiles(array $files): void
     {
@@ -327,10 +292,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @param array<array-key, mixed>|object|null $data
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the parsed body isn't valid.
      */
     final protected function setParsedBody($data): void
     {
@@ -344,14 +306,11 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @param array<array-key, mixed> $files
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If one of the files isn't valid.
      */
     private function validateUploadedFiles(array $files): void
     {
-        if ([] === $files) {
+        if ($files === []) {
             return;
         }
 
@@ -359,7 +318,7 @@ class ServerRequest extends Request implements ServerRequestInterface
          * @psalm-suppress MissingClosureParamType
          */
         array_walk_recursive($files, static function ($file): void {
-            if (! ($file instanceof UploadedFileInterface)) {
+            if (!($file instanceof UploadedFileInterface)) {
                 throw new InvalidArgumentException('Invalid uploaded file');
             }
         });
@@ -370,19 +329,14 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @param mixed $data
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
-     *         If the parsed body isn't valid.
      */
     private function validateParsedBody($data): void
     {
-        if (null === $data) {
+        if ($data === null || is_array($data) || is_object($data)) {
             return;
         }
 
-        if (!is_array($data) && !is_object($data)) {
-            throw new InvalidArgumentException('Invalid parsed body');
-        }
+        throw new InvalidArgumentException('Invalid parsed body');
     }
 }

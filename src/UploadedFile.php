@@ -11,28 +11,24 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
-use Sunrise\Http\Message\Stream\FileStream;
+use Throwable;
+use TypeError;
 
-/**
- * Import functions
- */
 use function dirname;
+use function gettype;
 use function is_dir;
 use function is_file;
+use function is_readable;
+use function is_string;
+use function is_uploaded_file;
 use function is_writable;
+use function move_uploaded_file;
+use function rename;
 use function sprintf;
-use function unlink;
 
-/**
- * Import constants
- */
 use const UPLOAD_ERR_OK;
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_FORM_SIZE;
@@ -42,17 +38,9 @@ use const UPLOAD_ERR_NO_TMP_DIR;
 use const UPLOAD_ERR_CANT_WRITE;
 use const UPLOAD_ERR_EXTENSION;
 
-/**
- * UploadedFile
- *
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class UploadedFile implements UploadedFileInterface
 {
-
     /**
-     * List of upload errors
-     *
      * @link https://www.php.net/manual/en/features.file-upload.errors.php
      *
      * @var array<int, non-empty-string>
@@ -68,57 +56,14 @@ class UploadedFile implements UploadedFileInterface
         UPLOAD_ERR_EXTENSION  => 'File upload was stopped by a PHP extension',
     ];
 
-    /**
-     * The file stream
-     *
-     * @var StreamInterface|null
-     */
-    private ?StreamInterface $stream = null;
-
-    /**
-     * The file size
-     *
-     * @var int|null
-     */
+    private ?StreamInterface $stream;
     private ?int $size;
-
-    /**
-     * The file's error code
-     *
-     * @var int
-     */
     private int $errorCode;
-
-    /**
-     * The file's error message
-     *
-     * @var string
-     */
     private string $errorMessage;
-
-    /**
-     * The client's file name
-     *
-     * @var string|null
-     */
     private ?string $clientFilename;
-
-    /**
-     * The client's file media type
-     *
-     * @var string|null
-     */
     private ?string $clientMediaType;
+    private bool $isMoved = false;
 
-    /**
-     * Constructor of the class
-     *
-     * @param StreamInterface|null $stream
-     * @param int|null $size
-     * @param int $error
-     * @param string|null $clientFilename
-     * @param string|null $clientMediaType
-     */
     public function __construct(
         ?StreamInterface $stream,
         ?int $size = null,
@@ -126,121 +71,81 @@ class UploadedFile implements UploadedFileInterface
         ?string $clientFilename = null,
         ?string $clientMediaType = null
     ) {
-        // It doesn't make sense to keep the stream
-        // if the file wasn't successfully uploaded...
-        if (UPLOAD_ERR_OK === $error) {
-            $this->stream = $stream;
-        }
-
+        $this->stream = $stream;
         $this->size = $size;
         $this->errorCode = $error;
-        $this->errorMessage = self::UPLOAD_ERRORS[$error] ?? 'Unknown error';
+        $this->errorMessage = self::UPLOAD_ERRORS[$error] ?? 'Unknown file upload error';
         $this->clientFilename = $clientFilename;
         $this->clientMediaType = $clientMediaType;
     }
 
     /**
-     * Gets the file stream
-     *
-     * @return StreamInterface
-     *
-     * @throws RuntimeException
-     *         - If the file has no a stream due to an error;
-     *         - If the file was already moved.
+     * @inheritDoc
      */
     public function getStream(): StreamInterface
     {
-        if (UPLOAD_ERR_OK <> $this->errorCode) {
-            throw new RuntimeException(sprintf(
-                'Uploaded file has no a stream due to the error #%d (%s)',
-                $this->errorCode,
-                $this->errorMessage
-            ));
+        if ($this->isMoved) {
+            throw new RuntimeException('Uploaded file was moved');
         }
 
-        if (!isset($this->stream)) {
-            throw new RuntimeException(
-                'Uploaded file has no a stream because it was already moved'
-            );
+        if ($this->errorCode !== UPLOAD_ERR_OK) {
+            throw new RuntimeException($this->errorMessage, $this->errorCode);
+        }
+
+        if ($this->stream === null) {
+            throw new RuntimeException('Uploaded file has no stream');
         }
 
         return $this->stream;
     }
 
     /**
-     * Moves the file to the given path
-     *
-     * @param string $targetPath
-     *
-     * @return void
-     *
-     * @throws InvalidArgumentException
-     *         If the target path cannot be used.
-     *
-     * @throws RuntimeException
-     *         - If the file has no a stream due to an error;
-     *         - If the file was already moved;
-     *         - If the file cannot be read.
+     * @inheritDoc
      */
     public function moveTo($targetPath): void
     {
-        if (UPLOAD_ERR_OK <> $this->errorCode) {
-            throw new RuntimeException(sprintf(
-                'Uploaded file cannot be moved due to the error #%d (%s)',
-                $this->errorCode,
-                $this->errorMessage
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (!is_string($targetPath)) {
+            throw new TypeError(sprintf(
+                'Argument #1 ($targetPath) must be of type string, %s given',
+                gettype($targetPath),
             ));
         }
 
-        if (!isset($this->stream)) {
-            throw new RuntimeException(
-                'Uploaded file cannot be moved because it was already moved'
-            );
+        $sourceStream = $this->getStream();
+
+        $sourcePath = $sourceStream->getMetadata('uri');
+        if (!is_string($sourcePath) || !is_file($sourcePath) || !is_readable($sourcePath)) {
+            throw new RuntimeException('Uploaded file does not exist or is not readable');
         }
 
-        if (!$this->stream->isReadable()) {
-            throw new RuntimeException(
-                'Uploaded file cannot be moved because it is not readable'
-            );
+        $sourceDirname = dirname($sourcePath);
+        if (!is_writable($sourceDirname)) {
+            throw new RuntimeException('To move the uploaded file, the source directory must be writable');
+        }
+
+        $targetDirname = dirname($targetPath);
+        if (!is_dir($targetDirname) || !is_writable($targetDirname)) {
+            throw new RuntimeException('To move the uploaded file, the target directory must exist and be writable');
         }
 
         try {
-            $targetStream = new FileStream($targetPath, 'wb');
-        } catch (InvalidArgumentException $e) {
-            throw new InvalidArgumentException(sprintf(
-                'Uploaded file cannot be moved due to the error: %s',
-                $e->getMessage()
-            ));
+            $this->isMoved = is_uploaded_file($sourcePath)
+                ? move_uploaded_file($sourcePath, $targetPath)
+                : rename($sourcePath, $targetPath);
+        } catch (Throwable $e) {
         }
 
-        if ($this->stream->isSeekable()) {
-            $this->stream->rewind();
+        if (!$this->isMoved) {
+            throw new RuntimeException('Failed to move the uploaded file');
         }
 
-        while (!$this->stream->eof()) {
-            $targetStream->write($this->stream->read(4096));
-        }
-
-        $targetStream->close();
-
-        /** @var string|null */
-        $sourcePath = $this->stream->getMetadata('uri');
-
-        $this->stream->close();
+        $sourceStream->close();
         $this->stream = null;
-
-        if (isset($sourcePath) && is_file($sourcePath)) {
-            $sourceDir = dirname($sourcePath);
-            if (is_writable($sourceDir)) {
-                unlink($sourcePath);
-            }
-        }
     }
 
     /**
-     * Gets the file size
-     *
-     * @return int|null
+     * @inheritDoc
      */
     public function getSize(): ?int
     {
@@ -248,9 +153,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Gets the file's error code
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getError(): int
     {
@@ -258,9 +161,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Gets the client's file name
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function getClientFilename(): ?string
     {
@@ -268,9 +169,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Gets the client's file media type
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function getClientMediaType(): ?string
     {

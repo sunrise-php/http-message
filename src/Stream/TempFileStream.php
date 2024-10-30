@@ -11,35 +11,31 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream;
 
-/**
- * Import functions
- */
 use function fopen;
 use function is_resource;
 use function is_writable;
 use function sys_get_temp_dir;
 use function tempnam;
 
-/**
- * TempFileStream
- */
 final class TempFileStream extends Stream
 {
-
     /**
-     * Constructor of the class
-     *
-     * @param string $prefix
-     *
      * @throws RuntimeException
      */
     public function __construct(string $prefix = '')
+    {
+        parent::__construct(self::createFile($prefix));
+    }
+
+    /**
+     * @return resource
+     *
+     * @throws RuntimeException
+     */
+    private static function createFile(string $prefix)
     {
         $dirname = sys_get_temp_dir();
         if (!is_writable($dirname)) {
@@ -48,14 +44,14 @@ final class TempFileStream extends Stream
 
         $filename = tempnam($dirname, $prefix);
         if ($filename === false) {
-            throw new RuntimeException('Temporary file name cannot be generated');
+            throw new RuntimeException('Temporary file cannot be created');
         }
 
-        $resource = fopen($filename, 'w+b');
+        $resource = fopen($filename, 'r+b');
         if (!is_resource($resource)) {
-            throw new RuntimeException('Temporary file cannot be created or opened');
+            throw new RuntimeException('Temporary file cannot be opened');
         }
 
-        parent::__construct($resource);
+        return $resource;
     }
 }

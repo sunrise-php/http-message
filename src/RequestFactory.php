@@ -11,22 +11,13 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * HTTP Request Message Factory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class RequestFactory implements RequestFactoryInterface
 {
-
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createRequest(string $method, $uri): RequestInterface
     {

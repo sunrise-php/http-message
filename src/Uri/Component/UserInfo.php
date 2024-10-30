@@ -11,47 +11,27 @@
 
 namespace Sunrise\Http\Message\Uri\Component;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 
 /**
- * URI component "User Information"
- *
  * @link https://tools.ietf.org/html/rfc3986#section-3.2.1
  */
 final class UserInfo implements ComponentInterface
 {
-
-    /**
-     * URI component "user"
-     *
-     * @var User
-     */
     private User $user;
-
-    /**
-     * URI component "password"
-     *
-     * @var Password|null
-     */
     private ?Password $password = null;
 
     /**
-     * Constructor of the class
-     *
      * @param mixed $user
      * @param mixed $password
      *
      * @throws InvalidArgumentException
-     *         If the user or password aren't valid.
      */
     public function __construct($user, $password = null)
     {
         $this->user = User::create($user);
 
-        if (isset($password)) {
+        if ($password !== null) {
             $this->password = Password::create($password);
         }
     }
@@ -65,7 +45,7 @@ final class UserInfo implements ComponentInterface
     {
         $value = $this->user->getValue();
 
-        if (isset($this->password)) {
+        if ($this->password !== null) {
             $value .= ':' . $this->password->getValue();
         }
 

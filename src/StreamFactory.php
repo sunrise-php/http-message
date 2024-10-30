@@ -11,24 +11,15 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Stream\FileStream;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
-/**
- * StreamFactory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class StreamFactory implements StreamFactoryInterface
 {
-
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createStream(string $content = ''): StreamInterface
     {
@@ -44,7 +35,7 @@ class StreamFactory implements StreamFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
@@ -52,7 +43,7 @@ class StreamFactory implements StreamFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createStreamFromResource($resource): StreamInterface
     {

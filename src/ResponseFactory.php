@@ -11,22 +11,13 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * HTTP Response Message Factory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class ResponseFactory implements ResponseFactoryInterface
 {
-
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {

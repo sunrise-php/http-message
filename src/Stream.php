@@ -11,17 +11,11 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Throwable;
 
-/**
- * Import functions
- */
 use function fclose;
 use function feof;
 use function fread;
@@ -34,41 +28,21 @@ use function stream_get_contents;
 use function stream_get_meta_data;
 use function strpbrk;
 
-/**
- * Import constants
- */
 use const SEEK_SET;
 
-/**
- * Stream
- *
- * @link https://www.php-fig.org/psr/psr-7/
- */
 class Stream implements StreamInterface
 {
-
     /**
-     * The stream resource
-     *
      * @var resource|null
      */
     private $resource;
 
-    /**
-     * Signals to close the stream on destruction
-     *
-     * @var bool
-     */
     private bool $autoClose;
 
     /**
-     * Constructor of the class
-     *
      * @param mixed $resource
-     * @param bool $autoClose
      *
      * @throws InvalidArgumentException
-     *         If the stream cannot be initialized with the resource.
      */
     public function __construct($resource, bool $autoClose = true)
     {
@@ -81,14 +55,9 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Creates a stream
-     *
      * @param mixed $resource
      *
-     * @return StreamInterface
-     *
      * @throws InvalidArgumentException
-     *         If the stream cannot be initialized with the resource.
      */
     public static function create($resource): StreamInterface
     {
@@ -99,9 +68,6 @@ class Stream implements StreamInterface
         return new self($resource);
     }
 
-    /**
-     * Destructor of the class
-     */
     public function __destruct()
     {
         if ($this->autoClose) {
@@ -110,11 +76,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Detaches a resource from the stream
-     *
-     * Returns NULL if the stream already without a resource.
-     *
-     * @return resource|null
+     * @inheritDoc
      */
     public function detach()
     {
@@ -125,11 +87,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Closes the stream
-     *
-     * @link http://php.net/manual/en/function.fclose.php
-     *
-     * @return void
+     * @inheritDoc
      */
     public function close(): void
     {
@@ -142,11 +100,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Checks if the end of the stream is reached
-     *
-     * @link http://php.net/manual/en/function.feof.php
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function eof(): bool
     {
@@ -158,13 +112,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Gets the stream pointer position
-     *
-     * @link http://php.net/manual/en/function.ftell.php
-     *
-     * @return int
-     *
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function tell(): int
     {
@@ -181,9 +129,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Checks if the stream is seekable
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isSeekable(): bool
     {
@@ -198,11 +144,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Moves the stream pointer to the beginning
-     *
-     * @return void
-     *
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function rewind(): void
     {
@@ -210,16 +152,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Moves the stream pointer to the given position
-     *
-     * @link http://php.net/manual/en/function.fseek.php
-     *
-     * @param int $offset
-     * @param int $whence
-     *
-     * @return void
-     *
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function seek($offset, $whence = SEEK_SET): void
     {
@@ -238,9 +171,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Checks if the stream is writable
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isWritable(): bool
     {
@@ -255,17 +186,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Writes the given string to the stream
-     *
-     * Returns the number of bytes written to the stream.
-     *
-     * @link http://php.net/manual/en/function.fwrite.php
-     *
-     * @param string $string
-     *
-     * @return int
-     *
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function write($string): int
     {
@@ -286,9 +207,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Checks if the stream is readable
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isReadable(): bool
     {
@@ -303,17 +222,10 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Reads the given number of bytes from the stream
+     * @inheritDoc
      *
-     * @link http://php.net/manual/en/function.fread.php
-     *
-     * @param int $length
      * @psalm-param int $length
-     * @phpstan-param int<0, max> $length
-     *
-     * @return string
-     *
-     * @throws RuntimeException
+     * @phpstan-param int<1, max> $length
      */
     public function read($length): string
     {
@@ -334,13 +246,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Reads the remainder of the stream
-     *
-     * @link http://php.net/manual/en/function.stream-get-contents.php
-     *
-     * @return string
-     *
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function getContents(): string
     {
@@ -361,13 +267,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Gets the stream metadata
-     *
-     * @link http://php.net/manual/en/function.stream-get-meta-data.php
-     *
-     * @param string|null $key
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function getMetadata($key = null)
     {
@@ -384,14 +284,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Gets the stream size
-     *
-     * Returns NULL if the stream doesn't have a resource,
-     * or if the stream size cannot be determined.
-     *
-     * @link http://php.net/manual/en/function.fstat.php
-     *
-     * @return int|null
+     * @inheritDoc
      */
     public function getSize(): ?int
     {
@@ -409,11 +302,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Converts the stream to a string
-     *
-     * @link http://php.net/manual/en/language.oop5.magic.php#object.tostring
-     *
-     * @return string
+     * @inheritDoc
      */
     public function __toString(): string
     {

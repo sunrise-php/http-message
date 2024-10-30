@@ -11,15 +11,9 @@
 
 namespace Sunrise\Http\Message\Uri\Component;
 
-/**
- * ComponentInterface
- */
 interface ComponentInterface
 {
-
     /**
-     * Gets the component value
-     *
      * @return mixed
      */
     public function getValue();

@@ -11,9 +11,6 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import functions
- */
 use function strncmp;
 use function strtolower;
 use function strtr;
@@ -21,10 +18,6 @@ use function substr;
 use function ucwords;
 
 /**
- * Gets the request headers
- *
- * @param array|null $serverParams
- *
  * @return array<string, string>
  *
  * @link http://php.net/manual/en/reserved.variables.server.php
@@ -46,7 +39,7 @@ function server_request_headers(?array $serverParams = null): array
 
     $result = [];
     foreach ($serverParams as $key => $value) {
-        if (0 <> strncmp('HTTP_', $key, 5)) {
+        if (strncmp('HTTP_', $key, 5) !== 0) {
             continue;
         }
 
