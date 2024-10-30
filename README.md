@@ -18,10 +18,7 @@ composer require sunrise/http-message
 ## Documentation Navigation
 
 - [Server Request from Global Environment](#server-request-from-global-environment)
-- [JSON and HTML Messages](#json-and-html-messages)
-- - [JSON Request](#json-request)
-- - [JSON Response](#json-response)
-- - [HTML Response](#html-response)
+- [Typed Messages](#typed-messages)
 - [Streams](#streams)
 - - [File Stream](#file-stream)
 - - [PHP Input Stream](#php-input-stream)
@@ -43,7 +40,7 @@ use Sunrise\Http\Message\ServerRequestFactory;
 $request = ServerRequestFactory::fromGlobals();
 ```
 
-### JSON and HTML Messages
+### Typed Messages
 
 #### JSON Request
 
@@ -59,6 +56,28 @@ You can also specify [encoding flags](https://www.php.net/manual/en/json.constan
 
 ```php
 $request = new JsonRequest('GET', '/', $data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE, 512);
+```
+
+#### URL Encoded Request
+
+```php
+use Sunrise\Http\Message\Request\UrlEncodedRequest;
+
+/** @var $data mixed */
+
+$request = new UrlEncodedRequest('GET', '/', $data);
+```
+
+You can also specify [encoding type](https://www.php.net/manual/ru/url.constants.php#constant.php-query-rfc1738) like below:
+
+```php
+use Sunrise\Http\Message\Request\UrlEncodedRequest;
+
+$encodingType = UrlEncodedRequest::ENCODING_TYPE_RFC1738;
+// or
+$encodingType = UrlEncodedRequest::ENCODING_TYPE_RFC3986;
+
+$request = new UrlEncodedRequest('GET', '/', $data, $encodingType);
 ```
 
 #### JSON Response
