@@ -11,31 +11,20 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Stream;
 
-/**
- * Import functions
- */
 use function fopen;
 use function sprintf;
 
-/**
- * @link https://www.php.net/manual/en/wrappers.php.php#wrappers.php.memory
- */
 final class PhpTempStream extends Stream
 {
-
     /**
-     * Constructor of the class
-     *
-     * @param string $mode
      * @param int<0, max> $maxmemory
      */
     public function __construct(string $mode = 'r+b', int $maxmemory = 2097152)
     {
-        parent::__construct(fopen(sprintf('php://temp/maxmemory:%d', $maxmemory), $mode));
+        $uri = sprintf('php://temp/maxmemory:%d', $maxmemory);
+
+        parent::__construct(fopen($uri, $mode));
     }
 }

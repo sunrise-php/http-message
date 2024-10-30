@@ -6,13 +6,12 @@ namespace Sunrise\Http\Message\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
-use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
-use Sunrise\Http\Message\Stream\FileStream;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 use Sunrise\Http\Message\Stream\TempFileStream;
 use Sunrise\Http\Message\Stream\TmpfileStream;
 use Sunrise\Http\Message\UploadedFile;
+use TypeError;
 
 use const UPLOAD_ERR_CANT_WRITE;
 use const UPLOAD_ERR_EXTENSION;
@@ -27,7 +26,7 @@ class UploadedFileTest extends TestCase
 {
     public function testContracts(): void
     {
-        $file = new UploadedFile(new PhpTempStream());
+        $file = new UploadedFile(null);
 
         $this->assertInstanceOf(UploadedFileInterface::class, $file);
     }
@@ -56,36 +55,40 @@ class UploadedFileTest extends TestCase
         $this->assertNull($file->getClientMediaType());
     }
 
-    /**
-     * @dataProvider uploadErrorCodeProvider
-     */
-    public function testGetsStreamWithError(int $errorCode): void
+    public function testGetStreamWithoutStream(): void
     {
-        $file = new UploadedFile(new PhpTempStream(), null, $errorCode);
-
-        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown error';
+        $file = new UploadedFile(null);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Uploaded file has no a stream due to the error #%d (%s)',
-            $errorCode,
-            $errorMessage
-        ));
+        $this->expectExceptionMessage('Uploaded file has no stream');
 
         $file->getStream();
     }
 
-    public function testGetsStreamAfterMove(): void
+    /**
+     * @dataProvider uploadErrorCodeProvider
+     */
+    public function testGetStreamWithError(int $errorCode): void
+    {
+        $file = new UploadedFile(null, null, $errorCode);
+
+        $expectedMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown file upload error';
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionCode($errorCode);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $file->getStream();
+    }
+
+    public function testGetStreamAfterMove(): void
     {
         $tmpfile = new TmpfileStream();
-
-        $file = new UploadedFile(new PhpTempStream());
+        $file = new UploadedFile(new TmpfileStream());
         $file->moveTo($tmpfile->getMetadata('uri'));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Uploaded file has no a stream because it was already moved'
-        );
+        $this->expectExceptionMessage('Uploaded file was moved');
 
         $file->getStream();
     }
@@ -108,65 +111,72 @@ class UploadedFileTest extends TestCase
         $this->assertFileDoesNotExist($srcPath);
     }
 
+    public function testMoveWithoutStream(): void
+    {
+        $file = new UploadedFile(null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Uploaded file has no stream');
+
+        $file->moveTo('/');
+    }
+
     /**
      * @dataProvider uploadErrorCodeProvider
      */
     public function testMoveWithError(int $errorCode): void
     {
-        $file = new UploadedFile(new PhpTempStream(), null, $errorCode);
+        $file = new UploadedFile(null, null, $errorCode);
 
-        $errorMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown error';
+        $expectedMessage = UploadedFile::UPLOAD_ERRORS[$errorCode] ?? 'Unknown file upload error';
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Uploaded file cannot be moved due to the error #%d (%s)',
-            $errorCode,
-            $errorMessage
-        ));
+        $this->expectExceptionCode($errorCode);
+        $this->expectExceptionMessage($expectedMessage);
 
-        $file->moveTo('/foo');
+        $file->moveTo('/');
     }
 
     public function testMoveAfterMove(): void
     {
         $tmpfile = new TmpfileStream();
 
-        $file = new UploadedFile(new PhpTempStream());
+        $file = new UploadedFile(new TmpfileStream());
         $file->moveTo($tmpfile->getMetadata('uri'));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Uploaded file cannot be moved because it was already moved'
-        );
+        $this->expectExceptionMessage('Uploaded file was moved');
 
-        $file->moveTo('/foo');
+        $file->moveTo($tmpfile->getMetadata('uri'));
     }
 
-    public function testMoveUnreadableFile(): void
+    public function testMoveInvalidTargetPath(): void
     {
-        $tmpfile = new TmpfileStream();
+        $file = new UploadedFile(null);
 
-        $file = new UploadedFile(new FileStream($tmpfile->getMetadata('uri'), 'w'));
+        $this->expectException(TypeError::class);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Uploaded file cannot be moved because it is not readable'
-        );
-
-        $file->moveTo('/foo');
+        $file->moveTo(null);
     }
 
-    public function testMoveUnwritableDirectory(): void
+    public function testMoveNonFileStream(): void
     {
         $file = new UploadedFile(new PhpTempStream());
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Uploaded file cannot be moved due to the error: ' .
-            'Unable to open the file "/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo" in the mode "wb"'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Uploaded file does not exist or is not readable');
 
-        $file->moveTo('/4c32dad5-181f-46b7-a86a-15568e11fdf9/foo');
+        $file->moveTo('/');
+    }
+
+    public function testCloseStreamAfterMove(): void
+    {
+        $tmpfile = new TmpfileStream();
+
+        $file = new UploadedFile($tmpfile);
+        $file->moveTo($tmpfile->getMetadata('uri'));
+
+        $this->assertNull($tmpfile->detach());
     }
 
     public function uploadErrorCodeProvider(): array

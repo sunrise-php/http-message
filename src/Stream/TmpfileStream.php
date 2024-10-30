@@ -11,36 +11,35 @@
 
 namespace Sunrise\Http\Message\Stream;
 
-/**
- * Import classes
- */
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream;
 
-/**
- * Import functions
- */
 use function is_resource;
 use function is_writable;
 use function sys_get_temp_dir;
 use function tmpfile;
 
 /**
- * The tmpfile() function opens a unique temporary file in binary
+ * The {@see tmpfile()} function opens a unique temporary file in binary
  * read/write (w+b) mode. The file will be automatically deleted
  * when it is closed or the program terminates.
- *
- * @link https://www.php.net/tmpfile
  */
 final class TmpfileStream extends Stream
 {
-
     /**
-     * Constructor of the class
-     *
      * @throws RuntimeException
      */
     public function __construct()
+    {
+        parent::__construct(self::createFile());
+    }
+
+    /**
+     * @return resource
+     *
+     * @throws RuntimeException
+     */
+    private static function createFile()
     {
         $dirname = sys_get_temp_dir();
         if (!is_writable($dirname)) {
@@ -52,6 +51,6 @@ final class TmpfileStream extends Stream
             throw new RuntimeException('Temporary file cannot be created or opened');
         }
 
-        parent::__construct($resource);
+        return $resource;
     }
 }

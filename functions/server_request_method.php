@@ -12,23 +12,11 @@
 namespace Sunrise\Http\Message;
 
 /**
- * Import classes
- */
-use Fig\Http\Message\RequestMethodInterface;
-
-/**
- * Gets the request method
- *
- * @param array|null $serverParams
- *
- * @return string
- *
- * @link http://php.net/manual/en/reserved.variables.server.php
  * @link https://datatracker.ietf.org/doc/html/rfc3875#section-4.1.12
  */
 function server_request_method(?array $serverParams = null): string
 {
     $serverParams ??= $_SERVER;
 
-    return $serverParams['REQUEST_METHOD'] ?? RequestMethodInterface::METHOD_GET;
+    return $serverParams['REQUEST_METHOD'] ?? 'GET';
 }

@@ -11,31 +11,16 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\UriInterface;
 
-/**
- * Import functions
- */
 use function array_key_exists;
 
-/**
- * Gets the request URI
- *
- * @param array|null $serverParams
- *
- * @return UriInterface
- *
- * @link http://php.net/manual/en/reserved.variables.server.php
- */
 function server_request_uri(?array $serverParams = null): UriInterface
 {
     $serverParams ??= $_SERVER;
 
     if (array_key_exists('HTTPS', $serverParams)) {
-        if (! ('off' === $serverParams['HTTPS'])) {
+        if ('off' !== $serverParams['HTTPS']) {
             $scheme = 'https://';
         }
     }

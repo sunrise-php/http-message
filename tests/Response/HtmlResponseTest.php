@@ -39,12 +39,12 @@ class HtmlResponseTest extends TestCase
     public function testConstructorWithUnexpectedHtml(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to create HTML response due to unexpected HTML data');
+        $this->expectExceptionMessage('Unable to create the HTML response due to a unexpected HTML type');
 
         new HtmlResponse(200, null);
     }
 
-    public function testConstructorWithStreamBody(): void
+    public function testConstructorWithStream(): void
     {
         $html = $this->createMock(StreamInterface::class);
         $response = new HtmlResponse(200, $html);

@@ -11,14 +11,8 @@
 
 namespace Sunrise\Http\Message\Exception;
 
-/**
- * Import classes
- */
 use Throwable;
 
-/**
- * ExceptionInterface
- */
 interface ExceptionInterface extends Throwable
 {
 }

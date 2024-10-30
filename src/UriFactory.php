@@ -11,22 +11,13 @@
 
 namespace Sunrise\Http\Message;
 
-/**
- * Import classes
- */
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * UriFactory
- *
- * @link https://www.php-fig.org/psr/psr-17/
- */
 class UriFactory implements UriFactoryInterface
 {
-
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function createUri(string $uri = ''): UriInterface
     {

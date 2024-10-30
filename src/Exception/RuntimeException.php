@@ -11,14 +11,6 @@
 
 namespace Sunrise\Http\Message\Exception;
 
-/**
- * Import classes
- */
-use RuntimeException as BaseRuntimeException;
-
-/**
- * RuntimeException
- */
-class RuntimeException extends BaseRuntimeException implements ExceptionInterface
+class RuntimeException extends \RuntimeException implements ExceptionInterface
 {
 }
