@@ -314,10 +314,7 @@ class ServerRequest extends Request implements ServerRequestInterface
             return;
         }
 
-        /**
-         * @psalm-suppress MissingClosureParamType
-         */
-        array_walk_recursive($files, static function ($file): void {
+        array_walk_recursive($files, /** @param mixed $file */ static function ($file): void {
             if (!($file instanceof UploadedFileInterface)) {
                 throw new InvalidArgumentException('Invalid uploaded file');
             }
