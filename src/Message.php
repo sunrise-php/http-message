@@ -299,7 +299,7 @@ abstract class Message implements MessageInterface
     private function validateHeaderValue(string $name, array $value): void
     {
         if ($value === []) {
-            throw new InvalidArgumentException("The value of the HTTP header {$name} cannot be an empty array");
+            throw new InvalidArgumentException("The value of the HTTP header $name cannot be an empty array");
         }
 
         foreach ($value as $key => $item) {
@@ -308,11 +308,11 @@ abstract class Message implements MessageInterface
             }
 
             if (!is_string($item)) {
-                throw new InvalidArgumentException("The value of the HTTP header {$name}[{$key}] must be a string");
+                throw new InvalidArgumentException("The value of the HTTP header $name:$key must be a string");
             }
 
             if (!preg_match(HeaderInterface::RFC7230_FIELD_VALUE_REGEX, $item)) {
-                throw new InvalidArgumentException("The value of the HTTP header {$name}[{$key}] is invalid");
+                throw new InvalidArgumentException("The value of the HTTP header $name:$key is invalid");
             }
         }
     }

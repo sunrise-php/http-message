@@ -202,7 +202,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithValueAsNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $this->createSubject()->withHeader('X-Foo', null);
     }
@@ -210,7 +210,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithValueAsNullAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $this->createSubject()->withHeader('X-Foo', ['bar', null, 'baz']);
     }
@@ -218,7 +218,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithValueAsNumber(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $this->createSubject()->withHeader('X-Foo', 42);
     }
@@ -226,7 +226,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithValueAsNumberAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $this->createSubject()->withHeader('X-Foo', ['bar', 42, 'baz']);
     }
@@ -234,7 +234,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithInvalidValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 is invalid');
 
         $this->createSubject()->withHeader('X-Foo', "\0");
     }
@@ -242,7 +242,7 @@ abstract class BaseMessageTest extends TestCase
     public function testSetHeaderWithInvalidValueAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 is invalid');
 
         $this->createSubject()->withHeader('X-Foo', ['bar', "\0", 'baz']);
     }
@@ -355,7 +355,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithValueAsNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $this->createSubject()->withAddedHeader('X-Foo', null);
     }
@@ -363,7 +363,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithValueAsNullAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $this->createSubject()->withAddedHeader('X-Foo', ['bar', null, 'baz']);
     }
@@ -371,7 +371,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithValueAsNumber(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $this->createSubject()->withAddedHeader('X-Foo', 42);
     }
@@ -379,7 +379,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithValueAsNumberAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $this->createSubject()->withAddedHeader('X-Foo', ['bar', 42, 'baz']);
     }
@@ -387,7 +387,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithInvalidValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 is invalid');
 
         $this->createSubject()->withAddedHeader('X-Foo', "\0");
     }
@@ -395,7 +395,7 @@ abstract class BaseMessageTest extends TestCase
     public function testAddHeaderWithInvalidValueAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 is invalid');
 
         $this->createSubject()->withAddedHeader('X-Foo', ['bar', "\0", 'baz']);
     }
@@ -796,7 +796,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithValueAsNull(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => null]);
 
@@ -808,7 +808,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithValueAsNullAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => ['bar', null, 'baz']]);
 
@@ -820,7 +820,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithValueAsNumber(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 must be a string');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => 42]);
 
@@ -832,7 +832,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithValueAsNumberAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] must be a string');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 must be a string');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => ['bar', 42, 'baz']]);
 
@@ -844,7 +844,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithInvalidValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 is invalid');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => "\0"]);
 
@@ -856,7 +856,7 @@ abstract class BaseMessageTest extends TestCase
     public function testConstructorWithHeadersWithInvalidValueAmongOthers(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[1] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:1 is invalid');
 
         $subject = $this->createSubjectWithHeaders(['X-Foo' => ['bar', "\0", 'baz']]);
 

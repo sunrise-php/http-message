@@ -124,7 +124,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testCreateServerRequestWithServerParamsWithInvalidHeader(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 is invalid');
 
         (new ServerRequestFactory)->createServerRequest('GET', new Uri(), ['HTTP_X_FOO' => "\0"]);
     }
@@ -299,7 +299,7 @@ class ServerRequestFactoryTest extends TestCase
         $_SERVER = ['HTTP_X_FOO' => "\0"];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value of the HTTP header X-Foo[0] is invalid');
+        $this->expectExceptionMessage('The value of the HTTP header X-Foo:0 is invalid');
 
         ServerRequestFactory::fromGlobals();
     }
