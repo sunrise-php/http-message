@@ -38,7 +38,7 @@
     "require-dev": {
         "php-di/php-di": "^6.4",
         "php-http/psr7-integration-tests": "^1.4",
-        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.6",
         "sunrise/coding-standard": "^1.0",
         "vimeo/psalm": "^5.26"
