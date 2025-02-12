@@ -137,7 +137,6 @@ class Stream implements StreamInterface
             return false;
         }
 
-        /** @var array{seekable: bool} */
         $metadata = stream_get_meta_data($this->resource);
 
         return $metadata['seekable'];
@@ -179,7 +178,6 @@ class Stream implements StreamInterface
             return false;
         }
 
-        /** @var array{mode: string} */
         $metadata = stream_get_meta_data($this->resource);
 
         return strpbrk($metadata['mode'], '+acwx') !== false;
@@ -215,7 +213,6 @@ class Stream implements StreamInterface
             return false;
         }
 
-        /** @var array{mode: string} */
         $metadata = stream_get_meta_data($this->resource);
 
         return strpbrk($metadata['mode'], '+r') !== false;
