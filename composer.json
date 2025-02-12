@@ -36,12 +36,12 @@
         "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "php-di/php-di": "^6.4",
+        "php-di/php-di": "^6.4 || ^7.0",
         "php-http/psr7-integration-tests": "^1.4",
-        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^9.6",
         "sunrise/coding-standard": "^1.0",
-        "vimeo/psalm": "^5.26"
+        "vimeo/psalm": "^5.26 || ^6.0"
     },
     "autoload": {
         "files": [
@@ -61,15 +61,15 @@
         }
     },
     "scripts": {
+        "phpcs": "@php phpcs --colors",
+        "psalm": "@php psalm --no-cache",
+        "phpstan": "@php phpstan analyse src --level=9 --memory-limit=-1",
+        "phpunit": "@php phpunit --colors=always",
         "test": [
-            "phpcs --colors",
-            "psalm --no-cache",
-            "phpstan analyse src --level=9 --memory-limit=-1",
-            "XDEBUG_MODE=coverage phpunit --coverage-text --colors=always"
-        ],
-        "build": [
-            "phpdoc -d src/ -t phpdoc/",
-            "XDEBUG_MODE=coverage phpunit --coverage-html coverage/"
+            "@phpcs",
+            "@psalm",
+            "@phpstan",
+            "@phpunit"
         ]
     },
     "conflict": {

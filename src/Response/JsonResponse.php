@@ -53,6 +53,7 @@ final class JsonResponse extends Response
         }
 
         try {
+            /** @var non-empty-string $json */
             $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (JsonException $e) {
             throw new InvalidArgumentException(sprintf(

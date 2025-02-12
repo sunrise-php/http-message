@@ -105,6 +105,7 @@ class UploadedFile implements UploadedFileInterface
     public function moveTo($targetPath): void
     {
         /** @psalm-suppress TypeDoesNotContainType */
+        // @phpstan-ignore function.alreadyNarrowedType
         if (!is_string($targetPath)) {
             throw new TypeError(sprintf(
                 'Argument #1 ($targetPath) must be of type string, %s given',
