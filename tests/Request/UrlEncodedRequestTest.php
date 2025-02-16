@@ -25,9 +25,9 @@ class UrlEncodedRequestTest extends TestCase
 
     public function testConstructorWithObject(): void
     {
-        $request = new UrlEncodedRequest('POST', '/', (object) ['foo' => 'bar']);
+        $request = new UrlEncodedRequest('POST', '/', (object) ['foo' => 'bar', 'bar' => 'baz']);
 
-        $this->assertSame('foo=bar', $request->getBody()->__toString());
+        $this->assertSame('foo=bar&bar=baz', $request->getBody()->__toString());
     }
 
     public function testConstructorWithDefaultEncodingType(): void
