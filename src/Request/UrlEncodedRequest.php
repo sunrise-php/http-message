@@ -70,7 +70,7 @@ final class UrlEncodedRequest extends Request
             return $data;
         }
 
-        $encodedData = http_build_query($data, '', '', $encodingType);
+        $encodedData = http_build_query($data, '', '&', $encodingType);
 
         $stream = new PhpTempStream('r+b');
         $stream->write($encodedData);
