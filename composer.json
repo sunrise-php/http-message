@@ -1,86 +1,85 @@
 {
-    "name": "sunrise/http-message",
-    "homepage": "https://github.com/sunrise-php/http-message",
-    "description": "HTTP message wrapper for PHP 7.4+ based on RFC-7230, PSR-7 and PSR-17",
-    "license": "MIT",
-    "keywords": [
-        "fenric",
-        "sunrise",
-        "http",
-        "header",
-        "message",
-        "request",
-        "response",
-        "stream",
-        "uri",
-        "upload",
-        "rfc-7230",
-        "psr-7",
-        "psr-17"
-    ],
-    "authors": [
-        {
-            "name": "Anatoly Nekhay",
-            "email": "afenric@gmail.com",
-            "homepage": "https://github.com/fenric"
-        }
-    ],
-    "provide": {
-        "psr/http-message-implementation": "1.0",
-        "psr/http-factory-implementation": "1.0"
-    },
-    "require": {
-        "php": ">=7.4",
-        "fig/http-message-util": "^1.1",
-        "psr/http-factory": "^1.0",
-        "psr/http-message": "^1.0"
-    },
-    "require-dev": {
-        "php-di/php-di": "^6.4 || ^7.0",
-        "php-http/psr7-integration-tests": "^1.4",
-        "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.6",
-        "sunrise/coding-standard": "^1.0",
-        "vimeo/psalm": "^5.26 || ^6.0"
-    },
-    "autoload": {
-        "files": [
-            "functions/server_request_files.php",
-            "functions/server_request_headers.php",
-            "functions/server_request_method.php",
-            "functions/server_request_protocol_version.php",
-            "functions/server_request_uri.php"
-        ],
-        "psr-4": {
-            "Sunrise\\Http\\Message\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Sunrise\\Http\\Message\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "phpcs": "@php phpcs --colors",
-        "psalm": "@php psalm --no-cache",
-        "phpstan": "@php phpstan analyse src --level=9 --memory-limit=-1",
-        "phpunit": "@php phpunit --colors=always",
-        "test": [
-            "@phpcs",
-            "@psalm",
-            "@phpstan",
-            "@phpunit"
-        ]
-    },
-    "conflict": {
-        "sunrise/http-factory": "*",
-        "sunrise/http-header": "*",
-        "sunrise/http-header-kit": "*",
-        "sunrise/http-server-request": "*",
-        "sunrise/stream": "*",
-        "sunrise/uri": "*"
-    },
-    "config": {
-        "sort-packages": true
+  "name": "sunrise/http-message",
+  "homepage": "https://github.com/sunrise-php/http-message",
+  "description": "HTTP message implementation for PHP 7.4+ based on RFC-7230, PSR-7 and PSR-17.",
+  "license": "MIT",
+  "keywords": [
+    "fenric",
+    "sunrise",
+    "http",
+    "header",
+    "message",
+    "request",
+    "response",
+    "stream",
+    "uri",
+    "upload",
+    "rfc-7230",
+    "psr-7",
+    "psr-17"
+  ],
+  "authors": [
+    {
+      "name": "Anatoly Nekhay",
+      "email": "afenric@gmail.com",
+      "homepage": "https://github.com/fenric"
     }
+  ],
+  "provide": {
+    "psr/http-message-implementation": "1.0",
+    "psr/http-factory-implementation": "1.0"
+  },
+  "require": {
+    "php": ">=7.4",
+    "fig/http-message-util": "^1.1",
+    "psr/http-factory": "^1.0",
+    "psr/http-message": "^1.0"
+  },
+  "require-dev": {
+    "php-di/php-di": "^6.4 || ^7.0",
+    "php-http/psr7-integration-tests": "^1.4",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^9.6",
+    "sunrise/coding-standard": "^1.0",
+    "vimeo/psalm": "^5.26 || ^6.0"
+  },
+  "autoload": {
+    "files": [
+      "functions/server_request_files.php",
+      "functions/server_request_headers.php",
+      "functions/server_request_method.php",
+      "functions/server_request_protocol_version.php",
+      "functions/server_request_uri.php"
+    ],
+    "psr-4": {
+      "Sunrise\\Http\\Message\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Sunrise\\Http\\Message\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "phpcs": "@php phpcs --colors",
+    "psalm": "@php psalm --no-cache",
+    "phpstan": "@php phpstan analyse src --level=9 --memory-limit=-1",
+    "phpunit": "@php phpunit --colors=always",
+    "test": [
+      "@phpcs",
+      "@psalm",
+      "@phpstan",
+      "@phpunit"
+    ]
+  },
+  "conflict": {
+    "sunrise/http-factory": "*",
+    "sunrise/http-header": "*",
+    "sunrise/http-server-request": "*",
+    "sunrise/stream": "*",
+    "sunrise/uri": "*"
+  },
+  "config": {
+    "sort-packages": true
+  }
 }
