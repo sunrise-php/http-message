@@ -170,7 +170,7 @@ class Request extends Message implements RequestInterface, RequestMethodInterfac
 
         $port = $this->uri->getPort();
         if ($port !== null) {
-            $host .= ':' . $port;
+            $host .= ':' . (string) $port;
         }
 
         $this->setHeader('Host', $host, true);

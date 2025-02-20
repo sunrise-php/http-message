@@ -235,7 +235,7 @@ class Uri implements UriInterface
 
         $port = $this->getPort();
         if ($port !== null) {
-            $authority = $authority . ':' . $port;
+            $authority = $authority . ':' . (string) $port;
         }
 
         return $authority;
