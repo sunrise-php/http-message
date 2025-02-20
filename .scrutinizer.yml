@@ -21,28 +21,28 @@ build:
         php: 8.3.16
       tests:
         override:
-          - command: composer test
+          - command: php vendor/bin/phpunit
     php82:
       environment:
         php: 8.2.27
       tests:
         override:
-          - command: composer test
+          - command: php vendor/bin/phpunit
     php81:
       environment:
         php: 8.1.31
       tests:
         override:
-          - command: composer test
+          - command: php vendor/bin/phpunit
     php80:
       environment:
         php: 8.0.30
       tests:
         override:
-          - command: composer test
+          - command: php vendor/bin/phpunit
     php74:
       environment:
         php: 7.4.33
       tests:
         override:
-          - command: composer test
+          - command: php vendor/bin/phpunit
