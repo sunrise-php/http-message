@@ -16,6 +16,9 @@ use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Stream\FileStream;
 use Sunrise\Http\Message\Stream\PhpTempStream;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class StreamFactory implements StreamFactoryInterface
 {
     /**

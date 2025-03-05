@@ -26,6 +26,9 @@ use function ltrim;
 use function parse_url;
 use function strncmp;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class Uri implements UriInterface
 {
     private string $scheme = '';

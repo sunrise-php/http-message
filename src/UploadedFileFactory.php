@@ -17,6 +17,9 @@ use Psr\Http\Message\UploadedFileInterface;
 
 use const UPLOAD_ERR_OK;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class UploadedFileFactory implements UploadedFileFactoryInterface
 {
     /**

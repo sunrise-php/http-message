@@ -15,6 +15,9 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Sunrise\Http\Message\Stream\PhpInputStream;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class ServerRequestFactory implements ServerRequestFactoryInterface
 {
     /**

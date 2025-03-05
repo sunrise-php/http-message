@@ -14,6 +14,9 @@ namespace Sunrise\Http\Message;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class ResponseFactory implements ResponseFactoryInterface
 {
     /**

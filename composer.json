@@ -1,22 +1,17 @@
 {
   "name": "sunrise/http-message",
   "homepage": "https://github.com/sunrise-php/http-message",
-  "description": "HTTP message implementation for PHP 7.4+ based on RFC-7230, PSR-7 and PSR-17.",
+  "description": "An HTTP message implementation based on PSR-7, PSR-17 and RFC-7230.",
   "license": "MIT",
   "keywords": [
     "fenric",
     "sunrise",
     "http",
-    "header",
-    "message",
     "request",
     "response",
-    "stream",
-    "uri",
-    "upload",
-    "rfc-7230",
     "psr-7",
-    "psr-17"
+    "psr-17",
+    "rfc-7230"
   ],
   "authors": [
     {

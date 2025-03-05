@@ -14,6 +14,9 @@ namespace Sunrise\Http\Message;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class UriFactory implements UriFactoryInterface
 {
     /**
