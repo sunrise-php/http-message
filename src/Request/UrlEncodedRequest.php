@@ -15,13 +15,8 @@ use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Request;
 use Sunrise\Http\Message\Stream\PhpTempStream;
-use TypeError;
 
-use function gettype;
 use function http_build_query;
-use function is_array;
-use function is_object;
-use function sprintf;
 
 use const PHP_QUERY_RFC1738;
 use const PHP_QUERY_RFC3986;
@@ -36,24 +31,13 @@ final class UrlEncodedRequest extends Request
 
     /**
      * @param mixed $uri
-     * @param array<array-key, mixed>|object $data
+     * @param mixed $data
      * @param self::ENCODING_TYPE_* $encodingType
      *
      * @throws InvalidArgumentException
      */
     public function __construct(string $method, $uri, $data, int $encodingType = self::ENCODING_TYPE_RFC1738)
     {
-        /**
-         * @psalm-suppress DocblockTypeContradiction
-         * @phpstan-ignore-next-line
-         */
-        if (!is_array($data) && !is_object($data)) {
-            throw new TypeError(sprintf(
-                'Argument #3 ($data) must be of type string, %s given',
-                gettype($data),
-            ));
-        }
-
         parent::__construct($method, $uri);
 
         $this->setBody(self::createBody($data, $encodingType));
@@ -61,7 +45,7 @@ final class UrlEncodedRequest extends Request
     }
 
     /**
-     * @param array<array-key, mixed>|object $data
+     * @param mixed $data
      * @param self::ENCODING_TYPE_* $encodingType
      */
     private static function createBody($data, int $encodingType): StreamInterface
@@ -70,10 +54,10 @@ final class UrlEncodedRequest extends Request
             return $data;
         }
 
-        $encodedData = http_build_query($data, '', '&', $encodingType);
+        $query = http_build_query((array) $data, '', '&', $encodingType);
 
         $stream = new PhpTempStream('r+b');
-        $stream->write($encodedData);
+        $stream->write($query);
         $stream->rewind();
 
         return $stream;

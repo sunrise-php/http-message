@@ -11,6 +11,9 @@
 
 namespace Sunrise\Http\Message\Exception;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

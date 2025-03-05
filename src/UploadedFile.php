@@ -38,6 +38,9 @@ use const UPLOAD_ERR_NO_TMP_DIR;
 use const UPLOAD_ERR_CANT_WRITE;
 use const UPLOAD_ERR_EXTENSION;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class UploadedFile implements UploadedFileInterface
 {
     /**

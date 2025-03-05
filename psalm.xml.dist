@@ -14,7 +14,6 @@
   </projectFiles>
 
   <issueHandlers>
-    <ClassMustBeFinal errorLevel="suppress" />
     <MissingOverrideAttribute errorLevel="suppress" />
     <PossiblyUnusedMethod errorLevel="suppress" />
     <PossiblyUnusedReturnValue errorLevel="suppress" />

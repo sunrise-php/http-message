@@ -21,6 +21,9 @@ use function array_walk_recursive;
 use function is_array;
 use function is_object;
 
+/**
+ * @psalm-suppress ClassMustBeFinal
+ */
 class ServerRequest extends Request implements ServerRequestInterface
 {
     /**
