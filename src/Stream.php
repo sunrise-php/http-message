@@ -11,6 +11,8 @@
 
 namespace Sunrise\Http\Message;
 
+use App\Exception\ExceptionFactory;
+use OverflowException;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
@@ -202,6 +204,24 @@ class Stream implements StreamInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @since 3.7.0
+     *
+     * @throws OverflowException
+     */
+    public function writeStream(StreamInterface $stream, int $limit = -1): int
+    {
+        $written = 0;
+        while (!$stream->eof()) {
+            $written += $this->write($stream->read(4096));
+            if ($limit > 0 && $written > $limit) {
+                throw new OverflowException('Maximum stream size exceeded.');
+            }
+        }
+
+        return $written;
     }
 
     /**
