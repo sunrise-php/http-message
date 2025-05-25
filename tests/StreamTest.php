@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Sunrise\Http\Message\Tests;
 
+use OverflowException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
 use Sunrise\Http\Message\Exception\RuntimeException;
 use Sunrise\Http\Message\Stream;
 
+use Sunrise\Http\Message\StreamFactory;
 use function fclose;
 use function fopen;
 use function is_resource;
@@ -343,6 +345,20 @@ class StreamTest extends TestCase
         $this->expectExceptionMessage('Stream is not writable');
 
         $testStream->write('foo');
+    }
+
+    public function testWriteStream(): void
+    {
+        $source = (new StreamFactory())->createStream('foo');
+        self::assertSame(3, $this->testStream->writeStream($source));
+        $this->assertSame('foo', (string) $this->testStream);
+    }
+
+    public function testWriteTooLargeStream(): void
+    {
+        $source = (new StreamFactory())->createStream('foox');
+        $this->expectException(OverflowException::class);
+        $this->testStream->writeStream($source, 3);
     }
 
     public function testIsReadable(): void
