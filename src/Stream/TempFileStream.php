@@ -30,6 +30,14 @@ final class TempFileStream extends Stream
         parent::__construct(self::createFile($prefix));
     }
 
+    public function getFilename(): string
+    {
+        /** @var string $filename */
+        $filename = $this->getMetadata('uri');
+
+        return $filename;
+    }
+
     /**
      * @return resource
      *

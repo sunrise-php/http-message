@@ -29,6 +29,14 @@ final class FileStream extends Stream
         parent::__construct(self::openFile($filename, $mode));
     }
 
+    public function getFilename(): string
+    {
+        /** @var string $filename */
+        $filename = $this->getMetadata('uri');
+
+        return $filename;
+    }
+
     /**
      * @return resource
      *
@@ -46,7 +54,7 @@ final class FileStream extends Stream
             throw new InvalidArgumentException(sprintf(
                 'Unable to open the file "%s" in the mode "%s"',
                 $filename,
-                $mode
+                $mode,
             ));
         }
 

@@ -34,6 +34,14 @@ final class TmpfileStream extends Stream
         parent::__construct(self::createFile());
     }
 
+    public function getFilename(): string
+    {
+        /** @var string $filename */
+        $filename = $this->getMetadata('uri');
+
+        return $filename;
+    }
+
     /**
      * @return resource
      *
