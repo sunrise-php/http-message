@@ -12,6 +12,7 @@
 namespace Sunrise\Http\Message\Stream;
 
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
+use Sunrise\Http\Message\FileStreamInterface;
 use Sunrise\Http\Message\Stream;
 use Throwable;
 
@@ -19,7 +20,7 @@ use function fopen;
 use function is_resource;
 use function sprintf;
 
-final class FileStream extends Stream
+final class FileStream extends Stream implements FileStreamInterface
 {
     /**
      * @throws InvalidArgumentException

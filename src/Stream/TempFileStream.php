@@ -12,6 +12,7 @@
 namespace Sunrise\Http\Message\Stream;
 
 use Sunrise\Http\Message\Exception\RuntimeException;
+use Sunrise\Http\Message\FileStreamInterface;
 use Sunrise\Http\Message\Stream;
 
 use function fopen;
@@ -20,7 +21,7 @@ use function is_writable;
 use function sys_get_temp_dir;
 use function tempnam;
 
-final class TempFileStream extends Stream
+final class TempFileStream extends Stream implements FileStreamInterface
 {
     /**
      * @throws RuntimeException
