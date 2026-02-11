@@ -12,6 +12,7 @@
 namespace Sunrise\Http\Message\Stream;
 
 use Sunrise\Http\Message\Exception\InvalidArgumentException;
+use Sunrise\Http\Message\FileStreamInterface;
 use Sunrise\Http\Message\Stream;
 use Throwable;
 
@@ -19,7 +20,7 @@ use function fopen;
 use function is_resource;
 use function sprintf;
 
-final class FileStream extends Stream
+final class FileStream extends Stream implements FileStreamInterface
 {
     /**
      * @throws InvalidArgumentException
@@ -27,6 +28,14 @@ final class FileStream extends Stream
     public function __construct(string $filename, string $mode)
     {
         parent::__construct(self::openFile($filename, $mode));
+    }
+
+    public function getFilename(): string
+    {
+        /** @var string $filename */
+        $filename = $this->getMetadata('uri');
+
+        return $filename;
     }
 
     /**
@@ -46,7 +55,7 @@ final class FileStream extends Stream
             throw new InvalidArgumentException(sprintf(
                 'Unable to open the file "%s" in the mode "%s"',
                 $filename,
-                $mode
+                $mode,
             ));
         }
 

@@ -12,6 +12,7 @@
 namespace Sunrise\Http\Message\Stream;
 
 use Sunrise\Http\Message\Exception\RuntimeException;
+use Sunrise\Http\Message\FileStreamInterface;
 use Sunrise\Http\Message\Stream;
 
 use function is_resource;
@@ -24,7 +25,7 @@ use function tmpfile;
  * read/write (w+b) mode. The file will be automatically deleted
  * when it is closed or the program terminates.
  */
-final class TmpfileStream extends Stream
+final class TmpfileStream extends Stream implements FileStreamInterface
 {
     /**
      * @throws RuntimeException
@@ -32,6 +33,14 @@ final class TmpfileStream extends Stream
     public function __construct()
     {
         parent::__construct(self::createFile());
+    }
+
+    public function getFilename(): string
+    {
+        /** @var string $filename */
+        $filename = $this->getMetadata('uri');
+
+        return $filename;
     }
 
     /**

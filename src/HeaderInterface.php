@@ -11,12 +11,7 @@
 
 namespace Sunrise\Http\Message;
 
-use IteratorAggregate;
-
-/**
- * @extends IteratorAggregate<int, string>
- */
-interface HeaderInterface extends IteratorAggregate
+interface HeaderInterface
 {
     public const RFC822_DATE_FORMAT = 'D, d M y H:i:s O';
 
