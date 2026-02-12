@@ -34,7 +34,7 @@
     "php-di/php-di": "^6.4 || ^7.0",
     "php-http/psr7-integration-tests": "^1.4",
     "phpstan/phpstan": "^2.1",
-    "phpunit/phpunit": "^9.6",
+    "phpunit/phpunit": "^13.0",
     "sunrise/coding-standard": "^1.0",
     "vimeo/psalm": "^5.26 || ^6.0"
   },
